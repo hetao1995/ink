@@ -27,6 +27,8 @@
         <emoji.version>4.0.0</emoji.version>
         <guava.version>20.0</guava.version>
         <commons-lang3.version>3.5</commons-lang3.version>
+        <swagger.version>2.2.2</swagger.version>
+        <HikariCP.version>2.7.9</HikariCP.version>
     </properties>
 
     <dependencies>
@@ -165,12 +167,12 @@
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>2.2.2</version>
+            <version>${swagger.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.2.2</version>
+            <version>${swagger.version}</version>
         </dependency>
 
         <!--  alibaba的druid数据库连接池-->
@@ -182,7 +184,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>2.7.9</version>
+            <version>${HikariCP.version}</version>
         </dependency>
 
 
