@@ -197,7 +197,7 @@ public class TaleUtils {
      * 判断是否是合法路径
      */
     public static boolean isPath(String slug) {
-        if (StringKit.isNotBlank(slug)) {
+        if (StringUtils.isNotBlank(slug)) {
             if (slug.contains("/") || slug.contains(" ") || slug.contains(".")) {
                 return false;
             }
