@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import xyz.itao.ink.configuration.JwtAuthenticationToken;
+import xyz.itao.ink.service.JwtUserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,8 @@ import java.util.Date;
  */
 public class JwtRefreshSuccessHandler implements AuthenticationSuccessHandler {
 
-    private static final int tokenRefreshInterval = 300;  //刷新间隔5分钟
+    //刷新间隔5分钟
+    private static final int tokenRefreshInterval = 300;
 
     private JwtUserService jwtUserService;
 

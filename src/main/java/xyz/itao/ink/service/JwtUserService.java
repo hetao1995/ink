@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
@@ -16,6 +17,7 @@ import java.util.Date;
  * @date 2018-12-01
  * @description
  */
+@Service("userService")
 public class JwtUserService implements UserDetailsService {
 
     private PasswordEncoder passwordEncoder;

@@ -13,7 +13,7 @@ import java.io.IOException;
  * @date 2018-12-01
  * @description
  */
-public class OptionsRequestFilter extends OncePerRequestFilter {
+public class OptionRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

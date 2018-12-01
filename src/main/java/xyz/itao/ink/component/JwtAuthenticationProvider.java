@@ -1,15 +1,19 @@
-package xyz.itao.ink.service;
+package xyz.itao.ink.component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
+import org.springframework.stereotype.Component;
 import xyz.itao.ink.configuration.JwtAuthenticationToken;
 
 import java.util.Calendar;
@@ -19,17 +23,23 @@ import java.util.Calendar;
  * @date 2018-12-01
  * @description
  */
+@Component
+@Slf4j
 public class JwtAuthenticationProvider implements AuthenticationProvider {
+    @Autowired
+    UserDetailsService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        DecodedJWT jwt = ((JwtAuthenticationToken)authentication).getToken();
-        if(jwt.getExpiresAt().before(Calendar.getInstance().getTime()))
+        DecodedJWT jwt = ((JwtAuthenticationToken) authentication).getToken();
+        if (jwt.getExpiresAt().before(Calendar.getInstance().getTime())) {
             throw new NonceExpiredException("Token expires");
+        }
         String username = jwt.getSubject();
-        UserDetails user = userService.getUserLoginInfo(username);
-        if(user == null || user.getPassword()==null)
+        UserDetails user = userService.loadUserByUsername(username);
+        if (user == null || user.getPassword() == null) {
             throw new NonceExpiredException("Token expires");
+        }
         String encryptSalt = user.getPassword();
         try {
             Algorithm algorithm = Algorithm.HMAC256(encryptSalt);
@@ -40,8 +50,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         } catch (Exception e) {
             throw new BadCredentialsException("JWT token verify fail", e);
         }
-        JwtAuthenticationToken token = new JwtAuthenticationToken(user, jwt, user.getAuthorities());
-        return token;
+        return new JwtAuthenticationToken(user, jwt, user.getAuthorities());
     }
 
     @Override
