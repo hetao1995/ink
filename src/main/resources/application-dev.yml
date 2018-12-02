@@ -10,7 +10,7 @@ spring:
         hikari:
           #基本属性
           jdbc-url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
-          driver-class-name: com.mysql.jdbc.Driver
+          driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
           password: root
           #连接池大小名称等
