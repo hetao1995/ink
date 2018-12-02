@@ -1,7 +1,9 @@
 package xyz.itao.ink.dao;
 
+import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.Role;
 
+@Component
 public interface RoleMapper {
     int deleteByPrimaryKey(Long id);
 

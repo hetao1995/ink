@@ -1,9 +1,12 @@
 package xyz.itao.ink.domain;
 
+import com.google.common.collect.Lists;
 import lombok.Builder;
 import lombok.Data;
+import xyz.itao.ink.repository.UserRoleRepository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author hetao
@@ -12,7 +15,7 @@ import java.util.Date;
  */
 @Data
 @Builder
-public class UserDomain{
+public class UserDomain {
 
     /**
      * 用户id
@@ -23,6 +26,11 @@ public class UserDomain{
      * 是否已经被删除了
      */
     private Boolean deleted;
+
+    /**
+     * 是否是长期用户 true：是 false：不是
+     */
+    private Boolean permanent;
 
     /**
      * 是否处于激活状态
@@ -82,8 +90,34 @@ public class UserDomain{
     /**
      * 用户的主页，不能重复
      */
-    private String hmeUrl;
+    private String homeUrl;
 
+    /**
+     * 角色的repository，用于获取当前用户的角色
+     */
+    private UserRoleRepository userRoleRepository;
 
+    /**
+     * 用户角色
+     */
+    List<String> roles;
 
+    /**
+     * 通过 RoleRepository 获取角色
+     *
+     * @return 所有角色数组
+     */
+    public List<String> getRoles() {
+        // roles已经加载或者id未初始化，直接返回roles
+        if (roles != null || id == null || userRoleRepository == null) {
+            return roles;
+        }
+        List<UserRoleDomain> userRoleDomains = userRoleRepository.loadAllUserRolesByUserId(id);
+
+        roles = Lists.newArrayList();
+        for (UserRoleDomain userRoleDomain : userRoleDomains) {
+            roles.add(userRoleDomain.getRole());
+        }
+        return roles;
+    }
 }

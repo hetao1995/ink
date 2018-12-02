@@ -1,5 +1,6 @@
 package xyz.itao.ink.domain.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
  * @description users表的实体类
  */
 @Data
+@Builder
 public class User {
     /**
      * 用户id
@@ -84,6 +86,6 @@ public class User {
     /**
      * 用户的主页，不能重复
      */
-    private String hmeUrl;
+    private String homeUrl;
 
 }
