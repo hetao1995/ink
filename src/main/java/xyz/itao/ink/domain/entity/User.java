@@ -22,6 +22,11 @@ public class User {
     private Boolean deleted;
 
     /**
+     * 是否是长期用户 true：是 false：不是
+     */
+    private Boolean permanent;
+
+    /**
      * 是否处于激活状态
      */
     private Boolean actived;

@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="xyz.itao.ink.domain.entity.User" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
+    <result column="permanent" property="permanent" jdbcType="BIT" />
     <result column="actived" property="actived" jdbcType="BIT" />
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="password" property="password" jdbcType="CHAR" />
@@ -20,7 +21,7 @@
     <result column="hme_url" property="hmeUrl" jdbcType="LONGVARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, deleted, actived, username, password, display_name, email, salt, last_login, 
+    id, deleted, permanent, actived, username, password, display_name, email, salt, last_login, 
     create_time, update_time, create_by, update_by
   </sql>
   <sql id="Blob_Column_List" >
@@ -39,16 +40,18 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="xyz.itao.ink.domain.entity.User" >
-    insert into users (id, deleted, actived, 
-      username, password, display_name, 
-      email, salt, last_login, 
-      create_time, update_time, create_by, 
-      update_by, hme_url)
-    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{actived,jdbcType=BIT}, 
-      #{username,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, #{displayName,jdbcType=VARCHAR}, 
-      #{email,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{lastLogin,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, 
-      #{updateBy,jdbcType=BIGINT}, #{hmeUrl,jdbcType=LONGVARCHAR})
+    insert into users (id, deleted, permanent, 
+      actived, username, password, 
+      display_name, email, salt, 
+      last_login, create_time, update_time, 
+      create_by, update_by, hme_url
+      )
+    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{permanent,jdbcType=BIT}, 
+      #{actived,jdbcType=BIT}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, 
+      #{displayName,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, 
+      #{lastLogin,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT}, #{hmeUrl,jdbcType=LONGVARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.User" >
     insert into users
@@ -58,6 +61,9 @@
       </if>
       <if test="deleted != null" >
         deleted,
+      </if>
+      <if test="permanent != null" >
+        permanent,
       </if>
       <if test="actived != null" >
         actived,
@@ -103,6 +109,9 @@
       <if test="deleted != null" >
         #{deleted,jdbcType=BIT},
       </if>
+      <if test="permanent != null" >
+        #{permanent,jdbcType=BIT},
+      </if>
       <if test="actived != null" >
         #{actived,jdbcType=BIT},
       </if>
@@ -147,6 +156,9 @@
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
       </if>
+      <if test="permanent != null" >
+        permanent = #{permanent,jdbcType=BIT},
+      </if>
       <if test="actived != null" >
         actived = #{actived,jdbcType=BIT},
       </if>
@@ -189,6 +201,7 @@
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="xyz.itao.ink.domain.entity.User" >
     update users
     set deleted = #{deleted,jdbcType=BIT},
+      permanent = #{permanent,jdbcType=BIT},
       actived = #{actived,jdbcType=BIT},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=CHAR},
@@ -206,6 +219,7 @@
   <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.User" >
     update users
     set deleted = #{deleted,jdbcType=BIT},
+      permanent = #{permanent,jdbcType=BIT},
       actived = #{actived,jdbcType=BIT},
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=CHAR},

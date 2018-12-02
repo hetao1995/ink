@@ -1,5 +1,6 @@
 package xyz.itao.ink.domain.entity;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
@@ -10,6 +11,7 @@ import java.util.Date;
  * @description links表的实体类
  */
 @Data
+@Builder
 public class Link {
     /**
      * 连接的id
