@@ -29,3 +29,6 @@ logs
 upload
 target
 .mvn
+.mvnw
+.mvnw.cmd
+.ink.iml
