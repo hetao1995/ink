@@ -41,6 +41,26 @@ public class UserRoleRepositoryImpl extends AbstractBaseRepository<UserRoleDomai
     }
 
     @Override
+    protected boolean doSave(UserRole entity) {
+        return userRoleMapper.insertSelective(entity);
+    }
+
+    @Override
+    protected UserRole doLoadByNoNullProperties(UserRole entity) {
+        List<UserRole> userRoles = userRoleMapper.selectByNoNulProperties(entity);
+        if(userRoles.isEmpty()){
+            return null;
+        }
+        return userRoles.get(0);
+    }
+
+
+    @Override
+    protected boolean doUpdate(UserRole entity) {
+        return userRoleMapper.updateByPrimaryKeySelective(entity);
+    }
+
+    @Override
     protected UserRoleDomain doAssemble(UserRole entity) {
         return UserRoleDomain
                 .builder()

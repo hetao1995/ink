@@ -6,7 +6,7 @@ import xyz.itao.ink.domain.entity.User;
 public interface UserMapper {
 
     /**
-     * 将非空数组插入到数据库
+     * 将非空数据插入到数据库
      * @param record 要插入的数据
      * @return 是否插入成功
      */

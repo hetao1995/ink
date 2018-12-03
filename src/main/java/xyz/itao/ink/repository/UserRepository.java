@@ -34,4 +34,12 @@ public interface UserRepository {
      * @return 主页地址对应的UserDomain
      */
     UserDomain loadUserDomainByHomeUrl(String homeUrl);
+
+    /**
+     * 将userdomian对象存入数据库
+     * @param userDomain 需要存入的内容
+     * @return 存入后的结果
+     */
+    UserDomain saveNewUserDomain(UserDomain userDomain);
+
 }

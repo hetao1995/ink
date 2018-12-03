@@ -18,5 +18,5 @@ public interface RoleRepository {
      * @param id role的id
      * @return id 对应的RoleDomain对象
      */
-    RoleDomain loadRoleById(Long id);
+    RoleDomain loadRoleDomainById(Long id);
 }

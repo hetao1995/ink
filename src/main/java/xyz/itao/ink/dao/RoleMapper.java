@@ -5,15 +5,34 @@ import xyz.itao.ink.domain.entity.Role;
 
 @Component
 public interface RoleMapper {
-    int deleteByPrimaryKey(Long id);
 
-    int insert(Role record);
+    /**
+     * 将非空数据插入到数据库
+     * @param record 要插入的数据
+     * @return 是否插入成功
+     */
+    boolean insertSelective(Role record);
 
-    int insertSelective(Role record);
-
+    /**
+     * 通过主键查找数据
+     * @param id 主键id
+     * @return 主键对应的User实例
+     */
     Role selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(Role record);
+    /**
+     * 更新数据，主键不能为空，注意，删除数据也是调用此方法，只是将deleted设置为true
+     * @param record 需要更新的数据
+     * @return 是否更新成功
+     */
+    boolean updateByPrimaryKeySelective(Role record);
 
-    int updateByPrimaryKey(Role record);
+    /**
+     * 多种条件查找，包括id、deleted等
+     * 这些条件全部满足才会返回
+     * @param record 条件
+     * @return 满足条件的User实例
+     */
+    Role selectByNoNulProperties(Role record);
+
 }

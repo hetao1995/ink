@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @Builder
-public class UserRoleDomain {
+public class UserRoleDomain extends BaseDomain{
     /**
      * 用户角色记录的id
      */
@@ -74,7 +74,7 @@ public class UserRoleDomain {
             return role;
         }
         // 根据roleRepository获取RoleDomain对象
-        RoleDomain roleDomain = roleRepository.loadRoleById(roleId);
+        RoleDomain roleDomain = roleRepository.loadRoleDomainById(roleId);
         if (roleDomain == null) {
             return role;
         }

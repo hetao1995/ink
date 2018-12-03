@@ -23,11 +23,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
 
     @Override
     public UserDomain loadUserDomainById(Long id) {
-        User user = userMapper.selectByPrimaryKey(id);
-        if (user == null) {
-            return null;
-        }
-        return assemble(user);
+        return loadById(id);
     }
 
     @Override
@@ -38,7 +34,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .deleted(false)
                 .permanent(true)
                 .build();
-        user = userMapper.selectByNoNulProperties(user);
+        user = doLoadByNoNullProperties(user);
         return assemble(user);
     }
 
@@ -50,7 +46,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .deleted(false)
                 .permanent(true)
                 .build();
-        user = userMapper.selectByNoNulProperties(user);
+        user = doLoadByNoNullProperties(user);
         return assemble(user);
     }
 
@@ -62,8 +58,13 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .deleted(false)
                 .permanent(true)
                 .build();
-        user = userMapper.selectByNoNulProperties(user);
+        user = doLoadByNoNullProperties(user);
         return assemble(user);
+    }
+
+    @Override
+    public UserDomain saveNewUserDomain(UserDomain userDomain) {
+        return save(userDomain);
     }
 
     @Override
@@ -109,5 +110,21 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .password(domain.getPassword())
                 .lastLogin(domain.getLastLogin())
                 .build();
+    }
+
+    @Override
+    protected boolean doSave(User entity) {
+        return userMapper.insertSelective(entity);
+    }
+
+    @Override
+    protected User doLoadByNoNullProperties(User entity) {
+        return userMapper.selectByNoNulProperties(entity);
+    }
+
+
+    @Override
+    protected boolean doUpdate(User entity) {
+        return userMapper.updateByPrimaryKeySelective(entity);
     }
 }

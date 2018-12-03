@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @Builder
-public class RoleDomain {
+public class RoleDomain extends BaseDomain{
     /**
      * 角色id
      */

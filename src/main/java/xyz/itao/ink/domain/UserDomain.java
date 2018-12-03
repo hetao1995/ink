@@ -15,17 +15,36 @@ import java.util.List;
  */
 @Data
 @Builder
-public class UserDomain {
+public class UserDomain extends BaseDomain{
 
     /**
-     * 用户id
+     * id
      */
-    private Long id;
+    protected Long id;
 
     /**
      * 是否已经被删除了
      */
-    private Boolean deleted;
+    protected Boolean deleted;
+    /**
+     * 创建用户的时间戳
+     */
+    protected Date createTime;
+
+    /**
+     * 更新的时间戳
+     */
+    protected Date updateTime;
+
+    /**
+     * 被谁创建
+     */
+    protected Long createBy;
+
+    /**
+     * 被谁修改
+     */
+    protected Long updateBy;
 
     /**
      * 是否是长期用户 true：是 false：不是
@@ -67,25 +86,6 @@ public class UserDomain {
      */
     private Date lastLogin;
 
-    /**
-     * 创建用户的时间戳
-     */
-    private Date createTime;
-
-    /**
-     * 更新的时间戳
-     */
-    private Date updateTime;
-
-    /**
-     * 被谁创建
-     */
-    private Long createBy;
-
-    /**
-     * 被谁修改
-     */
-    private Long updateBy;
 
     /**
      * 用户的主页，不能重复

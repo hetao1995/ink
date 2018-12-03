@@ -23,10 +23,23 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
 
 
     @Override
-    public RoleDomain loadRoleById(Long id) {
-        Role role =  roleMapper.selectByPrimaryKey(id);
-        // todo 将其放入缓存
-        return assemble(role);
+    public RoleDomain loadRoleDomainById(Long id) {
+        return loadById(id);
+    }
+
+    @Override
+    protected boolean doSave(Role entity) {
+        return roleMapper.insertSelective(entity);
+    }
+
+    @Override
+    protected Role doLoadByNoNullProperties(Role entity) {
+        return roleMapper.selectByNoNulProperties(entity);
+    }
+
+    @Override
+    protected boolean doUpdate(Role entity) {
+        return roleMapper.updateByPrimaryKeySelective(entity);
     }
 
     @Override
