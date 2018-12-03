@@ -9,6 +9,7 @@ import org.springframework.security.web.authentication.AbstractAuthenticationPro
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
+import xyz.itao.ink.domain.token.MultiIdentifierAndPasswordAuthenticationToken;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,31 +23,38 @@ import java.nio.charset.Charset;
  * @date 2018-11-30
  * @description
  */
-public class UsernamePasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class MultiIdentifierAndPasswordAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    public UsernamePasswordAuthenticationFilter() {
-        //拦截url为 "/login" 的POST请求
-        super(new AntPathRequestMatcher("/login", "POST"));
+    public MultiIdentifierAndPasswordAuthenticationFilter() {
+        //拦截url为 "/admin/login" 的POST请求
+        super(new AntPathRequestMatcher("/admin/login", "POST"));
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
-        //从json中获取username和password
+        //从json中获取identifier和password
         String body = StreamUtils.copyToString(request.getInputStream(), Charset.forName("UTF-8"));
-        String username = null, password = null;
+        String identifier = null, password = null;
+        Boolean rememberMe = false;
         if (StringUtils.hasText(body)) {
             JSONObject jsonObj = JSON.parseObject(body);
-            username = jsonObj.getString("username");
+            identifier = jsonObj.getString("identifier");
             password = jsonObj.getString("password");
+            rememberMe = jsonObj.getBoolean("rememberMe");
         }
 
-        if (username == null)
-            username = "";
-        if (password == null)
+        if (identifier == null){
+            identifier = "";
+        }
+        if (password == null){
             password = "";
-        username = username.trim();
+        }
+        if(rememberMe == null){
+            rememberMe = false;
+        }
+        identifier = identifier.trim();
         //封装到token中提交
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+        MultiIdentifierAndPasswordAuthenticationToken authRequest = new MultiIdentifierAndPasswordAuthenticationToken(identifier, password, rememberMe);
 
         return this.getAuthenticationManager().authenticate(authRequest);
 

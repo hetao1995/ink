@@ -1,13 +1,16 @@
 package xyz.itao.ink.domain;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.security.core.CredentialsContainer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.util.Assert;
 import xyz.itao.ink.repository.UserRoleRepository;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author hetao
@@ -101,7 +104,7 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
     /**
      * 用户角色
      */
-    List<String> roles;
+    private List<String> roles;
 
     /**
      * 通过 RoleRepository 获取角色
@@ -128,5 +131,15 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
     @Override
     public void eraseCredentials() {
         password = null;
+    }
+
+    public Set<GrantedAuthority>  getAuthorities() {
+        Set<GrantedAuthority> authorities = Sets.newHashSet();
+        for (String role : getRoles()) {
+            Assert.isTrue(!role.startsWith("ROLE_"), () -> role
+                    + " cannot start with ROLE_ (it is automatically added)");
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        }
+        return authorities;
     }
 }

@@ -3,12 +3,12 @@ package xyz.itao.ink.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.header.Header;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
@@ -17,11 +17,11 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import xyz.itao.ink.filter.OptionRequestFilter;
-import xyz.itao.ink.handler.JsonLoginSuccessHandler;
-import xyz.itao.ink.handler.JwtRefreshSuccessHandler;
+import xyz.itao.ink.handler.MultiIdentifierAndPasswordLoginSuccessHandler;
+import xyz.itao.ink.handler.JwtLoginSuccessHandler;
 import xyz.itao.ink.handler.TokenClearLogoutHandler;
-import xyz.itao.ink.component.JwtAuthenticationProvider;
-import xyz.itao.ink.service.JwtUserService;
+import xyz.itao.ink.provider.JwtAuthenticationProvider;
+import xyz.itao.ink.provider.MultiIdentifierAndPasswordAuthenticationProvider;
 
 import java.util.Arrays;
 
@@ -32,7 +32,6 @@ import java.util.Arrays;
  */
 @EnableWebSecurity
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -42,7 +41,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 //需登陆才能访问的url
                 .antMatchers("/article/**").hasRole("USER")
-                //默认其它的请求都需要认认证
+                //默认其它的请求都需要认证
                 .anyRequest().authenticated()
                 .and()
                 //CRSF禁用，因为不使用session
@@ -66,7 +65,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //拦截OPTIONS请求，直接返回header
                 .addFilterAfter(new OptionRequestFilter(), CorsFilter.class)
                 //添加登录filter
-                .apply(new JsonLoginConfigurer<>()).loginSuccessHandler(jsonLoginSuccessHandler())
+                .apply(new MultiIdentifierAndPasswordLoginConfigurer<>()).loginSuccessHandler(jsonLoginSuccessHandler())
                 .and()
                 //添加token的filter
                 .apply(new JwtLoginConfigurer<>()).tokenValidSuccessHandler(jwtRefreshSuccessHandler()).permissiveRequestUrls("/logout")
@@ -84,7 +83,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
     //配置provider
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(daoAuthenticationProvider()).authenticationProvider(jwtAuthenticationProvider());
+        auth.authenticationProvider(multiIdentifierAndPasswordAuthenticationProvider()).authenticationProvider(jwtAuthenticationProvider());
     }
 
     @Override
@@ -98,37 +97,27 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
         return new JwtAuthenticationProvider();
     }
 
-    @Bean("daoAuthenticationProvider")
-    protected AuthenticationProvider daoAuthenticationProvider() throws Exception{
-        //这里会默认使用BCryptPasswordEncoder比对加密后的密码，注意要跟createUser时保持一致
-        DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider();
-        daoProvider.setUserDetailsService(userDetailsService());
-        return daoProvider;
+    @Bean("multiIdentifierAndPasswordAuthenticationProvider")
+    protected AuthenticationProvider multiIdentifierAndPasswordAuthenticationProvider() throws Exception{
+        return new MultiIdentifierAndPasswordAuthenticationProvider(passwordEncoder());
     }
-
-    @Override
-    protected UserDetailsService userDetailsService() {
-        return new JwtUserService();
+    @Bean("PasswordEncoder")
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
-
-    @Bean("jwtUserService")
-    protected JwtUserService jwtUserService() {
-        return new JwtUserService();
+    @Bean("jsonLoginSuccessHandler")
+    protected MultiIdentifierAndPasswordLoginSuccessHandler jsonLoginSuccessHandler() {
+        return new MultiIdentifierAndPasswordLoginSuccessHandler();
     }
 
     @Bean
-    protected JsonLoginSuccessHandler jsonLoginSuccessHandler() {
-        return new JsonLoginSuccessHandler(jwtUserService());
-    }
-
-    @Bean
-    protected JwtRefreshSuccessHandler jwtRefreshSuccessHandler() {
-        return new JwtRefreshSuccessHandler(jwtUserService());
+    protected JwtLoginSuccessHandler jwtRefreshSuccessHandler() {
+        return new JwtLoginSuccessHandler();
     }
 
     @Bean
     protected TokenClearLogoutHandler tokenClearLogoutHandler() {
-        return new TokenClearLogoutHandler(jwtUserService());
+        return new TokenClearLogoutHandler();
     }
 
     @Bean

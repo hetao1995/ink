@@ -18,7 +18,7 @@ import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
-import xyz.itao.ink.configuration.JwtAuthenticationToken;
+import xyz.itao.ink.domain.token.JwtAuthenticationToken;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getJwtLoginToken(UserDetails user) {
+    public String getJwtLoginToken(UserDomain userDomain) {
         return null;
     }
 
@@ -43,5 +43,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDomain loadUserDomainById(Long id) {
         return userRepository.loadUserDomainById(id);
+    }
+
+    @Override
+    public UserDomain loadUserDomainByUsername(String username) {
+        return userRepository.loadUserDomainByUsername(username);
+    }
+
+    @Override
+    public UserDomain loadUserDomainByEmail(String email) {
+        return userRepository.loadUserDomainByEmail(email);
+    }
+
+    @Override
+    public UserDomain loadUserDomainByHomeUrl(String homeUrl) {
+        return userRepository.loadUserDomainByHomeUrl(homeUrl);
     }
 }

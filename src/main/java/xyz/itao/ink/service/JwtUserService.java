@@ -38,7 +38,8 @@ public class JwtUserService implements UserDetailsService {
     }
 
     public String saveUserLoginInfo(UserDetails user) {
-        String salt = "123456ef"; //BCrypt.gensalt();  正式开发时可以调用该方法实时生成加密的salt
+        String salt = "123456ef";
+        //BCrypt.gensalt();  正式开发时可以调用该方法实时生成加密的salt
         /**
          * @todo 将salt保存到数据库或者缓存中
          * redisTemplate.opsForValue().set("token:"+username, salt, 3600, TimeUnit.SECONDS);

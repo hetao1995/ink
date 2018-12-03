@@ -15,7 +15,6 @@ import java.util.Collections;
  * @description
  */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
-    private static final long serialVersionUID = 3981518947978158945L;
 
     private UserDomain principal ;
     private DecodedJWT token;
@@ -34,7 +33,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return token;
+        return null;
     }
 
     @Override

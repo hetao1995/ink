@@ -1,7 +1,8 @@
 package xyz.itao.ink.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import xyz.itao.ink.utils.TaleUtils;
+import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.UserDomain;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,12 +31,12 @@ public abstract class BaseController {
         return this;
     }
 
-    public UsersVo user() {
-        return TaleUtils.getLoginUser();
+    public UserDomain user(HttpServletRequest request) {
+        return (UserDomain) request.getAttribute(WebConstant.LOGIN_USER);
     }
 
-    public Integer getUid(){
-        return this.user().getUid();
+    public Long getUid(HttpServletRequest request){
+        return this.user(request).getId();
     }
 
     public String render_404() {

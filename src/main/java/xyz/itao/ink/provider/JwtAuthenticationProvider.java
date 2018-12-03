@@ -1,4 +1,4 @@
-package xyz.itao.ink.component;
+package xyz.itao.ink.provider;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -10,10 +10,7 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
-import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.JwtAuthenticationToken;
 import xyz.itao.ink.service.UserService;
@@ -25,7 +22,6 @@ import java.util.Calendar;
  * @date 2018-12-01
  * @description
  */
-@Component
 @Slf4j
 public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Autowired
@@ -35,14 +31,18 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         DecodedJWT jwt = ((JwtAuthenticationToken) authentication).getToken();
         if (jwt.getExpiresAt().before(Calendar.getInstance().getTime())) {
+            log.debug("jwt token 失败", jwt);
             throw new NonceExpiredException("Token expires");
         }
+        // 获取jwt中的id
         Long id = Long.valueOf(jwt.getSubject());
         UserDomain userDomain = userService.loadUserDomainById(id);
-        if (userDomain == null || userDomain.getPassword() == null) {
+        if (userDomain == null || userDomain.getSalt() == null) {
+            log.debug("没有找到userDomain或者userDomian中salt为空 ",userDomain);
             throw new NonceExpiredException("Token expires");
         }
-        String encryptSalt = userDomain.getPassword();
+        // 获取jwt中的盐
+        String encryptSalt = userDomain.getSalt();
         try {
             Algorithm algorithm = Algorithm.HMAC256(encryptSalt);
             JWTVerifier verifier = JWT.require(algorithm)
@@ -50,9 +50,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                     .build();
             verifier.verify(jwt.getToken());
         } catch (Exception e) {
+            log.debug("jwt 验证失败 ", jwt);
             throw new BadCredentialsException("JWT token verify fail", e);
         }
-        return new JwtAuthenticationToken(user, jwt, user.getAuthorities());
+        // 返回jwtToken
+        return new JwtAuthenticationToken(userDomain, jwt, userDomain.getAuthorities());
     }
 
     @Override
