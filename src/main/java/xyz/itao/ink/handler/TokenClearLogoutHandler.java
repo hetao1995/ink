@@ -1,8 +1,11 @@
 package xyz.itao.ink.handler;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.stereotype.Component;
+import xyz.itao.ink.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,13 +15,12 @@ import javax.servlet.http.HttpServletResponse;
  * @date 2018-12-01
  * @description 登出的时候清除token
  */
+@Component
 public class TokenClearLogoutHandler implements LogoutHandler {
 
-    private JwtUserService jwtUserService;
+    @Autowired
+    private UserService userService;
 
-    public TokenClearLogoutHandler(JwtUserService jwtUserService) {
-        this.jwtUserService = jwtUserService;
-    }
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

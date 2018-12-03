@@ -24,4 +24,18 @@ public interface UserService {
      * @return jwt令牌
      */
     String getJwtLoginToken(UserDetails user);
+
+    /**
+     * 清除JwtToken
+     * @param userDomain 用户domain
+     * @return 是否清除成功
+     */
+    boolean clearJwtLoginToken(UserDomain userDomain);
+
+    /**
+     * 通过id加载UserDomain
+     * @param id 主键
+     * @return 加载的结果
+     */
+    UserDomain loadUserDomainById(Long id);
 }

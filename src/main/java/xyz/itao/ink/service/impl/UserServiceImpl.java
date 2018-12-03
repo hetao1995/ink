@@ -34,4 +34,14 @@ public class UserServiceImpl implements UserService {
     public String getJwtLoginToken(UserDetails user) {
         return null;
     }
+
+    @Override
+    public boolean clearJwtLoginToken(UserDomain userDomain) {
+        return false;
+    }
+
+    @Override
+    public UserDomain loadUserDomainById(Long id) {
+        return userRepository.loadUserDomainById(id);
+    }
 }

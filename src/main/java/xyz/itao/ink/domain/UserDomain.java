@@ -3,6 +3,7 @@ package xyz.itao.ink.domain;
 import com.google.common.collect.Lists;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.security.core.CredentialsContainer;
 import xyz.itao.ink.repository.UserRoleRepository;
 
 import java.util.Date;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 @Data
 @Builder
-public class UserDomain extends BaseDomain{
+public class UserDomain extends BaseDomain implements CredentialsContainer {
 
     /**
      * id
@@ -119,5 +120,13 @@ public class UserDomain extends BaseDomain{
             roles.add(userRoleDomain.getRole());
         }
         return roles;
+    }
+
+    /**
+     * SpringSecurity调用后擦除的内容
+     */
+    @Override
+    public void eraseCredentials() {
+        password = null;
     }
 }

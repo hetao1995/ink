@@ -14,7 +14,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
 import org.springframework.stereotype.Component;
-import xyz.itao.ink.configuration.JwtAuthenticationToken;
+import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.domain.token.JwtAuthenticationToken;
+import xyz.itao.ink.service.UserService;
 
 import java.util.Calendar;
 
@@ -27,7 +29,7 @@ import java.util.Calendar;
 @Slf4j
 public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Autowired
-    UserDetailsService userService;
+    UserService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -35,16 +37,16 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         if (jwt.getExpiresAt().before(Calendar.getInstance().getTime())) {
             throw new NonceExpiredException("Token expires");
         }
-        String username = jwt.getSubject();
-        UserDetails user = userService.loadUserByUsername(username);
-        if (user == null || user.getPassword() == null) {
+        Long id = Long.valueOf(jwt.getSubject());
+        UserDomain userDomain = userService.loadUserDomainById(id);
+        if (userDomain == null || userDomain.getPassword() == null) {
             throw new NonceExpiredException("Token expires");
         }
-        String encryptSalt = user.getPassword();
+        String encryptSalt = userDomain.getPassword();
         try {
             Algorithm algorithm = Algorithm.HMAC256(encryptSalt);
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withSubject(username)
+                    .withSubject(String.valueOf(id))
                     .build();
             verifier.verify(jwt.getToken());
         } catch (Exception e) {
