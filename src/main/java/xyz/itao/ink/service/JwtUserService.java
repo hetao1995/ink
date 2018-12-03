@@ -17,7 +17,7 @@ import java.util.Date;
  * @date 2018-12-01
  * @description
  */
-@Service("userService")
+
 public class JwtUserService implements UserDetailsService {
 
     private PasswordEncoder passwordEncoder;

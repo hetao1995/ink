@@ -20,18 +20,7 @@
     from roles
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from roles
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="xyz.itao.ink.domain.entity.Role" >
-    insert into roles (id, deleted, role, 
-      detail, create_time, update_time, 
-      update_by, create_by)
-    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=TINYINT}, #{role,jdbcType=VARCHAR}, 
-      #{detail,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT})
-  </insert>
+
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Role" >
     insert into roles
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -65,7 +54,7 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="deleted != null" >
-        #{deleted,jdbcType=TINYINT},
+        #{deleted,jdbcType=BIT},
       </if>
       <if test="role != null" >
         #{role,jdbcType=VARCHAR},
@@ -91,7 +80,7 @@
     update roles
     <set >
       <if test="deleted != null" >
-        deleted = #{deleted,jdbcType=TINYINT},
+        deleted = #{deleted,jdbcType=BIT},
       </if>
       <if test="role != null" >
         role = #{role,jdbcType=VARCHAR},
@@ -114,15 +103,5 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.Role" >
-    update roles
-    set deleted = #{deleted,jdbcType=TINYINT},
-      role = #{role,jdbcType=VARCHAR},
-      detail = #{detail,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=BIGINT},
-      create_by = #{createBy,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
 </mapper>

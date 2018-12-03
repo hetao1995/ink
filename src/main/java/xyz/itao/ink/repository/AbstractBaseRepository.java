@@ -27,7 +27,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
         if(!saved){
             throw new InnerException(ExceptionEnum.PERSISTENCE_FAIL, domain);
         }
-        return loadById(domain.getId());
+        return assemble(doLoadByNoNullProperties(entity));
     }
 
     /**
@@ -43,21 +43,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
             throw new InnerException(ExceptionEnum.PERSISTENCE_FAIL, domain);
         }
         //todo 缓存失效
-        return loadById(domain.getId());
-    }
-
-    /**
-     * 通过主键加载数据
-     * @param id 主键
-     * @return 加载的domain
-     */
-    public  D loadById(Long id){
-        // todo 首先从缓存中查找
-        D domain = (D) D.builder().id(id).deleted(false).build();
-        E entity = extract(domain);
-        entity = doLoadByNoNullProperties(entity);
-        // todo 更新缓存中的entity
-        return assemble(entity);
+        return assemble(doLoadByNoNullProperties(entity));
     }
 
     /**

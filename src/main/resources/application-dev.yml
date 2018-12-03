@@ -9,15 +9,16 @@ spring:
         #HikariCP相关配置
         hikari:
           #基本属性
-          jdbc-url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+          jdbc-url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
-          password: root
+          password: 666
           #连接池大小名称等
           maximum-pool-size: 5
           connection-test-query: SELECT 1
           pool-name: ink
           auto-commit: true
+        url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
     thymeleaf:
             prefix: classpath:/templates/
             check-template-location: true
@@ -30,12 +31,12 @@ spring:
       proxy-target-class: true
     servlet:
           multipart:
-            max-file-size: 10Mb
-            max-request-size: 100Mb
+            max-file-size: 10MB
+            max-request-size: 100MB
 
 
 mybatis:
-  mapper-locations: classpath:mapper/*.xml
+  mapper-locations: classpath:mappers/*.xml
   type-aliases-package: xyz.itao.domain.entity
 
 
@@ -49,7 +50,7 @@ pagehelper:
 
 logging:
   level:
-    cn.luischen.dao : DEBUG
+    xyz.itao.ink.dao : DEBUG
 
 swagger:
   show: true

@@ -24,7 +24,12 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
 
     @Override
     public RoleDomain loadRoleDomainById(Long id) {
-        return loadById(id);
+        Role role = Role
+                .builder()
+                .id(id)
+                .deleted(false)
+                .build();
+        return assemble(doLoadByNoNullProperties(role));
     }
 
     @Override

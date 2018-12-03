@@ -21,7 +21,7 @@ public class RoleDomain extends BaseDomain{
     /**
      * 是否已经被删除
      */
-    private Byte deleted;
+    private Boolean deleted;
 
     /**
      * 角色名

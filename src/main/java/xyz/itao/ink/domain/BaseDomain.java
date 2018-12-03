@@ -11,7 +11,6 @@ import java.util.Date;
  * @description
  */
 @Data
-@Builder
 public abstract class BaseDomain {
     /**
      * id

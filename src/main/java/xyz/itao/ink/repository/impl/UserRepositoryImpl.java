@@ -23,7 +23,12 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
 
     @Override
     public UserDomain loadUserDomainById(Long id) {
-        return loadById(id);
+        User user = User
+                .builder()
+                .id(id)
+                .deleted(false)
+                .build();
+        return assemble(doLoadByNoNullProperties(user));
     }
 
     @Override
