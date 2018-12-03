@@ -29,6 +29,11 @@ public class Content {
     private Boolean deleted;
 
     /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
+
+    /**
      * 内容标题
      */
     private String title;
@@ -107,5 +112,6 @@ public class Content {
      * 被谁修改
      */
     private Long updateBy;
+
 
 }

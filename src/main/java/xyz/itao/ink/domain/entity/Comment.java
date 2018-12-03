@@ -21,7 +21,12 @@ public class Comment {
     /**
      * 是否被删除
      */
-    private Byte deleted;
+    private Boolean deleted;
+
+    /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
 
     /**
      * 品论所属内容
@@ -72,4 +77,5 @@ public class Comment {
      * 被谁修改
      */
     private Long updateBy;
+
 }

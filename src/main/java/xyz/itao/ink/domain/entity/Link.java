@@ -21,7 +21,12 @@ public class Link {
     /**
      * 是否被删除
      */
-    private Byte deleted;
+    private Boolean deleted;
+
+    /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
 
     /**
      * 文件上传者的id

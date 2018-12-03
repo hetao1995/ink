@@ -24,6 +24,11 @@ public class Role {
     private Boolean deleted;
 
     /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
+
+    /**
      * 角色名
      */
     private String role;

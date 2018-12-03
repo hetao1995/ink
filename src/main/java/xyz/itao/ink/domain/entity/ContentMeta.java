@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 public class ContentMeta {
     /**
-     * 主键id
+     * 主键
      */
     private Long id;
 
@@ -22,6 +22,11 @@ public class ContentMeta {
      * 是否被删除
      */
     private Boolean deleted;
+
+    /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
 
     /**
      * 内容主键
@@ -52,5 +57,6 @@ public class ContentMeta {
      * 被谁修改
      */
     private Long updateBy;
+
 
 }

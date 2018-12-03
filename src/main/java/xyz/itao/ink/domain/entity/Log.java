@@ -24,6 +24,11 @@ public class Log {
     private Boolean deleted;
 
     /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
+
+    /**
      * 发起人id
      */
     private Long userId;

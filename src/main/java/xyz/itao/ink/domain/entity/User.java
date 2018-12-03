@@ -24,14 +24,14 @@ public class User {
     private Boolean deleted;
 
     /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
+
+    /**
      * 是否是长期用户 true：是 false：不是
      */
     private Boolean permanent;
-
-    /**
-     * 是否处于激活状态
-     */
-    private Boolean actived;
 
     /**
      * 用户名，由字母、数字、下划线组成，长度在30以下，不能重复
@@ -39,7 +39,7 @@ public class User {
     private String username;
 
     /**
-     * 密码加盐sha512散列之后的值
+     * 密码加盐bcrypt散列之后的值
      */
     private String password;
 
@@ -52,6 +52,11 @@ public class User {
      * 邮箱，不能重复
      */
     private String email;
+
+    /**
+     * 用户的主页，不能重复
+     */
+    private String homeUrl;
 
     /**
      * 加密的盐，这个用户所有需要生成摘要的地方都用这个
@@ -82,10 +87,5 @@ public class User {
      * 被谁修改
      */
     private Long updateBy;
-
-    /**
-     * 用户的主页，不能重复
-     */
-    private String homeUrl;
 
 }
