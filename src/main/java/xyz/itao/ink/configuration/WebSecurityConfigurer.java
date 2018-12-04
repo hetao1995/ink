@@ -30,30 +30,34 @@ import java.util.Arrays;
  * @date 2018-11-30
  * @description
  */
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 //静态资源访问无需认证
                 .antMatchers("/image/**").permitAll()
+                .antMatchers("/*").permitAll()
+                .antMatchers("/admin/login").permitAll()
                 //admin开头的请求，需要admin权限
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 //需登陆才能访问的url
                 .antMatchers("/article/**").hasRole("USER")
                 //默认其它的请求都需要认证
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 //CRSF禁用，因为不使用session
                 .csrf().disable()
                 //禁用session
                 .sessionManagement().disable()
                 .formLogin()
-                .loginPage("/admin/login")
-                .failureForwardUrl("/admin/login?error")
+                .loginPage("/login")
+                .failureForwardUrl("/login?error")
                 .successForwardUrl("/admin/index")
                 //拒绝form登录
-                .disable()
+//                .disable()
+                .and()
                 //支持跨域
                 .cors()
                 //添加header设置，支持跨域和ajax请求
