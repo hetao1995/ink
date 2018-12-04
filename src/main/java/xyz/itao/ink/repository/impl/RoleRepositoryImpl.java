@@ -32,6 +32,20 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
     }
 
     @Override
+    public RoleDomain saveNewRole(RoleDomain roleDomain) {
+        return save(roleDomain);
+    }
+
+    @Override
+    public RoleDomain loadActiveRoleDomainByRole(String role) {
+        RoleDomain roleDomain = RoleDomain
+                .builder()
+                .role(role)
+                .build();
+        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain);
+    }
+
+    @Override
     protected boolean doSave(Role entity) {
         return roleMapper.insertSelective(entity);
     }

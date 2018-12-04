@@ -37,6 +37,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .username(username)
                 .deleted(false)
                 .permanent(true)
+                .active(true)
                 .build();
         user = doLoadByNoNullProperties(user);
         return assemble(user);
@@ -49,6 +50,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .email(email)
                 .deleted(false)
                 .permanent(true)
+                .active(true)
                 .build();
         user = doLoadByNoNullProperties(user);
         return assemble(user);
@@ -61,6 +63,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .homeUrl(homeUrl)
                 .deleted(false)
                 .permanent(true)
+                .active(true)
                 .build();
         user = doLoadByNoNullProperties(user);
         return assemble(user);

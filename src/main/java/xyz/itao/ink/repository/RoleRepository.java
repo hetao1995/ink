@@ -19,4 +19,18 @@ public interface RoleRepository {
      * @return id 对应的RoleDomain对象
      */
     RoleDomain loadActiveRoleDomainById(Long id);
+
+    /**
+     * 存储新的角色
+     * @param roleDomain 需要存储的内容
+     * @return 存储结果对应的roleDomain
+     */
+    RoleDomain saveNewRole(RoleDomain roleDomain);
+
+    /**
+     * 根据角色名称查找RoleDomain
+     * @param role 角色名称
+     * @return 对应的RoleDomain对象
+     */
+    RoleDomain loadActiveRoleDomainByRole(String role);
 }

@@ -20,10 +20,10 @@ public interface UserService {
 
     /**
      * 获取Jwt登录的Token
-     * @param user springsecurity拦截的UserDetail对象，usernanme可以是用户名、homeUrl、email
+     * @param userDomain 登录成功的UserDomain对象
      * @return jwt令牌
      */
-    String getJwtLoginToken(UserDomain userDomain);
+    String getJwtLoginToken(UserDomain userDomain, Boolean rememberMe);
 
     /**
      * 清除JwtToken
@@ -60,4 +60,14 @@ public interface UserService {
      */
     UserDomain loadUserDomainByHomeUrl(String homeUrl);
 
+    /**
+     * 注册一个永久的用户
+     * @param username username
+     * @param email 邮箱
+     * @param homeUrl 主页地址
+     * @param password 密码
+     * @param displayName 展示的昵称
+     * @return
+     */
+    UserDomain registerPermanentUser(String username, String email, String homeUrl, String password, String displayName);
 }

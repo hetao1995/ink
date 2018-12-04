@@ -18,4 +18,6 @@ public interface UserRoleRepository {
      * @return 所有Role的集合
      */
     List<UserRoleDomain> loadAllActiveUserRolesByUserId(Long userId);
+
+    UserRoleDomain saveNewUserRole(UserRoleDomain userRoleDomain);
 }

@@ -189,4 +189,14 @@ public class PatternUtils {
         String regex = "[1-9](\\d{1,2})?\\.(0|([1-9](\\d{1,2})?))\\.(0|([1-9](\\d{1,2})?))\\.(0|([1-9](\\d{1,2})?))";
         return Pattern.matches(regex, ipAddress);
     }
+
+    /**
+     * 匹配usernanme，匹配的规则为2-20位，字母、数字、下划线组成， 字母开头
+     * @param username 传如的username
+     * @return 是否验证成功
+     */
+    public static boolean isUsername(String username){
+        String regex = "^[a-zA-Z]\\w{5,17}$";
+        return Pattern.matches(regex, username);
+    }
 }

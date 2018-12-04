@@ -22,6 +22,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
         domain.setCreateTime(DateUtils.getNow());
         domain.setUpdateTime(DateUtils.getNow());
         domain.setId(IdUtils.nextId());
+        domain.setDeleted(false);
         E entity = extract(domain);
         boolean saved = doSave(entity);
         if(!saved){

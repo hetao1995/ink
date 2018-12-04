@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class TipException extends RuntimeException {
-
+    private Integer code;
     public TipException() {
     }
 
@@ -23,6 +23,11 @@ public class TipException extends RuntimeException {
 
     public TipException(Throwable cause) {
         super(cause);
+    }
+
+    public TipException(ExceptionEnum exceptionEnum){
+        super(exceptionEnum.getMessage());
+        this.code = exceptionEnum.getCode();
     }
 
 }

@@ -42,6 +42,11 @@ public class UserRoleRepositoryImpl extends AbstractBaseRepository<UserRoleDomai
     }
 
     @Override
+    public UserRoleDomain saveNewUserRole(UserRoleDomain userRoleDomain) {
+        return save(userRoleDomain);
+    }
+
+    @Override
     protected boolean doSave(UserRole entity) {
         return userRoleMapper.insertSelective(entity);
     }
