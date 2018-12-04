@@ -14,9 +14,9 @@ import java.util.List;
 public interface RoleRepository {
 
     /**
-     * 通过role的id加载role对象
+     * 通过role的id加载激活状态的role对象
      * @param id role的id
      * @return id 对应的RoleDomain对象
      */
-    RoleDomain loadRoleDomainById(Long id);
+    RoleDomain loadActiveRoleDomainById(Long id);
 }

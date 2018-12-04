@@ -58,7 +58,7 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
     /**
      * 是否处于激活状态
      */
-    private Boolean actived;
+    private Boolean active;
 
     /**
      * 用户名，由字母、数字、下划线组成，长度在30以下，不能重复

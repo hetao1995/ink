@@ -23,13 +23,12 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
 
 
     @Override
-    public RoleDomain loadRoleDomainById(Long id) {
-        Role role = Role
+    public RoleDomain loadActiveRoleDomainById(Long id) {
+        RoleDomain roleDomain = RoleDomain
                 .builder()
                 .id(id)
-                .deleted(false)
                 .build();
-        return assemble(doLoadByNoNullProperties(role));
+        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain);
     }
 
     @Override
@@ -59,6 +58,7 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
                 .updateBy(entity.getUpdateBy())
                 .role(entity.getRole())
                 .detail(entity.getDetail())
+                .active(entity.getActive())
                 .build();
     }
 
@@ -74,6 +74,7 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
                 .updateBy(domain.getUpdateBy())
                 .role(domain.getRole())
                 .detail(domain.getDetail())
+                .active(domain.getActive())
                 .build();
     }
 }

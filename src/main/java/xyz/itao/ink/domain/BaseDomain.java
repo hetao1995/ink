@@ -20,7 +20,13 @@ public abstract class BaseDomain {
     /**
      * 是否已经被删除了
      */
-    protected Boolean deleted;
+    private Boolean deleted;
+
+    /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
+
     /**
      * 创建用户的时间戳
      */

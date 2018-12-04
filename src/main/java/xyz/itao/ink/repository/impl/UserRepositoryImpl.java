@@ -22,13 +22,12 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
     UserRoleRepository userRoleRepository;
 
     @Override
-    public UserDomain loadUserDomainById(Long id) {
-        User user = User
+    public UserDomain loadActiveUserDomainById(Long id) {
+        UserDomain userDomain = UserDomain
                 .builder()
                 .id(id)
-                .deleted(false)
                 .build();
-        return assemble(doLoadByNoNullProperties(user));
+        return loadByNoNullPropertiesActiveAndNotDelect(userDomain);
     }
 
     @Override
@@ -83,7 +82,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .updateTime(entity.getUpdateTime())
                 .updateBy(entity.getUpdateBy())
                 .permanent(entity.getPermanent())
-                .actived(entity.getActived())
+                .active(entity.getActive())
                 .salt(entity.getSalt())
                 .displayName(entity.getDisplayName())
                 .username(entity.getUsername())
@@ -106,7 +105,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .updateTime(domain.getUpdateTime())
                 .updateBy(domain.getUpdateBy())
                 .permanent(domain.getPermanent())
-                .actived(domain.getActived())
+                .active(domain.getActive())
                 .salt(domain.getSalt())
                 .displayName(domain.getDisplayName())
                 .username(domain.getUsername())

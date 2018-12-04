@@ -47,6 +47,39 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
     }
 
     /**
+     * 查找激活的内容
+     * @param domain 查找的条件
+     * @return 查找的结果
+     */
+    public D loadByNoNullPropertiesActiveAndNotDelect(D domain){
+        domain.setActive(true);
+        return loadByNoNullPropertiesNotDelect(domain);
+    }
+
+    /**
+     * 查找非激活状态的内容
+     * @param domain 查找的条件
+     * @return 查找的结果
+     */
+    public D loadByNoNullPropertiesNotActiveAndNotDelect(D domain){
+        domain.setActive(false);
+        return loadByNoNullPropertiesNotDelect(domain);
+    }
+
+    /**
+     * 查找所有未被删除的数据
+     * @param domain 查找的条件
+     * @return 查找的结果
+     */
+    public D loadByNoNullPropertiesNotDelect(D domain){
+        domain.setDeleted(false);
+        // todo 首先在缓存中查找
+        E entity = doLoadByNoNullProperties(extract(domain));
+        entity = doLoadByNoNullProperties(entity);
+        return assemble(entity);
+    }
+
+    /**
      * 通过entity组装domain
      * @param entity 需要组装的entity
      * @return 组装的结果

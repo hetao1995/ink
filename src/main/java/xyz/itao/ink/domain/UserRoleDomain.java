@@ -20,9 +20,14 @@ public class UserRoleDomain extends BaseDomain{
     private Long id;
 
     /**
-     * 是否被删除
+     * 是否已经被删除
      */
     private Boolean deleted;
+
+    /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
 
     /**
      * 用户id
@@ -74,7 +79,7 @@ public class UserRoleDomain extends BaseDomain{
             return role;
         }
         // 根据roleRepository获取RoleDomain对象
-        RoleDomain roleDomain = roleRepository.loadRoleDomainById(roleId);
+        RoleDomain roleDomain = roleRepository.loadActiveRoleDomainById(roleId);
         if (roleDomain == null) {
             return role;
         }

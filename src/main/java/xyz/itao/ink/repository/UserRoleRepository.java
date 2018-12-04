@@ -17,5 +17,5 @@ public interface UserRoleRepository {
      * @param userId 用户id
      * @return 所有Role的集合
      */
-    List<UserRoleDomain> loadAllUserRolesByUserId(Long userId);
+    List<UserRoleDomain> loadAllActiveUserRolesByUserId(Long userId);
 }

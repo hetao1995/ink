@@ -26,11 +26,12 @@ public class UserRoleRepositoryImpl extends AbstractBaseRepository<UserRoleDomai
     RoleRepository roleRepository;
 
     @Override
-    public List<UserRoleDomain> loadAllUserRolesByUserId(Long userId) {
+    public List<UserRoleDomain> loadAllActiveUserRolesByUserId(Long userId) {
         UserRole userRole = UserRole
                 .builder()
                 .userId(userId)
                 .deleted(false)
+                .active(true)
                 .build();
         List<UserRole> userRoles = userRoleMapper.selectByNoNulProperties(userRole);
         List<UserRoleDomain> userRoleDomains = Lists.newArrayList();
@@ -73,6 +74,7 @@ public class UserRoleRepositoryImpl extends AbstractBaseRepository<UserRoleDomai
                 .userId(entity.getUserId())
                 .roleId(entity.getRoleId())
                 .roleRepository(roleRepository)
+                .active(entity.getActive())
                 .build();
     }
 
@@ -88,6 +90,7 @@ public class UserRoleRepositoryImpl extends AbstractBaseRepository<UserRoleDomai
                 .updateBy(domain.getUpdateBy())
                 .userId(domain.getUserId())
                 .roleId(domain.getRoleId())
+                .active(domain.getActive())
                 .build();
     }
 

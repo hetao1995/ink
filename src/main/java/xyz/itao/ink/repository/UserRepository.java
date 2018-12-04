@@ -9,11 +9,11 @@ import xyz.itao.ink.domain.UserDomain;
  */
 public interface UserRepository {
     /**
-     * 通过id获取UserDomain
+     * 通过id获取active状态的UserDomain
      * @param id 用户id
      * @return id对应的UserDomain
      */
-    UserDomain loadUserDomainById(Long id);
+    UserDomain loadActiveUserDomainById(Long id);
     /**
      * 通过username获取UserDomain
      * @param username 用户名
