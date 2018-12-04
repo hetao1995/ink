@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="xyz.itao.ink.dao.UserRoleMapper" >
   <resultMap id="BaseResultMap" type="xyz.itao.ink.domain.entity.UserRole" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
+    <result column="active" property="active" jdbcType="BIT" />
     <result column="user_id" property="userId" jdbcType="BIGINT" />
     <result column="role_id" property="roleId" jdbcType="BIGINT" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -12,10 +14,11 @@
     <result column="update_by" property="updateBy" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, deleted, user_id, role_id, create_time, update_time, create_by, update_by
+    id, deleted, active, user_id, role_id, create_time, update_time, create_by, update_by
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select 
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long"
+  >
+    select
     <include refid="Base_Column_List" />
     from user_roles
     where id = #{id,jdbcType=BIGINT}
@@ -49,6 +52,9 @@
       <if test="deleted != null" >
         deleted,
       </if>
+      <if test="active != null" >
+        active,
+      </if>
       <if test="userId != null" >
         user_id,
       </if>
@@ -75,6 +81,9 @@
       <if test="deleted != null" >
         #{deleted,jdbcType=BIT},
       </if>
+      <if test="active != null" >
+        #{active,jdbcType=BIT},
+      </if>
       <if test="userId != null" >
         #{userId,jdbcType=BIGINT},
       </if>
@@ -95,11 +104,15 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="xyz.itao.ink.domain.entity.UserRole" >
+  <update id="updateByPrimaryKeySelective"
+          parameterType="xyz.itao.ink.domain.entity.UserRole" >
     update user_roles
     <set >
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="active != null" >
+        active = #{active,jdbcType=BIT},
       </if>
       <if test="userId != null" >
         user_id = #{userId,jdbcType=BIGINT},

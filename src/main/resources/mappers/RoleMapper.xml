@@ -3,7 +3,8 @@
 <mapper namespace="xyz.itao.ink.dao.RoleMapper" >
   <resultMap id="BaseResultMap" type="xyz.itao.ink.domain.entity.Role" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+    <result column="active" property="active" jdbcType="BIT" />
     <result column="role" property="role" jdbcType="VARCHAR" />
     <result column="detail" property="detail" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
@@ -12,7 +13,7 @@
     <result column="create_by" property="createBy" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, deleted, role, detail, create_time, update_time, update_by, create_by
+    id, deleted, active, role, detail, create_time, update_time, update_by, create_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
@@ -20,7 +21,26 @@
     from roles
     where id = #{id,jdbcType=BIGINT}
   </select>
-
+  <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.Role">
+      select
+      <include refid="Base_Column_List"/>
+      from roles
+      where
+      <trim suffixOverrides="and" >
+      <if test="id != null" >
+          id = #{id,jdbcType=BIGINT} and
+      </if>
+      <if test="deleted != null" >
+          deleted = #{deleted,jdbcType=BIT} and
+      </if>
+      <if test="active != null" >
+          active = #{active,jdbcType=BIT} and
+      </if>
+      <if test="role != null" >
+          role = #{role,jdbcType=VARCHAR} and
+      </if>
+      </trim>
+  </select>
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Role" >
     insert into roles
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -29,6 +49,9 @@
       </if>
       <if test="deleted != null" >
         deleted,
+      </if>
+      <if test="active != null" >
+        active,
       </if>
       <if test="role != null" >
         role,
@@ -56,6 +79,9 @@
       <if test="deleted != null" >
         #{deleted,jdbcType=BIT},
       </if>
+      <if test="active != null" >
+        #{active,jdbcType=BIT},
+      </if>
       <if test="role != null" >
         #{role,jdbcType=VARCHAR},
       </if>
@@ -82,6 +108,9 @@
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
       </if>
+      <if test="active != null" >
+        active = #{active,jdbcType=BIT},
+      </if>
       <if test="role != null" >
         role = #{role,jdbcType=VARCHAR},
       </if>
@@ -103,5 +132,4 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-
 </mapper>

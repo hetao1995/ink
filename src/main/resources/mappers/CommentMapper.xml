@@ -3,7 +3,8 @@
 <mapper namespace="xyz.itao.ink.dao.CommentMapper" >
   <resultMap id="BaseResultMap" type="xyz.itao.ink.domain.entity.Comment" >
     <id column="id" property="id" jdbcType="BIGINT" />
-    <result column="deleted" property="deleted" jdbcType="TINYINT" />
+    <result column="deleted" property="deleted" jdbcType="BIT" />
+    <result column="active" property="active" jdbcType="BIT" />
     <result column="content_id" property="contentId" jdbcType="BIGINT" />
     <result column="author_id" property="authorId" jdbcType="BIGINT" />
     <result column="parent_id" property="parentId" jdbcType="BIGINT" />
@@ -16,7 +17,7 @@
     <result column="update_by" property="updateBy" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, deleted, content_id, author_id, parent_id, content, type, status, create_time, 
+    id, deleted, active, content_id, author_id, parent_id, content, type, status, create_time, 
     update_time, create_by, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
@@ -30,12 +31,12 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="xyz.itao.ink.domain.entity.Comment" >
-    insert into comments (id, deleted, content_id, 
+    insert into comments (id, deleted, active, content_id, 
       author_id, parent_id, content, 
       type, status, create_time, 
       update_time, create_by, update_by
       )
-    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=TINYINT}, #{contentId,jdbcType=BIGINT}, 
+    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{active,jdbcType=BIT}, #{contentId,jdbcType=BIGINT}, 
       #{authorId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
       #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT}
@@ -49,6 +50,9 @@
       </if>
       <if test="deleted != null" >
         deleted,
+      </if>
+      <if test="active != null" >
+        active,
       </if>
       <if test="contentId != null" >
         content_id,
@@ -86,7 +90,10 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="deleted != null" >
-        #{deleted,jdbcType=TINYINT},
+        #{deleted,jdbcType=BIT},
+      </if>
+      <if test="active != null" >
+        #{active,jdbcType=BIT},
       </if>
       <if test="contentId != null" >
         #{contentId,jdbcType=BIGINT},
@@ -124,7 +131,10 @@
     update comments
     <set >
       <if test="deleted != null" >
-        deleted = #{deleted,jdbcType=TINYINT},
+        deleted = #{deleted,jdbcType=BIT},
+      </if>
+      <if test="active != null" >
+        active = #{active,jdbcType=BIT},
       </if>
       <if test="contentId != null" >
         content_id = #{contentId,jdbcType=BIGINT},
@@ -161,7 +171,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.Comment" >
     update comments
-    set deleted = #{deleted,jdbcType=TINYINT},
+    set deleted = #{deleted,jdbcType=BIT},
+      active = #{active,jdbcType=BIT},
       content_id = #{contentId,jdbcType=BIGINT},
       author_id = #{authorId,jdbcType=BIGINT},
       parent_id = #{parentId,jdbcType=BIGINT},

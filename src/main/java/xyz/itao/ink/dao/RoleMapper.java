@@ -28,7 +28,7 @@ public interface RoleMapper {
     boolean updateByPrimaryKeySelective(Role record);
 
     /**
-     * 多种条件查找，包括id、deleted等
+     * 多种条件查找，包括id、deleted、actived等
      * 这些条件全部满足才会返回
      * @param record 条件
      * @return 满足条件的User实例
