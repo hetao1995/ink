@@ -18,9 +18,7 @@ public class MultiIdentifierAndPasswordAuthenticationToken extends AbstractAuthe
     private String password;
     private Boolean rememberMe;
 
-    public Boolean getRememberMe() {
-        return rememberMe;
-    }
+
 
     public MultiIdentifierAndPasswordAuthenticationToken(String identifier, String password, Boolean rememberMe){
         super(Collections.emptyList());
@@ -29,9 +27,10 @@ public class MultiIdentifierAndPasswordAuthenticationToken extends AbstractAuthe
         this.rememberMe = rememberMe;
     }
 
-    public MultiIdentifierAndPasswordAuthenticationToken(UserDomain userDomain, Collection<? extends GrantedAuthority> authorities) {
+    public MultiIdentifierAndPasswordAuthenticationToken(UserDomain userDomain, Boolean rememberMe, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = userDomain;
+        this.rememberMe = rememberMe;
         this.setAuthenticated(true);
     }
 
@@ -49,8 +48,13 @@ public class MultiIdentifierAndPasswordAuthenticationToken extends AbstractAuthe
         return identifier;
     }
 
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
+    }
+
+    public Boolean getRememberMe() {
+        return rememberMe;
     }
 
 }

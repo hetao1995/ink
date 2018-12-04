@@ -37,7 +37,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         UserDomain userDomain = (UserDomain) authentication.getPrincipal();
         request.setAttribute(WebConstant.LOGIN_USER, userDomain);
         if (shouldRefresh) {
-            String newToken = userService.getJwtLoginToken(userDomain);
+            String newToken = userService.getJwtLoginToken(userDomain, false);
             response.setHeader("Authorization", newToken);
         }
     }

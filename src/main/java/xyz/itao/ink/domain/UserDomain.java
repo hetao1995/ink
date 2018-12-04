@@ -116,7 +116,7 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
         if (roles != null || id == null || userRoleRepository == null) {
             return roles;
         }
-        List<UserRoleDomain> userRoleDomains = userRoleRepository.loadAllUserRolesByUserId(id);
+        List<UserRoleDomain> userRoleDomains = userRoleRepository.loadAllActiveUserRolesByUserId(id);
 
         roles = Lists.newArrayList();
         for (UserRoleDomain userRoleDomain : userRoleDomains) {

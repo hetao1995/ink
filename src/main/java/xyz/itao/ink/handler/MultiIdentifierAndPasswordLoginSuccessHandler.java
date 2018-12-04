@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.domain.token.MultiIdentifierAndPasswordAuthenticationToken;
 import xyz.itao.ink.service.UserService;
 
 import javax.servlet.ServletException;
@@ -25,7 +26,7 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
     private UserService userService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String token = userService.getJwtLoginToken((UserDomain) authentication.getPrincipal());
+        String token = userService.getJwtLoginToken((UserDomain) authentication.getPrincipal(), ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe());
         response.setHeader("Authorization", token);
     }
 }

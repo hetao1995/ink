@@ -45,7 +45,7 @@ public class MultiIdentifierAndPasswordAuthenticationProvider implements Authent
             log.debug("密码错误 ", identifier, password);
             throw new BadCredentialsException("Fail to check password");
         }
-        return new MultiIdentifierAndPasswordAuthenticationToken(userDomain, userDomain.getAuthorities());
+        return new MultiIdentifierAndPasswordAuthenticationToken(userDomain, ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe(),userDomain.getAuthorities());
     }
 
     @Override
