@@ -6,7 +6,9 @@ package xyz.itao.ink.exception;
  * @description 错误枚举 code<0 为内部错误， code>0 为外部错误
  */
 public enum ExceptionEnum {
-    PERSISTENCE_FAIL("持久化失败!",-1),
+    ILLEGAL_OPERATION("非法操作，不支持此方法！", -1),
+    PERSISTENCE_FAIL("持久化失败!",-2),
+
     USERNAME_ILLEGAL("用户名无效，用户名必须是2-20位，字母开头，数字、字母、下划线组成！", 1),
     EMAIL_ILLEGAL("不是有效的邮箱地址，请再次确认！", 2),
     HOME_URL_ILLEGAL("不是有效的主页地址，请再次确认！",3),

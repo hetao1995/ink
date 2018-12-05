@@ -1,17 +1,15 @@
 package xyz.itao.ink.dao;
 
+import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.Log;
 
+import java.util.List;
+
+@Component
 public interface LogMapper {
     int deleteByPrimaryKey(Long id);
 
-    int insert(Log record);
+    boolean insert(Log record);
 
-    int insertSelective(Log record);
-
-    Log selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKeySelective(Log record);
-
-    int updateByPrimaryKey(Log record);
+    List<Log> selectAllLogs();
 }

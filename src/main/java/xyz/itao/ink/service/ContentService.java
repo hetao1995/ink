@@ -1,6 +1,10 @@
 package xyz.itao.ink.service;
 
+import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.vo.ContentVo;
+import xyz.itao.ink.domain.vo.UserVo;
 
 /**
  * @author hetao
@@ -13,12 +17,25 @@ public interface ContentService {
      * @param id content的id
      * @return 是否删除成功
      */
-    boolean deleteById(Long id);
+    boolean deleteById(Long id, UserVo userVo);
 
     /**
-     * 通过id加载ContentDomain
+     * 通过id加载ContentVo
      * @param id content的主键
      * @return 加载的结果
      */
-    ContentDomain loadContentDomainById(String id);
+    ContentVo loadContentVoById(Long id);
+
+    /**
+     * 发布一个新的内容
+     * @param contentVo 发布的内容
+     * @return  发布后的vo
+     */
+    ContentVo publishNewContent(ContentVo contentVo);
+
+    /**
+     * 分页加载所有的contentvo
+     * @return
+     */
+    PageInfo<ContentVo> loadAllActiveContentVo(ArticleParam articleParam);
 }

@@ -1,5 +1,6 @@
 package xyz.itao.ink.controller.admin;
 
+import com.github.pagehelper.PageInfo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,16 +11,23 @@ import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.params.PageParam;
-import xyz.itao.ink.service.ContentService;
-import xyz.itao.ink.service.SiteService;
+import xyz.itao.ink.domain.vo.ContentVo;
+import xyz.itao.ink.domain.vo.LogVo;
+import xyz.itao.ink.domain.vo.UserVo;
+import xyz.itao.ink.service.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.PathParam;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static xyz.itao.ink.constant.WebConstant.CLASSPATH;
 
 /**
  * @author hetao
@@ -34,96 +42,102 @@ public class AdminApiController {
     ContentService contentService;
     @Autowired
     SiteService siteService;
+    @Autowired
+    MetaService metaService;
+    @Autowired
+    OptionService optionService;
+    @Autowired
+    LogService logService;
     @GetMapping(value = "/logs")
-    public RestResponse sysLogs(PageParam pageParam) {
-        return RestResponse.ok(select().from(Logs.class).order(Logs::getId, OrderBy.DESC).page(pageParam.getPage(), pageParam.getLimit()));
+    public RestResponse sysLogs(@RequestParam PageParam pageParam) {
+        PageInfo<LogVo> logVoPageInfo = logService.getLogs(pageParam);
+        return RestResponse.ok(logVoPageInfo);
     }
 
     @SysLog("删除页面")
     @DeleteMapping(value = "/page/{id}")
-    public RestResponse<?> deletePage(@PathVariable Long id) {
-        contentService.deleteById(id);
+    public RestResponse<?> deletePage(@PathVariable Long id, UserVo userVo) {
+        contentService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @GetMapping(value = "/articles/{id}")
-    public RestResponse article(@PathVariable String id) {
-        ContentDomain contentDomain = contentService.loadContentDomainById(id);
-        contentDomain.setContent("");
-        return RestResponse.ok(contentDomain);
+    public RestResponse article(@PathVariable Long id) {
+        ContentVo contentVo = contentService.loadContentVoById(id);
+        contentVo.setContent("");
+        return RestResponse.ok(contentVo);
     }
 
     @GetMapping(value = "/articles/content/{id}")
-    public String articleContent(@PathVariable String id) {
-        ContentDomain contentDomain = contentService.loadContentDomainById(id);
-        return contentDomain.getContent();
+    public String articleContent(@PathVariable Long id) {
+        ContentVo contentVo = contentService.loadContentVoById(id);
+        return contentVo.getContent();
     }
 
     @PostMapping(value = "/articles")
-    public RestResponse newArticle(ContentDomain contentDomain, UserDomain userDomain) {
-        CommonValidator.valid(contents);
+    public RestResponse newArticle(ContentVo contentVo, UserVo userVo) {
+        CommonValidator.valid(contentVo);
 
-        Users users = this.user();
-        contentDomain.setType(TypeConst.ARTICLE);
-        contentDomain.setAuthorId(userDomain.getId());
+        contentVo.setType(TypeConst.ARTICLE);
+        contentVo.setAuthorId(userVo.getId());
         //将点击数设初始化为0
-        contentDomain.setHits(0L);
+        contentVo.setHits(0L);
         //将评论数设初始化为0
-        contentDomain.setCommentsNum(0L);
-        if (StringUtils.isBlank(contentDomain.getCategories())) {
-            contentDomain.setCategories("默认分类");
+        contentVo.setCommentsNum(0L);
+        if (StringUtils.isBlank(contentVo.getCategories())) {
+            contentVo.setCategories("默认分类");
         }
-        Integer cid = contentService.publishNewContent(contentDomain);
+        Long cid = contentService.publishNewContent(contentVo).getId();
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok(cid);
     }
 
     @DeleteMapping(value = "/articles/{id}")
-    public RestResponse<?> deleteArticle(@PathVariable Long id) {
-        contentService.deleteById(id);
+    public RestResponse<?> deleteArticle(@PathVariable Long id, UserVo userVo) {
+        contentService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @PutMapping(value = "/articles/{id}")
-    public RestResponse updateArticle(@PathVariable Long id, ContentDomain contentDomain) {
-        if (null == contentDomain || null == contentDomain.getId()) {
+    public RestResponse updateArticle(@PathVariable Long id, ContentVo contentVo, UserVo userVo) {
+        if (null == contentVo || null == id) {
             return RestResponse.fail("缺少参数，请重试");
         }
-        CommonValidator.valid(contents);
-        contentService.updateArticle(contents);
-        return RestResponse.ok(cid);
+        contentVo.setId(id);
+        CommonValidator.valid(contentVo);
+        contentService.updateArticle(contentVo, userVo.getId());
+        return RestResponse.ok(id);
     }
 
     @GetMapping("/articles")
     public RestResponse articleList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.ARTICLE);
-        articleParam.setOrderBy("created desc");
-        Page<Contents> articles = contentService.findArticles(articleParam);
-        return RestResponse.ok(articles);
+        articleParam.setOrderBy("create_time desc");
+        PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllActiveContentVo(articleParam);
+        return RestResponse.ok(contentVoPageInfo);
     }
 
     @GetMapping("/pages")
     public RestResponse pageList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.PAGE);
-        articleParam.setOrderBy("created desc");
-        Page<Contents> articles = contentsService.findArticles(articleParam);
-        return RestResponse.ok(articles);
+        articleParam.setOrderBy("create_time desc");
+        PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllActiveContentVo(articleParam);
+        return RestResponse.ok(contentVoPageInfo);
     }
 
     @SysLog("发布页面")
     @PostMapping("/pages")
-    public RestResponse<?> newPage(@BodyParam Contents contents) {
+    public RestResponse<?> newPage( ContentVo contentVo, UserVo userVo) {
 
-        CommonValidator.valid(contents);
+        CommonValidator.valid(contentVo);
 
-        Users users = this.user();
-        contents.setType(Types.PAGE);
-        contents.setAllowPing(true);
-        contents.setAuthorId(users.getUid());
-        contentsService.publish(contents);
-        siteService.cleanCache(Types.SYS_STATISTICS);
+        contentVo.setType(TypeConst.PAGE);
+        contentVo.setAllowPing(true);
+        contentVo.setAuthorId(userVo.getId());
+        contentService.publish(contentVo, userVo.getId());
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -136,28 +150,28 @@ public class AdminApiController {
             return RestResponse.fail("缺少参数，请重试");
         }
         Integer cid = contents.getCid();
-        contents.setType(Types.PAGE);
-        contentsService.updateArticle(contents);
+        contents.setType(TypeConst.PAGE);
+        contentService.updateArticle(contents);
         return RestResponse.ok(cid);
     }
 
     @SysLog("保存分类")
-    @PostRoute("category/save")
-    public RestResponse<?> saveCategory(@BodyParam MetaParam metaParam) {
-        metasService.saveMeta(Types.CATEGORY, metaParam.getCname(), metaParam.getMid());
-        siteService.cleanCache(Types.SYS_STATISTICS);
+    @PostMapping("/category")
+    public RestResponse<?> saveCategory(MetaParam metaParam) {
+        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid());
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("删除分类/标签")
-    @PostRoute("category/delete/:mid")
-    public RestResponse<?> deleteMeta(@PathParam Integer mid) {
-        metasService.delete(mid);
-        siteService.cleanCache(Types.SYS_STATISTICS);
+    @DeleteMapping("category/{id}")
+    public RestResponse<?> deleteMeta(@PathVariable Long id) {
+        metaService.delete(id);
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
-    @GetRoute("comments")
+    @GetMapping("/comments")
     public RestResponse commentList(CommentParam commentParam) {
         Users users = this.user();
         commentParam.setExcludeUID(users.getUid());
@@ -167,28 +181,28 @@ public class AdminApiController {
     }
 
     @SysLog("删除评论")
-    @PostRoute("comment/delete/:coid")
-    public RestResponse<?> deleteComment(@PathParam Integer coid) {
+    @DeleteMapping("/comments/{id}")
+    public RestResponse<?> deleteComment(@PathVariable Long id) {
         Comments comments = select().from(Comments.class).byId(coid);
         if (null == comments) {
             return RestResponse.fail("不存在该评论");
         }
-        commentsService.delete(coid, comments.getCid());
-        siteService.cleanCache(Types.SYS_STATISTICS);
+        commentService.delete(coid, comments.getCid());
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("修改评论状态")
-    @PostRoute("comment/status")
+    @PutMapping("/comments")
     public RestResponse<?> updateStatus(@BodyParam Comments comments) {
         comments.update();
-        siteService.cleanCache(Types.SYS_STATISTICS);
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("回复评论")
-    @PostRoute("comment/reply")
-    public RestResponse<?> replyComment(@BodyParam Comments comments, Request request) {
+    @PostMapping("/comment")
+    public RestResponse<?> replyComment(@BodyParam Comments comments, HttpServletRequest request) {
         CommonValidator.validAdmin(comments);
 
         Comments c = select().from(Comments.class).byId(comments.getCoid());
@@ -202,7 +216,7 @@ public class AdminApiController {
         comments.setIp(request.address());
         comments.setUrl(users.getHomeUrl());
 
-        if (StringKit.isNotBlank(users.getEmail())) {
+        if (StringUtils.isNotBlank(users.getEmail())) {
             comments.setMail(users.getEmail());
         } else {
             comments.setMail("");
@@ -210,11 +224,11 @@ public class AdminApiController {
         comments.setStatus(TaleConst.COMMENT_APPROVED);
         comments.setParent(comments.getCoid());
         commentsService.saveComment(comments);
-        siteService.cleanCache(Types.SYS_STATISTICS);
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
-    @GetRoute("attaches")
+    @GetMapping("/attaches")
     public RestResponse attachList(PageParam pageParam) {
 
         Page<Attach> attachPage = select().from(Attach.class)
@@ -225,14 +239,14 @@ public class AdminApiController {
     }
 
     @SysLog("删除附件")
-    @PostRoute("attach/delete/:id")
-    public RestResponse<?> deleteAttach(@PathParam Integer id) throws IOException {
+    @DeleteMapping("/attaches/{id}")
+    public RestResponse<?> deleteAttach(@PathVariable Long id) throws IOException {
         Attach attach = select().from(Attach.class).byId(id);
         if (null == attach) {
             return RestResponse.fail("不存在该附件");
         }
         String key = attach.getFkey();
-        siteService.cleanCache(Types.SYS_STATISTICS);
+        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         String             filePath = CLASSPATH.substring(0, CLASSPATH.length() - 1) + key;
         java.nio.file.Path path     = Paths.get(filePath);
         log.info("Delete attach: [{}]", filePath);
@@ -243,39 +257,39 @@ public class AdminApiController {
         return RestResponse.ok();
     }
 
-    @GetRoute("categories")
+    @GetMapping("/categories")
     public RestResponse categoryList() {
-        List<Metas> categories = siteService.getMetas(Types.RECENT_META, Types.CATEGORY, TaleConst.MAX_POSTS);
+        List<Metas> categories = siteService.getMetas(TypeConst.RECENT_META, TypeConst.CATEGORY, TaleConst.MAX_POSTS);
         return RestResponse.ok(categories);
     }
 
-    @GetRoute("tags")
+    @GetMapping("/tags")
     public RestResponse tagList() {
-        List<Metas> tags = siteService.getMetas(Types.RECENT_META, Types.TAG, TaleConst.MAX_POSTS);
+        List<Metas> tags = siteService.getMetas(TypeConst.RECENT_META, TypeConst.TAG, TaleConst.MAX_POSTS);
         return RestResponse.ok(tags);
     }
 
-    @GetRoute("options")
+    @GetMapping("/options")
     public RestResponse options() {
-        Map<String, String> options = optionsService.getOptions();
+        Map<String, String> options = optionService.getOptions();
         return RestResponse.ok(options);
     }
 
     @SysLog("保存系统配置")
-    @PostRoute("options/save")
-    public RestResponse<?> saveOptions(Request request) {
+    @PostMapping("/options")
+    public RestResponse<?> saveOptions(HttpServletRequest request) {
         Map<String, List<String>> querys = request.parameters();
-        querys.forEach((k, v) -> optionsService.saveOption(k, v.get(0)));
-        Environment config = Environment.of(optionsService.getOptions());
+        querys.forEach((k, v) -> optionService.saveOption(k, v.get(0)));
+        Environment config = Environment.of(optionService.getOptions());
         TaleConst.OPTIONS = config;
         return RestResponse.ok();
     }
 
     @SysLog("保存高级选项设置")
-    @PostRoute("advanced/save")
+    @PostMapping("/advanced")
     public RestResponse<?> saveAdvance(AdvanceParam advanceParam) {
         // 清除缓存
-        if (StringKit.isNotBlank(advanceParam.getCacheKey())) {
+        if (StringUtils.isNotBlank(advanceParam.getCacheKey())) {
             if ("*".equals(advanceParam.getCacheKey())) {
                 cache.clean();
             } else {
@@ -283,51 +297,51 @@ public class AdminApiController {
             }
         }
         // 要过过滤的黑名单列表
-        if (StringKit.isNotBlank(advanceParam.getBlockIps())) {
-            optionsService.saveOption(Types.BLOCK_IPS, advanceParam.getBlockIps());
+        if (StringUtils.isNotBlank(advanceParam.getBlockIps())) {
+            optionService.saveOption(TypeConst.BLOCK_IPS, advanceParam.getBlockIps());
             TaleConst.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
         } else {
             optionsService.saveOption(Types.BLOCK_IPS, "");
             TaleConst.BLOCK_IPS.clear();
         }
         // 处理卸载插件
-        if (StringKit.isNotBlank(advanceParam.getPluginName())) {
+        if (StringUtils.isNotBlank(advanceParam.getPluginName())) {
             String key = "plugin_";
             // 卸载所有插件
             if (!"*".equals(advanceParam.getPluginName())) {
                 key = "plugin_" + advanceParam.getPluginName();
             } else {
-                optionsService.saveOption(Types.ATTACH_URL, Commons.site_url());
+                optionService.saveOption(TypeConst.ATTACH_URL, Commons.site_url());
             }
-            optionsService.deleteOption(key);
+            optionService.deleteOption(key);
         }
 
-        if (StringKit.isNotBlank(advanceParam.getCdnURL())) {
+        if (StringUtils.isNotBlank(advanceParam.getCdnURL())) {
             optionsService.saveOption(OPTION_CDN_URL, advanceParam.getCdnURL());
             TaleConst.OPTIONS.set(OPTION_CDN_URL, advanceParam.getCdnURL());
         }
 
         // 是否允许重新安装
-        if (StringKit.isNotBlank(advanceParam.getAllowInstall())) {
-            optionsService.saveOption(OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
+        if (StringUtils.isNotBlank(advanceParam.getAllowInstall())) {
+            optionService.saveOption(OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
             TaleConst.OPTIONS.set(OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
         }
 
         // 评论是否需要审核
-        if (StringKit.isNotBlank(advanceParam.getAllowCommentAudit())) {
-            optionsService.saveOption(OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
+        if (StringUtils.isNotBlank(advanceParam.getAllowCommentAudit())) {
+            optionService.saveOption(OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
             TaleConst.OPTIONS.set(OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
         }
 
         // 是否允许公共资源CDN
-        if (StringKit.isNotBlank(advanceParam.getAllowCloudCDN())) {
-            optionsService.saveOption(OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
+        if (StringUtils.isNotBlank(advanceParam.getAllowCloudCDN())) {
+            optionService.saveOption(OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
             TaleConst.OPTIONS.set(OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
         }
         return RestResponse.ok();
     }
 
-    @GetRoute("themes")
+    @GetMapping("themes")
     public RestResponse getThemes() {
         // 读取主题
         String         themesDir  = CLASSPATH + "templates/themes";
@@ -350,7 +364,7 @@ public class AdminApiController {
     }
 
     @SysLog("保存主题设置")
-    @PostRoute("themes/setting")
+    @PostMapping("/themes/setting")
     public RestResponse<?> saveSetting(Request request) {
         Map<String, List<String>> query = request.parameters();
 
@@ -361,15 +375,15 @@ public class AdminApiController {
         Map<String, String> options = new HashMap<>();
         query.forEach((k, v) -> options.put(k, v.get(0)));
 
-        optionsService.saveOption(key, JsonKit.toString(options));
+        optionService.saveOption(key, JsonKit.toString(options));
 
         TaleConst.OPTIONS = Environment.of(optionsService.getOptions());
         return RestResponse.ok();
     }
 
     @SysLog("激活主题")
-    @PostRoute("themes/active")
-    public RestResponse<?> activeTheme(@BodyParam ThemeParam themeParam) {
+    @PostMapping("/themes/active")
+    public RestResponse<?> activeTheme( ThemeParam themeParam) {
         optionsService.saveOption(OPTION_SITE_THEME, themeParam.getSiteTheme());
         delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
 
@@ -385,7 +399,7 @@ public class AdminApiController {
     }
 
     @SysLog("保存模板")
-    @PostRoute("template/save")
+    @PostMapping("/template")
     public RestResponse<?> saveTpl(@BodyParam TemplateParam templateParam) throws IOException {
         if (StringKit.isBlank(templateParam.getFileName())) {
             return RestResponse.fail("缺少参数，请重试");

@@ -1,18 +1,16 @@
-package xyz.itao.ink.domain;
+package xyz.itao.ink.domain.vo;
 
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @author hetao
- * @date 2018-12-04
+ * @date 2018-12-05
  * @description
  */
 @Data
 @Builder
-public class ContentDomain extends BaseDomain{
+public class ContentVo {
     /**
      * 内容的id
      */
@@ -22,11 +20,6 @@ public class ContentDomain extends BaseDomain{
      * 作者的id
      */
     private Long authorId;
-
-    /**
-     * 是否被删除
-     */
-    private Boolean deleted;
 
     /**
      * 是否处于激活状态
@@ -92,24 +85,4 @@ public class ContentDomain extends BaseDomain{
      * 内容文字
      */
     private String content;
-
-    /**
-     * 创建时间
-     */
-    private Date createTime;
-
-    /**
-     * 修改时间
-     */
-    private Date updateTime;
-
-    /**
-     * 被谁创建
-     */
-    private Long createBy;
-
-    /**
-     * 被谁修改
-     */
-    private Long updateBy;
 }
