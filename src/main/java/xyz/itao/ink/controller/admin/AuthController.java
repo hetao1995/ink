@@ -14,7 +14,7 @@ import xyz.itao.ink.controller.BaseController;
 @Controller
 @Slf4j
 @RequestMapping(value = "/admin")
-public class AuthController extends BaseController {
+public class AuthController  {
     @GetMapping(value = "/login")
     public String login(){
         return "admin/login";

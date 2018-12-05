@@ -12,8 +12,10 @@ import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.params.PageParam;
+import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.LogVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -48,6 +50,8 @@ public class AdminApiController {
     OptionService optionService;
     @Autowired
     LogService logService;
+    @Autowired
+    CommentService commentService;
     @GetMapping(value = "/logs")
     public RestResponse sysLogs(@RequestParam PageParam pageParam) {
         PageInfo<LogVo> logVoPageInfo = logService.getLogs(pageParam);
@@ -143,47 +147,47 @@ public class AdminApiController {
 
     @SysLog("修改页面")
     @PutMapping("/pages/{id}")
-    public RestResponse<?> updatePage(@PathVariable Long id, Contents contents) {
-        CommonValidator.valid(contents);
+    public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo) {
+        CommonValidator.valid(contentVo);
 
-        if (null == contents.getCid()) {
+        if (null == id) {
             return RestResponse.fail("缺少参数，请重试");
         }
-        Integer cid = contents.getCid();
-        contents.setType(TypeConst.PAGE);
-        contentService.updateArticle(contents);
-        return RestResponse.ok(cid);
+        contentVo.setId(id);
+        contentVo.setType(TypeConst.PAGE);
+        contentService.updateArticle(contentVo);
+        return RestResponse.ok(id);
     }
 
     @SysLog("保存分类")
     @PostMapping("/category")
-    public RestResponse<?> saveCategory(MetaParam metaParam) {
-        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid());
+    public RestResponse<?> saveCategory(MetaParam metaParam, UserVo userVo) {
+        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid(), userVo.getId());
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("删除分类/标签")
     @DeleteMapping("category/{id}")
-    public RestResponse<?> deleteMeta(@PathVariable Long id) {
-        metaService.delete(id);
+    public RestResponse<?> deleteMeta(@PathVariable Long id, UserVo userVo) {
+        metaService.delete(id, userVo.getId());
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @GetMapping("/comments")
-    public RestResponse commentList(CommentParam commentParam) {
-        Users users = this.user();
-        commentParam.setExcludeUID(users.getUid());
+    public RestResponse commentList(CommentParam commentParam, UserVo userVo) {
 
-        Page<Comments> commentsPage = commentsService.findComments(commentParam);
+        commentParam.setExcludeUID(userVo.getId());
+
+        PageInfo<CommentVo> commentsPage = commentService.findComments(commentParam);
         return RestResponse.ok(commentsPage);
     }
 
     @SysLog("删除评论")
     @DeleteMapping("/comments/{id}")
     public RestResponse<?> deleteComment(@PathVariable Long id) {
-        Comments comments = select().from(Comments.class).byId(coid);
+        CommentVo commentVo = select().from(Comments.class).byId(id);
         if (null == comments) {
             return RestResponse.fail("不存在该评论");
         }
@@ -194,15 +198,15 @@ public class AdminApiController {
 
     @SysLog("修改评论状态")
     @PutMapping("/comments")
-    public RestResponse<?> updateStatus(@BodyParam Comments comments) {
-        comments.update();
+    public RestResponse<?> updateStatus( CommentVo commentVo) {
+        commentVo.update();
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("回复评论")
     @PostMapping("/comment")
-    public RestResponse<?> replyComment(@BodyParam Comments comments, HttpServletRequest request) {
+    public RestResponse<?> replyComment( CommentVo commentVo, HttpServletRequest request) {
         CommonValidator.validAdmin(comments);
 
         Comments c = select().from(Comments.class).byId(comments.getCoid());
