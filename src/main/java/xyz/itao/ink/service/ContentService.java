@@ -6,6 +6,8 @@ import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 
+import java.util.List;
+
 /**
  * @author hetao
  * @date 2018-12-04
@@ -46,4 +48,15 @@ public interface ContentService {
      */
     void updateArticle(ContentVo contentVo, UserVo userVo);
 
+    /**
+     * 获取所有的feed页
+     * @return
+     */
+    List<ContentVo> selectAllFeedArticles();
+
+    void hit(ContentVo contentVo);
+
+    PageInfo<ContentVo> getArticles(Long id, int page, int limit);
+
+    PageInfo<ContentVo> searchArticles(String keyword, int page, int limit);
 }

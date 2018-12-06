@@ -3,6 +3,7 @@ package xyz.itao.ink.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.RestResponse;
@@ -22,6 +23,7 @@ import java.nio.file.Paths;
  * @date 2018-12-06
  * @description
  */
+@RequestMapping("/install")
 public class InstallController extends BaseController {
     @Autowired
     private SiteService siteService;
@@ -58,16 +60,16 @@ public class InstallController extends BaseController {
 
 
         String siteUrl = TaleUtils.buildURL(installParam.getSiteUrl());
-        optionsService.saveOption("site_title", installParam.getSiteTitle());
-        optionsService.saveOption("site_url", siteUrl);
+        optionService.saveOption("site_title", installParam.getSiteTitle());
+        optionService.saveOption("site_url", siteUrl);
 
-        TaleConst.OPTIONS = Environment.of(optionsService.getOptions());
+        WebConstant.OPTIONS = Environment.of(optionsService.getOptions());
 
         return RestResponse.ok();
     }
 
     private boolean isRepeatInstall() {
-        return Files.exists(Paths.get(CLASSPATH + "install.lock"))
-                && TaleConst.OPTIONS.getInt("allow_install", 0) != 1;
+        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))
+                && WebConstant.Const.OPTIONS.getInt("allow_install", 0) != 1;
     }
 }

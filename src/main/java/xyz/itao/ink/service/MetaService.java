@@ -1,6 +1,11 @@
 package xyz.itao.ink.service;
 
+import xyz.itao.ink.domain.vo.ContentVo;
+import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.domain.vo.UserVo;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author hetao
@@ -23,4 +28,8 @@ public interface MetaService {
      * @param userVo
      */
     void deleteMetaById(Long id, UserVo userVo);
+
+    Map<String, List<ContentVo>> getMetaMapping(String category);
+
+    MetaVo getMeta(String category, String keyword);
 }

@@ -18,6 +18,7 @@ import xyz.itao.ink.domain.params.*;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.service.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
