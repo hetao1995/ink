@@ -31,11 +31,19 @@ public interface ContentService {
      * @param contentVo 发布的内容
      * @return  发布后的vo
      */
-    ContentVo publishNewContent(ContentVo contentVo);
+    ContentVo publishNewContent(ContentVo contentVo, UserVo userVo);
 
     /**
      * 分页加载所有的contentvo
      * @return
      */
     PageInfo<ContentVo> loadAllActiveContentVo(ArticleParam articleParam);
+
+    /**
+     * 修改文章
+     * @param contentVo
+     * @param userVo
+     */
+    void updateArticle(ContentVo contentVo, UserVo userVo);
+
 }

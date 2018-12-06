@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.SysLog;
+import xyz.itao.ink.bootstrap.InkLoader;
+import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -27,7 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static xyz.itao.ink.constant.WebConstant.CLASSPATH;
 
 /**
  * @author hetao
@@ -92,7 +93,7 @@ public class AdminApiController {
         if (StringUtils.isBlank(contentVo.getCategories())) {
             contentVo.setCategories("默认分类");
         }
-        Long cid = contentService.publishNewContent(contentVo).getId();
+        Long cid = contentService.publishNewContent(contentVo, userVo).getId();
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok(cid);
     }
@@ -140,7 +141,7 @@ public class AdminApiController {
         contentVo.setType(TypeConst.PAGE);
         contentVo.setAllowPing(true);
         contentVo.setAuthorId(userVo.getId());
-        contentService.publish(contentVo, userVo);
+        contentService.publishNewContent(contentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -155,7 +156,7 @@ public class AdminApiController {
         }
         contentVo.setId(id);
         contentVo.setType(TypeConst.PAGE);
-        contentService.updateArticle(contentVo);
+        contentService.updateArticle(contentVo, userVo);
         return RestResponse.ok(id);
     }
 
@@ -170,7 +171,7 @@ public class AdminApiController {
     @SysLog("删除分类/标签")
     @DeleteMapping("category/{id}")
     public RestResponse<?> deleteMeta(@PathVariable Long id, UserVo userVo) {
-        metaService.deleteById(id, userVo);
+        metaService.deleteMetaById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -178,7 +179,7 @@ public class AdminApiController {
     @GetMapping("/comments")
     public RestResponse commentList(CommentParam commentParam) {
 
-        PageInfo<CommentVo> commentsPage = commentService.findComments(commentParam);
+        PageInfo<CommentVo> commentsPage = commentService.loadAllCommentVo(commentParam);
         return RestResponse.ok(commentsPage);
     }
 
@@ -186,7 +187,7 @@ public class AdminApiController {
     @DeleteMapping("/comments/{id}")
     public RestResponse<?> deleteComment(@PathVariable Long id, UserVo userVo) {
 
-        CommentVo commentVo = commentService.deleteById(id, userVo);
+        CommentVo commentVo = commentService.deleteCommentById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -202,7 +203,7 @@ public class AdminApiController {
     @SysLog("回复评论")
     @PostMapping("/comment")
     public RestResponse<?> postComment(CommentVo commentVo, UserParam userParam, UserVo userVo) {
-        CommonValidator.validAdmin(commentVo);
+        CommonValidator.valid(commentVo);
         commentService.postNewComment(commentVo, userParam, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -219,8 +220,7 @@ public class AdminApiController {
     @SysLog("删除附件")
     @DeleteMapping("/attaches/{id}")
     public RestResponse<?> deleteAttach(@PathVariable Long id, UserVo userVo) throws IOException {
-        Attach attach = select().from(Attach.class).byId(id);
-        linkService.deleteById(id, userVo);
+        linkService.deleteAttachesById(id, userVo);
         return RestResponse.ok();
     }
 
@@ -232,13 +232,13 @@ public class AdminApiController {
 
     @GetMapping("/tags")
     public RestResponse tagList() {
-        List<MetaVo> tags = siteService.getMetaVo(TypeConst.RECENT_META, TypeConst.TAG, WebConst.MAX_POSTS);
+        List<MetaVo> tags = siteService.getMetaVo(TypeConst.RECENT_META, TypeConst.TAG, WebConstant.MAX_POSTS);
         return RestResponse.ok(tags);
     }
 
     @GetMapping("/options")
     public RestResponse options() {
-        Map<String, String> options = optionService.getAllOption();
+        Map<String, String> options = optionService.loadAllOptions();
         return RestResponse.ok(options);
     }
 
@@ -263,10 +263,10 @@ public class AdminApiController {
         // 要过过滤的黑名单列表
         if (StringUtils.isNotBlank(advanceParam.getBlockIps())) {
             optionService.saveOption(TypeConst.BLOCK_IPS, advanceParam.getBlockIps());
-            WebConst.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
+            WebConstant.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
         } else {
-            optionsService.saveOption(TypeConst.BLOCK_IPS, "");
-            WebConst.BLOCK_IPS.clear();
+            optionService.saveOption(TypeConst.BLOCK_IPS, "");
+            WebConstant.BLOCK_IPS.clear();
         }
         // 处理卸载插件
         if (StringUtils.isNotBlank(advanceParam.getPluginName())) {
@@ -281,26 +281,26 @@ public class AdminApiController {
         }
 
         if (StringUtils.isNotBlank(advanceParam.getCdnURL())) {
-            optionsService.saveOption(OPTION_CDN_URL, advanceParam.getCdnURL());
-            TaleConst.OPTIONS.set(OPTION_CDN_URL, advanceParam.getCdnURL());
+            optionService.saveOption(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
+            WebConstant.OPTIONS.set(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
         }
 
         // 是否允许重新安装
         if (StringUtils.isNotBlank(advanceParam.getAllowInstall())) {
-            optionService.saveOption(OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
-            TaleConst.OPTIONS.set(OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
+            optionService.saveOption(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
+            WebConstant.OPTIONS.set(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
         }
 
         // 评论是否需要审核
         if (StringUtils.isNotBlank(advanceParam.getAllowCommentAudit())) {
-            optionService.saveOption(OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
-            TaleConst.OPTIONS.set(OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
+            optionService.saveOption(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
+            WebConstant.OPTIONS.set(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
         }
 
         // 是否允许公共资源CDN
         if (StringUtils.isNotBlank(advanceParam.getAllowCloudCDN())) {
-            optionService.saveOption(OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
-            TaleConst.OPTIONS.set(OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
+            optionService.saveOption(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
+            WebConstant.OPTIONS.set(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
         }
         return RestResponse.ok();
     }
@@ -348,15 +348,15 @@ public class AdminApiController {
     @SysLog("激活主题")
     @PostMapping("/themes/active")
     public RestResponse<?> activeTheme( ThemeParam themeParam) {
-        optionsService.saveOption(OPTION_SITE_THEME, themeParam.getSiteTheme());
-        delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
-
-        TaleConst.OPTIONS.set(OPTION_SITE_THEME, themeParam.getSiteTheme());
+        optionService.saveOption(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
+//        delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
+        optionService.deleteAllThemes();
+        WebConstant.OPTIONS.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
         BaseController.THEME = "themes/" + themeParam.getSiteTheme();
 
         String themePath = "/templates/themes/" + themeParam.getSiteTheme();
         try {
-            TaleLoader.loadTheme(themePath);
+            InkLoader.loadTheme(themePath);
         } catch (Exception e) {
         }
         return RestResponse.ok();
@@ -369,7 +369,7 @@ public class AdminApiController {
             return RestResponse.fail("缺少参数，请重试");
         }
         String content   = templateParam.getContent();
-        String themePath = Const.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
+        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
         String filePath  = themePath + File.separatorChar + templateParam.getFileName();
         if (Files.exists(Paths.get(filePath))) {
             byte[] rf_wiki_byte = content.getBytes("UTF-8");
