@@ -13,16 +13,11 @@ import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
-import xyz.itao.ink.domain.ContentDomain;
-import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.dto.ThemeDto;
-import xyz.itao.ink.domain.entity.Link;
 import xyz.itao.ink.domain.params.*;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.service.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -341,7 +336,7 @@ public class AdminApiController {
 
         optionService.saveOption(key, JsonKit.toString(options));
 
-        TaleConst.OPTIONS = Environment.of(optionsService.getOptions());
+        WebConstant.OPTIONS = Environment.of(optionsService.getOptions());
         return RestResponse.ok();
     }
 
