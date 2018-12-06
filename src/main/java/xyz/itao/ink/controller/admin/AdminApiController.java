@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.UserDomain;
-import xyz.itao.ink.domain.params.ArticleParam;
-import xyz.itao.ink.domain.params.CommentParam;
-import xyz.itao.ink.domain.params.MetaParam;
-import xyz.itao.ink.domain.params.PageParam;
-import xyz.itao.ink.domain.vo.CommentVo;
-import xyz.itao.ink.domain.vo.ContentVo;
-import xyz.itao.ink.domain.vo.LogVo;
-import xyz.itao.ink.domain.vo.UserVo;
+import xyz.itao.ink.domain.dto.ThemeDto;
+import xyz.itao.ink.domain.entity.Link;
+import xyz.itao.ink.domain.params.*;
+import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.service.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +50,8 @@ public class AdminApiController {
     LogService logService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    LinkService linkService;
     @GetMapping(value = "/logs")
     public RestResponse sysLogs(@RequestParam PageParam pageParam) {
         PageInfo<LogVo> logVoPageInfo = logService.getLogs(pageParam);
@@ -111,7 +111,7 @@ public class AdminApiController {
         }
         contentVo.setId(id);
         CommonValidator.valid(contentVo);
-        contentService.updateArticle(contentVo, userVo.getId());
+        contentService.updateArticle(contentVo, userVo);
         return RestResponse.ok(id);
     }
 
@@ -140,14 +140,14 @@ public class AdminApiController {
         contentVo.setType(TypeConst.PAGE);
         contentVo.setAllowPing(true);
         contentVo.setAuthorId(userVo.getId());
-        contentService.publish(contentVo, userVo.getId());
+        contentService.publish(contentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("修改页面")
     @PutMapping("/pages/{id}")
-    public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo) {
+    public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo, UserVo userVo) {
         CommonValidator.valid(contentVo);
 
         if (null == id) {
@@ -162,7 +162,7 @@ public class AdminApiController {
     @SysLog("保存分类")
     @PostMapping("/category")
     public RestResponse<?> saveCategory(MetaParam metaParam, UserVo userVo) {
-        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid(), userVo.getId());
+        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid(), userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -170,15 +170,13 @@ public class AdminApiController {
     @SysLog("删除分类/标签")
     @DeleteMapping("category/{id}")
     public RestResponse<?> deleteMeta(@PathVariable Long id, UserVo userVo) {
-        metaService.delete(id, userVo.getId());
+        metaService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @GetMapping("/comments")
-    public RestResponse commentList(CommentParam commentParam, UserVo userVo) {
-
-        commentParam.setExcludeUID(userVo.getId());
+    public RestResponse commentList(CommentParam commentParam) {
 
         PageInfo<CommentVo> commentsPage = commentService.findComments(commentParam);
         return RestResponse.ok(commentsPage);
@@ -186,48 +184,26 @@ public class AdminApiController {
 
     @SysLog("删除评论")
     @DeleteMapping("/comments/{id}")
-    public RestResponse<?> deleteComment(@PathVariable Long id) {
-        CommentVo commentVo = select().from(Comments.class).byId(id);
-        if (null == comments) {
-            return RestResponse.fail("不存在该评论");
-        }
-        commentService.delete(coid, comments.getCid());
+    public RestResponse<?> deleteComment(@PathVariable Long id, UserVo userVo) {
+
+        CommentVo commentVo = commentService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("修改评论状态")
     @PutMapping("/comments")
-    public RestResponse<?> updateStatus( CommentVo commentVo) {
-        commentVo.update();
+    public RestResponse<?> updateStatus( CommentVo commentVo, UserVo userVo) {
+        commentService.updateCommentVo(commentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("回复评论")
     @PostMapping("/comment")
-    public RestResponse<?> replyComment( CommentVo commentVo, HttpServletRequest request) {
-        CommonValidator.validAdmin(comments);
-
-        Comments c = select().from(Comments.class).byId(comments.getCoid());
-        if (null == c) {
-            return RestResponse.fail("不存在该评论");
-        }
-        Users users = this.user();
-        comments.setAuthor(users.getUsername());
-        comments.setAuthorId(users.getUid());
-        comments.setCid(c.getCid());
-        comments.setIp(request.address());
-        comments.setUrl(users.getHomeUrl());
-
-        if (StringUtils.isNotBlank(users.getEmail())) {
-            comments.setMail(users.getEmail());
-        } else {
-            comments.setMail("");
-        }
-        comments.setStatus(TaleConst.COMMENT_APPROVED);
-        comments.setParent(comments.getCoid());
-        commentsService.saveComment(comments);
+    public RestResponse<?> postComment(CommentVo commentVo, UserParam userParam, UserVo userVo) {
+        CommonValidator.validAdmin(commentVo);
+        commentService.postNewComment(commentVo, userParam, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -235,57 +211,41 @@ public class AdminApiController {
     @GetMapping("/attaches")
     public RestResponse attachList(PageParam pageParam) {
 
-        Page<Attach> attachPage = select().from(Attach.class)
-                .order(Attach::getCreated, OrderBy.DESC)
-                .page(pageParam.getPage(), pageParam.getLimit());
+        PageInfo<LinkVo> linkVoPageInfo = linkService.loadAllActiveLinkVo(pageParam);
 
-        return RestResponse.ok(attachPage);
+        return RestResponse.ok(linkVoPageInfo);
     }
 
     @SysLog("删除附件")
     @DeleteMapping("/attaches/{id}")
-    public RestResponse<?> deleteAttach(@PathVariable Long id) throws IOException {
+    public RestResponse<?> deleteAttach(@PathVariable Long id, UserVo userVo) throws IOException {
         Attach attach = select().from(Attach.class).byId(id);
-        if (null == attach) {
-            return RestResponse.fail("不存在该附件");
-        }
-        String key = attach.getFkey();
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
-        String             filePath = CLASSPATH.substring(0, CLASSPATH.length() - 1) + key;
-        java.nio.file.Path path     = Paths.get(filePath);
-        log.info("Delete attach: [{}]", filePath);
-        if (Files.exists(path)) {
-            Files.delete(path);
-        }
-        Anima.deleteById(Attach.class, id);
+        linkService.deleteById(id, userVo);
         return RestResponse.ok();
     }
 
     @GetMapping("/categories")
     public RestResponse categoryList() {
-        List<Metas> categories = siteService.getMetas(TypeConst.RECENT_META, TypeConst.CATEGORY, TaleConst.MAX_POSTS);
+        List<MetaVo> categories = siteService.getMetaVo(TypeConst.RECENT_META, TypeConst.CATEGORY, WebConstant.MAX_POSTS);
         return RestResponse.ok(categories);
     }
 
     @GetMapping("/tags")
     public RestResponse tagList() {
-        List<Metas> tags = siteService.getMetas(TypeConst.RECENT_META, TypeConst.TAG, TaleConst.MAX_POSTS);
+        List<MetaVo> tags = siteService.getMetaVo(TypeConst.RECENT_META, TypeConst.TAG, WebConst.MAX_POSTS);
         return RestResponse.ok(tags);
     }
 
     @GetMapping("/options")
     public RestResponse options() {
-        Map<String, String> options = optionService.getOptions();
+        Map<String, String> options = optionService.getAllOption();
         return RestResponse.ok(options);
     }
 
     @SysLog("保存系统配置")
     @PostMapping("/options")
-    public RestResponse<?> saveOptions(HttpServletRequest request) {
-        Map<String, List<String>> querys = request.parameters();
-        querys.forEach((k, v) -> optionService.saveOption(k, v.get(0)));
-        Environment config = Environment.of(optionService.getOptions());
-        TaleConst.OPTIONS = config;
+    public RestResponse<?> saveOptions(Map<String, List<String>> options) {
+        options.forEach((k, v) -> optionService.saveOption(k, v.get(0)));
         return RestResponse.ok();
     }
 
@@ -303,10 +263,10 @@ public class AdminApiController {
         // 要过过滤的黑名单列表
         if (StringUtils.isNotBlank(advanceParam.getBlockIps())) {
             optionService.saveOption(TypeConst.BLOCK_IPS, advanceParam.getBlockIps());
-            TaleConst.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
+            WebConst.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
         } else {
-            optionsService.saveOption(Types.BLOCK_IPS, "");
-            TaleConst.BLOCK_IPS.clear();
+            optionsService.saveOption(TypeConst.BLOCK_IPS, "");
+            WebConst.BLOCK_IPS.clear();
         }
         // 处理卸载插件
         if (StringUtils.isNotBlank(advanceParam.getPluginName())) {
@@ -368,8 +328,8 @@ public class AdminApiController {
     }
 
     @SysLog("保存主题设置")
-    @PostMapping("/themes/setting")
-    public RestResponse<?> saveSetting(Request request) {
+    @PostMapping("/themes")
+    public RestResponse<?> saveSetting() {
         Map<String, List<String>> query = request.parameters();
 
         // theme_milk_options => {  }
@@ -404,8 +364,8 @@ public class AdminApiController {
 
     @SysLog("保存模板")
     @PostMapping("/template")
-    public RestResponse<?> saveTpl(@BodyParam TemplateParam templateParam) throws IOException {
-        if (StringKit.isBlank(templateParam.getFileName())) {
+    public RestResponse<?> saveTpl(TemplateParam templateParam) throws IOException {
+        if (StringUtils.isBlank(templateParam.getFileName())) {
             return RestResponse.fail("缺少参数，请重试");
         }
         String content   = templateParam.getContent();
