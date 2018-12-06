@@ -1,5 +1,6 @@
 package xyz.itao.ink.common;
 
+import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
 
@@ -14,5 +15,8 @@ public class CommonValidator {
     }
 
     public static void valid(CommentVo commentVo) {
+    }
+
+    public static void valid(InstallParam installParam) {
     }
 }
