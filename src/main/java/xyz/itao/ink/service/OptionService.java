@@ -13,4 +13,6 @@ public interface OptionService {
     void saveOption(String k, String s);
 
     void deleteOption(String key);
+
+    String getOption(String key);
 }

@@ -2,6 +2,7 @@ package xyz.itao.ink.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.domain.vo.UserVo;
 
 /**
  * @author hetao
@@ -70,4 +71,8 @@ public interface UserService {
      * @return
      */
     UserDomain registerPermanentUser(String username, String email, String homeUrl, String password, String displayName);
+
+    void updateProfile(String screenName, String email, UserVo userVo);
+
+    void updatePassword(String old_password, String password, UserVo userVo);
 }

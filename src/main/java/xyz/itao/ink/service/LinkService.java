@@ -1,9 +1,12 @@
 package xyz.itao.ink.service;
 
 import com.github.pagehelper.PageInfo;
+import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
 import xyz.itao.ink.domain.vo.UserVo;
+
+import java.util.List;
 
 /**
  * @author hetao
@@ -24,4 +27,8 @@ public interface LinkService {
      * @param userVo 删除的人
      */
     void deleteAttachesById(Long id, UserVo userVo);
+
+    PageInfo<LinkVo> getAttachs(int page, int limit);
+
+    List<String> saveFiles(MultipartFile[] multipartFiles, UserVo userVo);
 }

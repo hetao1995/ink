@@ -1,6 +1,7 @@
 package xyz.itao.ink.controller.admin;
 
 import com.github.pagehelper.PageInfo;
+import com.sun.deploy.config.WinPlatform;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.bootstrap.InkLoader;
 import xyz.itao.ink.common.CommonValidator;
+import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -278,25 +280,25 @@ public class AdminApiController {
 
         if (StringUtils.isNotBlank(advanceParam.getCdnURL())) {
             optionService.saveOption(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
-            WebConstant.OPTIONS.set(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
+            WebConstant.OPTIONS.put(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
         }
 
         // 是否允许重新安装
         if (StringUtils.isNotBlank(advanceParam.getAllowInstall())) {
             optionService.saveOption(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
-            WebConstant.OPTIONS.set(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
+            WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
         }
 
         // 评论是否需要审核
         if (StringUtils.isNotBlank(advanceParam.getAllowCommentAudit())) {
             optionService.saveOption(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
-            WebConstant.OPTIONS.set(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
+            WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
         }
 
         // 是否允许公共资源CDN
         if (StringUtils.isNotBlank(advanceParam.getAllowCloudCDN())) {
             optionService.saveOption(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
-            WebConstant.OPTIONS.set(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
+            WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
         }
         return RestResponse.ok();
     }
@@ -304,7 +306,7 @@ public class AdminApiController {
     @GetMapping("themes")
     public RestResponse getThemes() {
         // 读取主题
-        String         themesDir  = CLASSPATH + "templates/themes";
+        String         themesDir  = WebConstant.CLASSPATH + "templates/themes";
         File[]         themesFile = new File(themesDir).listFiles();
         List<ThemeDto> themes     = new ArrayList<>(themesFile.length);
         for (File f : themesFile) {
@@ -347,7 +349,7 @@ public class AdminApiController {
         optionService.saveOption(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
 //        delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
         optionService.deleteAllThemes();
-        WebConstant.OPTIONS.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
+        WebConstant.OPTIONS.put(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
         BaseController.THEME = "themes/" + themeParam.getSiteTheme();
 
         String themePath = "/templates/themes/" + themeParam.getSiteTheme();

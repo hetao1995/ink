@@ -1,7 +1,12 @@
 package xyz.itao.ink.constant;
 
+import com.google.common.collect.Maps;
+import xyz.itao.ink.controller.admin.AdminApiController;
+import xyz.itao.ink.domain.dto.PluginMenu;
+
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author hetao
@@ -9,6 +14,7 @@ import java.util.*;
  * @description
  */
 public interface WebConstant {
+    public static Map<String, String> initConfig = Maps.newConcurrentMap();
     /**
      * 用户domain域的key
      */
@@ -21,6 +27,7 @@ public interface WebConstant {
     public static       String      REMEMBER_TOKEN     = "";
     public static       Boolean     INSTALLED          = false;
     public static       Boolean     ENABLED_CDN        = true;
+    public static final Map<String, String> OPTIONS = Maps.newConcurrentMap();
 
     /**
      * 最大页码

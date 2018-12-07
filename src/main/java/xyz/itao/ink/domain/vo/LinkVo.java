@@ -1,10 +1,15 @@
 package xyz.itao.ink.domain.vo;
 
+import lombok.Builder;
+import lombok.Data;
+
 /**
  * @author hetao
  * @date 2018-12-06
  * @description
  */
+@Data
+@Builder
 public class LinkVo {
     /**
      * 连接的id

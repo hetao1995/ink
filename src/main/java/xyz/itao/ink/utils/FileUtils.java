@@ -1,9 +1,8 @@
 package xyz.itao.ink.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.*;
 import java.nio.channels.FileChannel;
 
 /**
@@ -40,5 +39,23 @@ public class FileUtils {
             return Math.round(value / kb) + "KB";
         }
         return Math.round(value) + "";
+    }
+
+    /**
+     * 判断文件是否是图片类型
+     *
+     * @param imageFile
+     * @return
+     */
+    public static boolean isImage(InputStream imageFile) {
+        try {
+            Image img = ImageIO.read(imageFile);
+            if (img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -1,5 +1,8 @@
 package xyz.itao.ink.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -198,5 +201,23 @@ public class PatternUtils {
     public static boolean isUsername(String username){
         String regex = "^[a-zA-Z]\\w{5,17}$";
         return Pattern.matches(regex, username);
+    }
+
+    /**
+     * 判断是否是合法路径
+     *
+     * @param slug
+     * @return
+     */
+    public static boolean isPath(String slug) {
+        Pattern SLUG_REGEX = Pattern.compile("^[A-Za-z0-9_-]{5,100}$", Pattern.CASE_INSENSITIVE);
+        if (StringUtils.isNotBlank(slug)) {
+            if (slug.contains("/") || slug.contains(" ") || slug.contains(".")) {
+                return false;
+            }
+            Matcher matcher = SLUG_REGEX.matcher(slug);
+            return matcher.find();
+        }
+        return false;
     }
 }
