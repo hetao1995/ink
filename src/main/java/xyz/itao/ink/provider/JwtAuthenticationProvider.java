@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.JwtAuthenticationToken;
+import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.UserService;
 
 import java.util.Calendar;
