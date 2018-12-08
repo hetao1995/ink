@@ -88,4 +88,9 @@ public class LogRepositoryImpl extends AbstractBaseRepository<LogDomain, Log> im
         }
         return logDomains;
     }
+
+    @Override
+    public LogDomain saveNewLogDomain(LogDomain domain) {
+        return save(domain);
+    }
 }
