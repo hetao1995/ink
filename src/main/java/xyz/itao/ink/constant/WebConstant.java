@@ -43,7 +43,7 @@ public class WebConstant {
      * 文章内容文字数限制
      */
     public static final int MAX_CONTENT_TEXT_LENGTH = 200000;
-    int MIN_CONTENT_TEXT_LENGTH = 1;
+    public static final int MIN_CONTENT_TEXT_LENGTH = 1;
 
     /**
      * 文章标题可以输入的文字个数限制
