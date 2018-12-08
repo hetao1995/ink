@@ -1,6 +1,9 @@
 package xyz.itao.ink.repository;
 
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.vo.ContentVo;
+
+import java.util.List;
 
 /**
  * @author hetao
@@ -28,4 +31,8 @@ public interface ContentRepository {
      * @return 加载的结果
      */
     ContentDomain loadActiveContentDomainById(Long id);
+
+    List<ContentDomain> loadAllActiveContentDomain();
+
+    List<ContentVo> loadAllFeedArticles();
 }

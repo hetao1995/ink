@@ -1,5 +1,6 @@
 package xyz.itao.ink.controller.admin;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class PageController extends BaseController {
     }
 
     @GetMapping("login")
-    public String login(HttpServletResponse response, UserVo userVo) {
+    public String login(HttpServletResponse response, UserVo userVo) throws IOException {
         if (null != userVo) {
             response.sendRedirect("/admin/index");
             return null;
@@ -135,7 +136,7 @@ public class PageController extends BaseController {
         Map<String, Object> map    = new HashMap<>();
         try {
             if (StringUtils.isNotBlank(option)) {
-                map = (Map<String, Object>) JsonKit.toAson(option);
+                map = JSON.parseObject(option);
             }
             request.setAttribute("options", map);
         } catch (Exception e) {

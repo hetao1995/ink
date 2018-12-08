@@ -1,5 +1,6 @@
 package xyz.itao.ink.controller.admin;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.sun.deploy.config.WinPlatform;
 import lombok.Data;
@@ -253,9 +254,9 @@ public class AdminApiController {
         // 清除缓存
         if (StringUtils.isNotBlank(advanceParam.getCacheKey())) {
             if ("*".equals(advanceParam.getCacheKey())) {
-                cache.clean();
+//                cache.clean();
             } else {
-                cache.del(advanceParam.getCacheKey());
+//                cache.del(advanceParam.getCacheKey());
             }
         }
         // 要过过滤的黑名单列表
@@ -317,7 +318,7 @@ public class AdminApiController {
                 }
                 themes.add(themeDto);
                 try {
-                    WebContext.blade().addStatics("/templates/themes/" + f.getName() + "/screenshot.png");
+//                    WebContext.blade().addStatics("/templates/themes/" + f.getName() + "/screenshot.png");
                 } catch (Exception e) {
                 }
             }
@@ -327,19 +328,19 @@ public class AdminApiController {
 
     @SysLog("保存主题设置")
     @PostMapping("/themes")
-    public RestResponse<?> saveSetting() {
-        Map<String, List<String>> query = request.parameters();
+    public RestResponse<?> saveSetting(Map<String, String> query) {
+//        Map<String, List<String>> query = request.parameters();
 
         // theme_milk_options => {  }
         String currentTheme = Commons.site_theme();
         String key          = "theme_" + currentTheme + "_options";
 
         Map<String, String> options = new HashMap<>();
-        query.forEach((k, v) -> options.put(k, v.get(0)));
+        query.forEach(options::put);
 
-        optionService.saveOption(key, JsonKit.toString(options));
+        optionService.saveOption(key, JSON.toJSONString(options));
 
-        WebConstant.OPTIONS = Environment.of(optionsService.getOptions());
+        WebConstant.OPTIONS = optionService.loadOptions();
         return RestResponse.ok();
     }
 

@@ -15,4 +15,8 @@ public interface OptionService {
     void deleteOption(String key);
 
     String getOption(String key);
+
+    Map<String, Object> loadOptions();
+
+    void deleteAllThemes();
 }

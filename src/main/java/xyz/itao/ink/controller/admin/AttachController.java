@@ -39,7 +39,7 @@ public class AttachController extends BaseController {
 
 
 
-    public static final String CLASSPATH = FileUtils.getUploadFilePath();
+//    public static final String CLASSPATH = FileUtils.getUploadFilePath();
 
     @Autowired
     private LinkService linkService;
@@ -60,7 +60,7 @@ public class AttachController extends BaseController {
                         @RequestParam(value = "limit", defaultValue = "12") int limit) {
         PageInfo<LinkVo> attachPaginator = linkService.getAttachs(page, limit);
         request.setAttribute("attachs", attachPaginator);
-        request.setAttribute(TypeConst.ATTACH_URL.getType(), Commons.site_option(TypeConst.ATTACH_URL.getType(), Commons.site_url()));
+        request.setAttribute(TypeConst.ATTACH_URL, Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url()));
         request.setAttribute("max_file_size", WebConstant.MAX_FILE_SIZE / 1024);
         return "admin/attach";
     }
@@ -68,7 +68,7 @@ public class AttachController extends BaseController {
     /**
      * 上传文件接口
      *
-     * @param request
+     * @param
      * @return
      */
     @PostMapping(value = "upload")

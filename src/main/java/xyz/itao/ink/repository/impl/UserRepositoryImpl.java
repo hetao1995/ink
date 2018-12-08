@@ -75,6 +75,11 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
     }
 
     @Override
+    public UserDomain updateUserDomain(UserDomain domain) {
+        return update(domain);
+    }
+
+    @Override
     protected UserDomain doAssemble(User entity) {
         return UserDomain
                 .builder()

@@ -11,13 +11,9 @@ import xyz.itao.ink.domain.vo.UserVo;
  */
 public interface UserService {
     /**
-     * 在评论的时候注册临时用户
-     * @param homeUrl 主页地址
-     * @param email 邮箱
-     * @param displayName 用户昵称
-     * @return 新注册的UserDomain
+     * @param userVo user 信息
      */
-    UserDomain registerTemporaryUser(String homeUrl, String email, String displayName);
+    UserVo registerTemporaryUser(UserVo userVo);
 
     /**
      * 获取Jwt登录的Token
@@ -38,41 +34,48 @@ public interface UserService {
      * @param id 主键
      * @return 加载的结果
      */
-    UserDomain loadUserDomainById(Long id);
+    UserVo loadUserVoById(Long id);
 
     /**
-     * 通过username获取UserDomain
+     * 通过username获取UserVo
      * @param username 用户名
      * @return 这个username对应的UserDomain
      */
-    UserDomain loadUserDomainByUsername(String username);
+    UserVo loadUserVoByUsername(String username);
 
     /**
      * 通过email加载UserDomain
      * @param email 邮箱
      * @return 邮箱对应的UserDomain
      */
-    UserDomain loadUserDomainByEmail(String email);
+    UserVo loadUserVoByEmail(String email);
 
     /**
      * 通过主页加载UserDomain
      * @param homeUrl 主页地址
      * @return 主页地址对应的UserDomain
      */
-    UserDomain loadUserDomainByHomeUrl(String homeUrl);
+    UserVo loadUserVoByHomeUrl(String homeUrl);
 
     /**
      * 注册一个永久的用户
-     * @param username username
-     * @param email 邮箱
-     * @param homeUrl 主页地址
-     * @param password 密码
-     * @param displayName 展示的昵称
-     * @return
+     * @param  userVo 注册用户信息
      */
-    UserDomain registerPermanentUser(String username, String email, String homeUrl, String password, String displayName);
+    UserVo registerPermanentUser(UserVo userVo);
 
+    /**
+     * 更新昵称和邮箱
+     * @param screenName 昵称
+     * @param email 邮箱
+     * @param userVo 更新谁的
+     */
     void updateProfile(String screenName, String email, UserVo userVo);
 
+    /**
+     * 修改密码
+     * @param old_password 旧密码
+     * @param password 新密码
+     * @param userVo 修改谁的
+     */
     void updatePassword(String old_password, String password, UserVo userVo);
 }

@@ -3,6 +3,8 @@ package xyz.itao.ink.domain.vo;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author hetao
  * @date 2018-12-05
@@ -85,4 +87,14 @@ public class ContentVo {
      * 内容文字
      */
     private String content;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 修改时间
+     */
+    private Date updateTime;
 }

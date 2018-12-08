@@ -1,5 +1,7 @@
 package xyz.itao.ink.bootstrap;
 
+import xyz.itao.ink.constant.WebConstant;
+
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -16,31 +18,29 @@ public class InkLoader {
     private InkLoader() {
     }
 
-    private static Blade blade;
 
-    public static void init(Blade blade) {
-        TaleLoader.blade = blade;
+    public static void init() {
         loadPlugins();
         loadThemes();
     }
 
     public static void loadThemes() {
-        String themeDir = CLASSPATH + "templates" + File.separatorChar + "themes";
+        String themeDir = WebConstant.CLASSPATH + "templates" + File.separatorChar + "themes";
         File[] dir      = new File(themeDir).listFiles();
         for (File f : dir) {
             if (f.isDirectory() && Files.isDirectory(Paths.get(f.getPath() + "/static"))) {
                 String themePath = "/templates/themes/" + f.getName();
-                blade.addStatics(themePath + "/style.css", themePath + "/screenshot.png", themePath + "/static/");
+//                blade.addStatics(themePath + "/style.css", themePath + "/screenshot.png", themePath + "/static/");
             }
         }
     }
 
     public static void loadTheme(String themePath) {
-        blade.addStatics(themePath + "/style.css", themePath + "/screenshot.png", themePath + "/static/");
+//        blade.addStatics(themePath + "/style.css", themePath + "/screenshot.png", themePath + "/static/");
     }
 
     public static void loadPlugins() {
-        File pluginDir = new File(CLASSPATH + "plugins");
+        File pluginDir = new File(WebConstant.CLASSPATH + "plugins");
         if (pluginDir.exists() && pluginDir.isDirectory()) {
             File[] plugins = pluginDir.listFiles();
             for (File plugin : plugins) {
@@ -63,7 +63,7 @@ public class InkLoader {
                 add.invoke(classLoader, pluginFile.toURI().toURL());
 
                 String pluginName = pluginFile.getName().substring(6);
-                blade.addStatics("/templates/plugins/" + pluginName + "/static/");
+//                blade.addStatics("/templates/plugins/" + pluginName + "/static/");
             }
         } catch (Exception e) {
             throw new RuntimeException("插件 [" + pluginFile.getName() + "] 加载失败");

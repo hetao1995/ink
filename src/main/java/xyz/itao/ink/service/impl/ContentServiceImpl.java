@@ -1,14 +1,20 @@
 package xyz.itao.ink.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.dao.ContentMapper;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.ContentService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -84,5 +90,43 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     public ContentVo loadContentVoById(Long id) {
         ContentDomain contentDomain =  contentRepository.loadActiveContentDomainById(id);
         return extract(contentDomain);
+    }
+
+    @Override
+    public ContentVo publishNewContent(ContentVo contentVo, UserVo userVo) {
+        return save(contentVo, userVo.getId());
+    }
+
+    @Override
+    public PageInfo<ContentVo> loadAllActiveContentVo(ArticleParam articleParam) {
+        PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
+        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain();
+        List<ContentVo> contentVos = contentDomains.stream().map(contentDomain -> extract(contentDomain)).collect(Collectors.toList());
+        return new PageInfo<>(contentVos);
+    }
+
+    @Override
+    public void updateArticle(ContentVo contentVo, UserVo userVo) {
+        update(contentVo, userVo.getId())
+    }
+
+    @Override
+    public List<ContentVo> selectAllFeedArticles() {
+        return contentRepository.loadAllFeedArticles();
+    }
+
+    @Override
+    public void hit(ContentVo contentVo) {
+        // todo 在缓存中加入hit
+    }
+
+    @Override
+    public PageInfo<ContentVo> getArticles(Long id, int page, int limit) {
+
+    }
+
+    @Override
+    public PageInfo<ContentVo> searchArticles(String keyword, int page, int limit) {
+        
     }
 }

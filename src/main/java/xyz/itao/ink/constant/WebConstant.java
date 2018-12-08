@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2018-12-03
  * @description
  */
-public interface WebConstant {
+public class WebConstant {
     public static Map<String, String> initConfig = Maps.newConcurrentMap();
     /**
      * 用户domain域的key
@@ -27,7 +27,7 @@ public interface WebConstant {
     public static       String      REMEMBER_TOKEN     = "";
     public static       Boolean     INSTALLED          = false;
     public static       Boolean     ENABLED_CDN        = true;
-    public static final Map<String, String> OPTIONS = Maps.newConcurrentMap();
+    public static       Map<String, Object> OPTIONS = Maps.newConcurrentMap();
 
     /**
      * 最大页码
@@ -40,14 +40,22 @@ public interface WebConstant {
     public static final int MAX_POSTS = 9999;
 
     /**
-     * 文章最多可以输入的文字数
+     * 文章内容文字数限制
      */
-    public static final int MAX_TEXT_COUNT = 200000;
+    public static final int MAX_CONTENT_TEXT_LENGTH = 200000;
+    int MIN_CONTENT_TEXT_LENGTH = 1;
 
     /**
-     * 文章标题最多可以输入的文字个数
+     * 文章标题可以输入的文字个数限制
      */
-    public static final int MAX_TITLE_COUNT = 200;
+    public static final int MAX_CONTENT_TITLE_LENGTH = 200;
+    public static final int MIN_CONTENT_TITLE_LENGTH = 1;
+
+    /**
+     * 评论字数限制
+     */
+    public static final int MAX_COMMENT_TEXT_LENGTH = 2000;
+    public static final int MIN_COMMENT_TEXT_LENGTH = 1;
 
     /**
      * 插件菜单

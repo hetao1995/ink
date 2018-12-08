@@ -1,5 +1,6 @@
 package xyz.itao.ink.service;
 
+import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface SiteService {
     List<ContentVo> getContens(String recentArticle, int i);
 
     StatisticsVo getStatistics();
+
+    UserVo installSite(InstallParam installParam);
 }

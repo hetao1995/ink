@@ -113,7 +113,7 @@ public class ArticleController extends BaseController {
 //        commentVo.setIp(request.address());
 //        comments.setAgent(request.userAgent());
 
-        if (WebConst.OPTIONS.getBoolean(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, true)) {
+        if ((Boolean)WebConstant.OPTIONS.getOrDefault(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, true)) {
             commentVo.setStatus(WebConstant.COMMENT_NO_AUDIT);
         } else {
             commentVo.setStatus(WebConstant.COMMENT_APPROVED);

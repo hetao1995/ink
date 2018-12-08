@@ -1,5 +1,10 @@
 package xyz.itao.ink.utils;
 
+import com.sun.syndication.feed.rss.Channel;
+import com.sun.syndication.feed.rss.Content;
+import com.sun.syndication.feed.rss.Item;
+import com.sun.syndication.io.FeedException;
+import com.sun.syndication.io.WireFeedOutput;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.StringUtils;
 import org.commonmark.Extension;
@@ -9,16 +14,19 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.vo.ContentVo;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.InputStream;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -140,5 +148,115 @@ public class InkUtils {
         return cleanValue;
     }
 
+    /**
+     * 获取RSS输出
+     */
+    public static String getRssXml(java.util.List<ContentVo> articles) throws FeedException {
+        Channel channel = new Channel("rss_2.0");
+        channel.setTitle((String) WebConstant.OPTIONS.get("site_title"));
+        channel.setLink(Commons.site_url());
+        channel.setDescription((String) WebConstant.OPTIONS.get("site_description"));
+        channel.setLanguage("zh-CN");
+        java.util.List<Item> items = new ArrayList<>();
+        articles.forEach(post -> {
+            Item item = new Item();
+            item.setTitle(post.getTitle());
+            Content content = new Content();
+            String  value   = article(post.getContent());
 
+            char[] xmlChar = value.toCharArray();
+            for (int i = 0; i < xmlChar.length; ++i) {
+                if (xmlChar[i] > 0xFFFD) {
+                    //直接替换掉0xb
+                    xmlChar[i] = ' ';
+                } else if (xmlChar[i] < 0x20 && xmlChar[i] != 't' & xmlChar[i] != 'n' & xmlChar[i] != 'r') {
+                    //直接替换掉0xb
+                    xmlChar[i] = ' ';
+                }
+            }
+
+            value = new String(xmlChar);
+
+            content.setValue(value);
+            item.setContent(content);
+            item.setLink(permalink(post.getId(), post.getSlug()));
+            item.setPubDate(post.getCreateTime());
+            items.add(item);
+        });
+        channel.setItems(items);
+        WireFeedOutput out = new WireFeedOutput();
+        return out.outputString(channel);
+    }
+
+    private static final String SITEMAP_HEAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\" xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
+
+    static class Url {
+        String loc;
+        String lastmod;
+
+        public Url(String loc) {
+            this.loc = loc;
+        }
+    }
+
+    public static String getSitemapXml(List<ContentVo> articles) {
+        List<Url> urls = articles.stream()
+                .map(InkUtils::parse)
+                .collect(Collectors.toList());
+        urls.add(new Url(Commons.site_url() + "/archives"));
+
+        String urlBody = urls.stream()
+                .map(url -> {
+                    String s = "<url><loc>" + url.loc + "</loc>";
+                    if (null != url.lastmod) {
+                        s += "<lastmod>" + url.lastmod + "</lastmod>";
+                    }
+                    return s + "</url>";
+                })
+                .collect(Collectors.joining("\n"));
+
+        return SITEMAP_HEAD + urlBody + "</urlset>";
+    }
+
+    private static Url parse(ContentVo contentVo) {
+        Url url = new Url(Commons.site_url() + "/article/" + contentVo.getId());
+        url.lastmod = DateUtils.dateFormat(contentVo.getUpdateTime(), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        return url;
+    }
+
+    public static String buildURL(String url) {
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
+        }
+        if (!url.startsWith("http")) {
+            url = "http://".concat(url);
+        }
+        return url;
+    }
+
+    /**
+     * 返回文章链接地址
+     *
+     * @param id 文章主键
+     * @param slug 文章链接
+     * @return 文章链接地址
+     */
+    public static String permalink(Long id, String slug) {
+        return Commons.site_url("/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
+    }
+
+    /**
+     * 显示文章内容，转换markdown为html
+     *
+     * @param value 文章内容
+     * @return html
+     */
+    public static String article(String value) {
+        if (StringUtils.isNotBlank(value)) {
+            value = value.replace("<!--more-->", "\r\n");
+            return mdToHtml(value);
+        }
+        return "";
+    }
 }

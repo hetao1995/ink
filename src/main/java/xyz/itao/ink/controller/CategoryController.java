@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.service.ContentService;
@@ -56,7 +57,7 @@ public class CategoryController extends BaseController {
     public String categories(HttpServletRequest request, @PathVariable String keyword,
                              @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
 
-        page = page < 0 || page > WebConst.MAX_PAGE ? 1 : page;
+        page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
         MetaVo metaVo = metaService.getMeta(TypeConst.CATEGORY, keyword);
         if (null == metaVo) {
             return this.render_404();
@@ -102,7 +103,7 @@ public class CategoryController extends BaseController {
      */
     @GetMapping(value = {"tag/{name}/{page}", "tag/{name}/{page}.html"})
     public String tags(HttpServletRequest request, @PathVariable String name, @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
-        page = page < 0 || page > WebConst.MAX_PAGE ? 1 : page;
+        page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
         MetaVo metaVo = metaService.getMeta(TypeConst.TAG, name);
         if (null == metaVo) {
             return this.render_404();

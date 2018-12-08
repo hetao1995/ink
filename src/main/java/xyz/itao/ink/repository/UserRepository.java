@@ -42,4 +42,10 @@ public interface UserRepository {
      */
     UserDomain saveNewUserDomain(UserDomain userDomain);
 
+    /**
+     * 更新userdomain数据
+     * @param domain 需要更新的数据
+     * @return 更新结果
+     */
+    UserDomain updateUserDomain(UserDomain domain);
 }
