@@ -90,6 +90,26 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     }
 
     @Override
+    public UserDomain loadUserDomainById(Long id) {
+        return userRepository.loadActiveUserDomainById(id);
+    }
+
+    @Override
+    public UserDomain loadUserDomainByUsername(String username) {
+        return userRepository.loadUserDomainByUsername(username);
+    }
+
+    @Override
+    public UserDomain loadUserDomainByEmail(String email) {
+        return userRepository.loadUserDomainByEmail(email);
+    }
+
+    @Override
+    public UserDomain loadUserDomainByHomeUrl(String homeUrl) {
+        return userRepository.loadUserDomainByHomeUrl(homeUrl);
+    }
+
+    @Override
     public UserVo registerPermanentUser(UserVo userVo) {
         CommonValidator.valid(userVo, true);
 
@@ -108,8 +128,12 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
 
     @Override
     public void updateProfile(String screenName, String email, UserVo userVo) {
-        if(screenName!=null) userVo.setDisplayName(screenName);
-        if(email!=null) userVo.setEmail(email);
+        if(screenName!=null) {
+            userVo.setDisplayName(screenName);
+        }
+        if(email!=null) {
+            userVo.setEmail(email);
+        }
         CommonValidator.valid(userVo, true);
         update(userVo, userVo.getId());
     }

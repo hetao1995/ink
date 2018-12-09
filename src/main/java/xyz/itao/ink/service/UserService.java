@@ -58,6 +58,34 @@ public interface UserService {
     UserVo loadUserVoByHomeUrl(String homeUrl);
 
     /**
+     * 通过id加载UserDomain
+     * @param id 主键
+     * @return 加载的结果
+     */
+    UserDomain loadUserDomainById(Long id);
+
+    /**
+     * 通过username获取UserVo
+     * @param username 用户名
+     * @return 这个username对应的UserDomain
+     */
+    UserDomain loadUserDomainByUsername(String username);
+
+    /**
+     * 通过email加载UserDomain
+     * @param email 邮箱
+     * @return 邮箱对应的UserDomain
+     */
+    UserDomain loadUserDomainByEmail(String email);
+
+    /**
+     * 通过主页加载UserDomain
+     * @param homeUrl 主页地址
+     * @return 主页地址对应的UserDomain
+     */
+    UserDomain loadUserDomainByHomeUrl(String homeUrl);
+
+    /**
      * 注册一个永久的用户
      * @param  userVo 注册用户信息
      */
