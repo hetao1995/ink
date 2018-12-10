@@ -29,7 +29,18 @@ public interface MetaService {
      */
     void deleteMetaById(Long id, UserVo userVo);
 
+    /**
+     * 获取meta数据的映射
+     * @param category
+     * @return
+     */
     Map<String, List<ContentVo>> getMetaMapping(String category);
 
+    /**
+     * 通过category和keyword获取meta数据
+     * @param category
+     * @param keyword
+     * @return
+     */
     MetaVo getMeta(String category, String keyword);
 }
