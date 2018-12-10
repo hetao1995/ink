@@ -8,11 +8,11 @@ import java.util.Date;
 /**
  * @author hetao
  * @date 2018-12-02
- * @description metas表的实体类
+ * @description
  */
 @Data
 @Builder
-public class Meta {
+public class Option {
     /**
      * 主键
      */
@@ -29,34 +29,19 @@ public class Meta {
     private Boolean active;
 
     /**
-     * 父级项目
-     */
-    private Long parentId;
-
-    /**
-     * 项目名称
+     * 配置名称
      */
     private String name;
 
     /**
-     * 项目缩略名
+     * 配置值
      */
-    private String slug;
+    private String value;
 
     /**
-     * 项目类型
-     */
-    private String type;
-
-    /**
-     * 项目详情
+     * 配置详情
      */
     private String detail;
-
-    /**
-     * 排序
-     */
-    private Integer sort;
 
     /**
      * 创建时间
@@ -69,12 +54,12 @@ public class Meta {
     private Date updateTime;
 
     /**
-     * 创建者
+     * 被谁创建
      */
     private Long createBy;
 
     /**
-     * 修改者
+     * 被谁修改
      */
     private Long updateBy;
 }

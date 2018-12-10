@@ -1,47 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="xyz.itao.ink.dao.MetaMapper" >
-  <resultMap id="BaseResultMap" type="xyz.itao.ink.domain.entity.Meta" >
+<mapper namespace="xyz.itao.ink.dao.OptionMapper" >
+  <resultMap id="BaseResultMap" type="xyz.itao.ink.domain.entity.Option" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="deleted" property="deleted" jdbcType="BIT" />
     <result column="active" property="active" jdbcType="BIT" />
-    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="slug" property="slug" jdbcType="VARCHAR" />
-    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="value" property="value" jdbcType="VARCHAR" />
     <result column="detail" property="detail" jdbcType="VARCHAR" />
-    <result column="sort" property="sort" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="BIGINT" />
     <result column="update_by" property="updateBy" jdbcType="BIGINT" />
   </resultMap>
   <sql id="Base_Column_List" >
-    id, deleted, active, parent_id, name, slug, type, detail, sort, create_time, update_time, 
-    create_by, update_by
+    id, deleted, active, name, value, detail, create_time, update_time, create_by, update_by
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    from metas
+    from options
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from metas
+    delete from options
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="xyz.itao.ink.domain.entity.Meta" >
-    insert into metas (id, deleted, active, parent_id, 
-      name, slug, type, detail, 
-      sort, create_time, update_time, 
-      create_by, update_by)
-    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{active,jdbcType=BIT}, #{parentId,jdbcType=BIGINT}, 
-      #{name,jdbcType=VARCHAR}, #{slug,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, 
-      #{sort,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT})
+  <insert id="insert" parameterType="xyz.itao.ink.domain.entity.Option" >
+    insert into options (id, deleted, active, name, 
+      value, detail, create_time, 
+      update_time, create_by, update_by
+      )
+    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{active,jdbcType=BIT}, #{name,jdbcType=VARCHAR}, 
+      #{value,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Meta" >
-    insert into metas
+  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Option" >
+    insert into options
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         id,
@@ -52,23 +48,14 @@
       <if test="active != null" >
         active,
       </if>
-      <if test="parentId != null" >
-        parent_id,
-      </if>
       <if test="name != null" >
         name,
       </if>
-      <if test="slug != null" >
-        slug,
-      </if>
-      <if test="type != null" >
-        type,
+      <if test="value != null" >
+        value,
       </if>
       <if test="detail != null" >
         detail,
-      </if>
-      <if test="sort != null" >
-        sort,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -93,23 +80,14 @@
       <if test="active != null" >
         #{active,jdbcType=BIT},
       </if>
-      <if test="parentId != null" >
-        #{parentId,jdbcType=BIGINT},
-      </if>
       <if test="name != null" >
         #{name,jdbcType=VARCHAR},
       </if>
-      <if test="slug != null" >
-        #{slug,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null" >
-        #{type,jdbcType=VARCHAR},
+      <if test="value != null" >
+        #{value,jdbcType=VARCHAR},
       </if>
       <if test="detail != null" >
         #{detail,jdbcType=VARCHAR},
-      </if>
-      <if test="sort != null" >
-        #{sort,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -125,8 +103,8 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="xyz.itao.ink.domain.entity.Meta" >
-    update metas
+  <update id="updateByPrimaryKeySelective" parameterType="xyz.itao.ink.domain.entity.Option" >
+    update options
     <set >
       <if test="deleted != null" >
         deleted = #{deleted,jdbcType=BIT},
@@ -134,23 +112,14 @@
       <if test="active != null" >
         active = #{active,jdbcType=BIT},
       </if>
-      <if test="parentId != null" >
-        parent_id = #{parentId,jdbcType=BIGINT},
-      </if>
       <if test="name != null" >
         name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="slug != null" >
-        slug = #{slug,jdbcType=VARCHAR},
-      </if>
-      <if test="type != null" >
-        type = #{type,jdbcType=VARCHAR},
+      <if test="value != null" >
+        value = #{value,jdbcType=VARCHAR},
       </if>
       <if test="detail != null" >
         detail = #{detail,jdbcType=VARCHAR},
-      </if>
-      <if test="sort != null" >
-        sort = #{sort,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -167,16 +136,13 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.Meta" >
-    update metas
+  <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.Option" >
+    update options
     set deleted = #{deleted,jdbcType=BIT},
       active = #{active,jdbcType=BIT},
-      parent_id = #{parentId,jdbcType=BIGINT},
       name = #{name,jdbcType=VARCHAR},
-      slug = #{slug,jdbcType=VARCHAR},
-      type = #{type,jdbcType=VARCHAR},
+      value = #{value,jdbcType=VARCHAR},
       detail = #{detail,jdbcType=VARCHAR},
-      sort = #{sort,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=BIGINT},
