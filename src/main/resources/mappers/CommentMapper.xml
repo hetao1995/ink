@@ -26,22 +26,42 @@
     from comments
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from comments
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="xyz.itao.ink.domain.entity.Comment" >
-    insert into comments (id, deleted, active, content_id, 
-      author_id, parent_id, content, 
-      type, status, create_time, 
-      update_time, create_by, update_by
-      )
-    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{active,jdbcType=BIT}, #{contentId,jdbcType=BIGINT}, 
-      #{authorId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, 
-      #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{updateBy,jdbcType=BIGINT}
-      )
-  </insert>
+    <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.Comment">
+      select
+      <include refid="Base_Column_List"/>
+      from comments
+      where
+      <trim suffixOverrides="and" >
+      <if test="id != null" >
+        id = #{id,jdbcType=BIGINT} and
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT} and
+      </if>
+      <if test="active != null" >
+        active = #{active,jdbcType=BIT} and
+      </if>
+      <if test="contentId != null" >
+        content_id = #{contentId,jdbcType=BIGINT} and
+      </if>
+      <if test="authorId != null" >
+        author_id = #{authorId,jdbcType=BIGINT} and
+      </if>
+      <if test="parentId != null" >
+        parent_id = #{parentId,jdbcType=BIGINT} and
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR} and
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=VARCHAR} and
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=VARCHAR} and
+      </if>
+      </trim>
+    </select>
+
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Comment" >
     insert into comments
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -169,20 +189,5 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.Comment" >
-    update comments
-    set deleted = #{deleted,jdbcType=BIT},
-      active = #{active,jdbcType=BIT},
-      content_id = #{contentId,jdbcType=BIGINT},
-      author_id = #{authorId,jdbcType=BIGINT},
-      parent_id = #{parentId,jdbcType=BIGINT},
-      content = #{content,jdbcType=VARCHAR},
-      type = #{type,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=BIGINT},
-      update_by = #{updateBy,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
 </mapper>

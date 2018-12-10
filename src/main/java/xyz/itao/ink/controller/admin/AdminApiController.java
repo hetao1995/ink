@@ -186,7 +186,7 @@ public class AdminApiController {
     @DeleteMapping("/comments/{id}")
     public RestResponse<?> deleteComment(@PathVariable Long id, UserVo userVo) {
 
-        CommentVo commentVo = commentService.deleteCommentById(id, userVo);
+        boolean commentVo = commentService.deleteCommentById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }

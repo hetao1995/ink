@@ -1,10 +1,13 @@
 package xyz.itao.ink.domain.params;
 
+import lombok.Data;
+
 /**
  * @author hetao
  * @date 2018-12-06
  * @description
  */
+@Data
 public class UserParam {
     /**
      * 用户名，由字母、数字、下划线组成，长度在30以下，不能重复

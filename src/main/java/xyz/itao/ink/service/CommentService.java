@@ -25,7 +25,7 @@ public interface CommentService {
      * @param userVo 操作的用户
      * @return
      */
-    CommentVo deleteCommentById(Long id, UserVo userVo);
+    boolean deleteCommentById(Long id, UserVo userVo);
 
     /**
      * 修改commnet
