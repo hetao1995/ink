@@ -15,12 +15,12 @@ import java.util.Map;
 public interface MetaService {
     /**
      * 设置meta数据
-     * @param category 类型
-     * @param cname
+     * @param type 类型
+     * @param name
      * @param mid
      * @param userVo 操作人
      */
-    void saveMeta(String category, String cname, Integer mid, UserVo userVo);
+    void saveMeta(String type, String name, Integer mid, UserVo userVo);
 
     /**
      * 通过id删除meta
@@ -37,10 +37,10 @@ public interface MetaService {
     Map<String, List<ContentVo>> getMetaMapping(String category);
 
     /**
-     * 通过category和keyword获取meta数据
-     * @param category
+     * 通过type和keyword获取meta数据
+     * @param type
      * @param keyword
      * @return
      */
-    MetaVo getMeta(String category, String keyword);
+    MetaVo getMeta(String type, String keyword);
 }
