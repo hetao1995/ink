@@ -11,4 +11,8 @@ public interface MetaRepository {
     MetaDomain updateMetaDomain(MetaDomain domain);
 
     MetaDomain saveNewMetaDomain(MetaDomain domain);
+
+    MetaDomain loadMetaDomainByTypeAndName(String type, String name);
+
+    void deleteMetaDomainById(Long id, Long id1);
 }

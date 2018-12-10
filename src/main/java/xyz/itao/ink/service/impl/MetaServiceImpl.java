@@ -35,8 +35,11 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
                 .id(vo.getId())
                 .active(vo.getActive())
                 .name(vo.getName())
+                .slug(vo.getSlug())
+                .parentId(vo.getParentId())
+                .type(vo.getType())
+                .sort(vo.getSort())
                 .detail(vo.getDetail())
-                .value(vo.getValue())
                 .build();
     }
 
@@ -47,8 +50,11 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
                 .id(domain.getId())
                 .active(domain.getActive())
                 .name(domain.getName())
+                .slug(domain.getSlug())
+                .parentId(domain.getParentId())
+                .type(domain.getType())
+                .sort(domain.getSort())
                 .detail(domain.getDetail())
-                .value(domain.getValue())
                 .build();
     }
 
@@ -63,7 +69,7 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     }
 
     @Override
-    public void saveMeta(String type, String name, Integer mid, UserVo userVo) {
+    public void saveMeta(String type, String name, Long mid, UserVo userVo) {
         if(StringUtils.isBlank(type)){
             throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
         }
@@ -71,23 +77,26 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
             throw new TipException(ExceptionEnum.META_NAME_ILLEGAL);
         }
         MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, name);
-        if(metaDomain == null){
+        if(metaDomain != null){
             throw new TipException(ExceptionEnum.META_HAS_SAVED);
         }
-        metaDomain = MetaDomain
+        MetaVo metaVo = MetaVo
                 .builder()
                 .name(name)
                 .id(mid)
+                .type(type)
+                .build();
+        save(metaVo, userVo.getId());
 
     }
 
     @Override
     public void deleteMetaById(Long id, UserVo userVo) {
-
+        metaRepository.deleteMetaDomainById(id, userVo.getId());
     }
 
     @Override
-    public Map<String, List<ContentVo>> getMetaMapping(String category) {
+    public Map<String, List<ContentVo>> getMetaMapping(String type) {
         return null;
     }
 

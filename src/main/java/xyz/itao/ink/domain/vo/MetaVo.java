@@ -12,10 +12,9 @@ import lombok.Data;
 @Builder
 public class MetaVo {
     /**
-     * 主键id
+     * 主键
      */
     private Long id;
-    
 
     /**
      * 是否处于激活状态
@@ -23,17 +22,32 @@ public class MetaVo {
     private Boolean active;
 
     /**
-     * 配置名称
+     * 父级项目
+     */
+    private Long parentId;
+
+    /**
+     * 项目名称
      */
     private String name;
 
     /**
-     * 配置值
+     * 项目缩略名
      */
-    private String value;
+    private String slug;
 
     /**
-     * 配置详情
+     * 项目类型
+     */
+    private String type;
+
+    /**
+     * 项目详情
      */
     private String detail;
+
+    /**
+     * 排序
+     */
+    private Integer sort;
 }

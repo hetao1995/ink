@@ -9,6 +9,6 @@ import lombok.Data;
  */
 @Data
 public class MetaParam {
-    private Integer mid;
+    private Long mid;
     private String cname;
 }

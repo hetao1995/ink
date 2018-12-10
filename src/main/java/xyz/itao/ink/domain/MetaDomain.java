@@ -14,7 +14,7 @@ import java.util.Date;
 @Builder
 public class MetaDomain extends BaseDomain{
     /**
-     * 主键id
+     * 主键
      */
     private Long id;
 
@@ -29,19 +29,34 @@ public class MetaDomain extends BaseDomain{
     private Boolean active;
 
     /**
-     * 配置名称
+     * 父级项目
+     */
+    private Long parentId;
+
+    /**
+     * 项目名称
      */
     private String name;
 
     /**
-     * 配置值
+     * 项目缩略名
      */
-    private String value;
+    private String slug;
 
     /**
-     * 配置详情
+     * 项目类型
+     */
+    private String type;
+
+    /**
+     * 项目详情
      */
     private String detail;
+
+    /**
+     * 排序
+     */
+    private Integer sort;
 
     /**
      * 创建时间
@@ -54,12 +69,12 @@ public class MetaDomain extends BaseDomain{
     private Date updateTime;
 
     /**
-     * 被谁创建
+     * 创建者
      */
     private Long createBy;
 
     /**
-     * 被谁修改
+     * 修改者
      */
     private Long updateBy;
 }

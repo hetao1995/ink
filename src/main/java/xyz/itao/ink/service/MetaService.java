@@ -20,7 +20,7 @@ public interface MetaService {
      * @param mid
      * @param userVo 操作人
      */
-    void saveMeta(String type, String name, Integer mid, UserVo userVo);
+    void saveMeta(String type, String name, Long mid, UserVo userVo);
 
     /**
      * 通过id删除meta
@@ -31,10 +31,10 @@ public interface MetaService {
 
     /**
      * 获取meta数据的映射
-     * @param category
+     * @param type
      * @return
      */
-    Map<String, List<ContentVo>> getMetaMapping(String category);
+    Map<String, List<ContentVo>> getMetaMapping(String type);
 
     /**
      * 通过type和keyword获取meta数据
