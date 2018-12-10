@@ -3,6 +3,8 @@ package xyz.itao.ink.dao;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.Role;
 
+import java.util.List;
+
 @Component
 public interface RoleMapper {
 
@@ -33,6 +35,6 @@ public interface RoleMapper {
      * @param record 条件
      * @return 满足条件的User实例
      */
-    Role selectByNoNulProperties(Role record);
+    List<Role> selectByNoNulProperties(Role record);
 
 }

@@ -31,7 +31,7 @@ public class LogRepositoryImpl extends AbstractBaseRepository<LogDomain, Log> im
     }
 
     @Override
-    protected Log doLoadByNoNullProperties(Log entity) {
+    protected List<Log> doLoadByNoNullProperties(Log entity) {
         return null;
     }
 

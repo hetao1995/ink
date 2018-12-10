@@ -52,12 +52,12 @@ public class UserRoleRepositoryImpl extends AbstractBaseRepository<UserRoleDomai
     }
 
     @Override
-    protected UserRole doLoadByNoNullProperties(UserRole entity) {
+    protected List<UserRole> doLoadByNoNullProperties(UserRole entity) {
         List<UserRole> userRoles = userRoleMapper.selectByNoNulProperties(entity);
         if(userRoles.isEmpty()){
             return null;
         }
-        return userRoles.get(0);
+        return userRoles;
     }
 
 

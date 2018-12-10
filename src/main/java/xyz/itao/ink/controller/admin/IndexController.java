@@ -31,7 +31,7 @@ import java.util.Map;
  * @date 2018-12-06
  * @description
  */
-@Controller
+@Controller("adminIndex")
 @RequestMapping("/admin")
 @Slf4j
 public class IndexController extends BaseController {
@@ -64,8 +64,6 @@ public class IndexController extends BaseController {
     public String profile() {
         return "/admin/profile";
     }
-
-
 
 
 }

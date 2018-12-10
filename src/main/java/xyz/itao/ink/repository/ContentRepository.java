@@ -32,7 +32,36 @@ public interface ContentRepository {
      */
     ContentDomain loadActiveContentDomainById(Long id);
 
+    /**
+     * 获取所有的激活状态的content
+     * @return
+     */
     List<ContentDomain> loadAllActiveContentDomain();
 
-    List<ContentVo> loadAllFeedArticles();
+    /**
+     * 获取所有allowfeed的文章
+     * @return
+     */
+    List<ContentDomain> loadAllFeedArticles();
+
+    /**
+     * 点击时间发生，更新点击次数
+     * 首先更新Redis中的数据
+     * 到了一定时间后更新数据库中的数据
+     * @param id 更新那个内容的hit
+     */
+    void updateHit(Long id);
+
+    /**
+     * 获取到当前的hit，先从缓存中获取，没有的话然后从数据库中获取
+     * @return 当前点击数
+     */
+    Long getHit(Long id);
+
+    /**
+     * 通过metaId到contentmeta查找contentdomain
+     * @param metaId meta表的id
+     * @return 查找的结果
+     */
+    List<ContentDomain> loadAllActiveContentDomainByMetaId(Long metaId);
 }

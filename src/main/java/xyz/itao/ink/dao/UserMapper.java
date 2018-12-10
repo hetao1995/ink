@@ -2,6 +2,9 @@ package xyz.itao.ink.dao;
 
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.User;
+
+import java.util.List;
+
 @Component
 public interface UserMapper {
 
@@ -32,6 +35,6 @@ public interface UserMapper {
      * @param record 条件
      * @return 满足条件的User实例
      */
-    User selectByNoNulProperties(User record);
+    List<User> selectByNoNulProperties(User record);
 
 }

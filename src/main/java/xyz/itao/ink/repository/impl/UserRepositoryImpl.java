@@ -9,6 +9,8 @@ import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.repository.UserRoleRepository;
 
+import java.util.List;
+
 /**
  * @author hetao
  * @date 2018-12-02
@@ -27,7 +29,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .builder()
                 .id(id)
                 .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(userDomain);
+        return loadByNoNullPropertiesActiveAndNotDelect(userDomain).get(0);
     }
 
     @Override
@@ -39,7 +41,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .permanent(true)
                 .active(true)
                 .build();
-        user = doLoadByNoNullProperties(user);
+        user = doLoadByNoNullProperties(user).get(0);
         return assemble(user);
     }
 
@@ -52,7 +54,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .permanent(true)
                 .active(true)
                 .build();
-        user = doLoadByNoNullProperties(user);
+        user = doLoadByNoNullProperties(user).get(0);
         return assemble(user);
     }
 
@@ -65,7 +67,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .permanent(true)
                 .active(true)
                 .build();
-        user = doLoadByNoNullProperties(user);
+        user = doLoadByNoNullProperties(user).get(0);
         return assemble(user);
     }
 
@@ -130,7 +132,7 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
     }
 
     @Override
-    protected User doLoadByNoNullProperties(User entity) {
+    protected List<User> doLoadByNoNullProperties(User entity) {
         return userMapper.selectByNoNulProperties(entity);
     }
 

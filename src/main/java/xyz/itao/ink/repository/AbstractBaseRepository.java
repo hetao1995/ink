@@ -6,6 +6,9 @@ import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author hetao
  * @date 2018-12-02
@@ -28,7 +31,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
         if(!saved){
             throw new InnerException(ExceptionEnum.PERSISTENCE_FAIL, domain);
         }
-        return assemble(doLoadByNoNullProperties(entity));
+        return assemble(doLoadByNoNullProperties(entity).get(0));
     }
 
     /**
@@ -44,7 +47,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
             throw new InnerException(ExceptionEnum.PERSISTENCE_FAIL, domain);
         }
         //todo 缓存失效
-        return assemble(doLoadByNoNullProperties(entity));
+        return assemble(doLoadByNoNullProperties(entity).get(0));
     }
 
     /**
@@ -52,7 +55,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
      * @param domain 查找的条件
      * @return 查找的结果
      */
-    public D loadByNoNullPropertiesActiveAndNotDelect(D domain){
+    public List<D> loadByNoNullPropertiesActiveAndNotDelect(D domain){
         domain.setActive(true);
         return loadByNoNullPropertiesNotDelect(domain);
     }
@@ -62,7 +65,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
      * @param domain 查找的条件
      * @return 查找的结果
      */
-    public D loadByNoNullPropertiesNotActiveAndNotDelect(D domain){
+    public List<D> loadByNoNullPropertiesNotActiveAndNotDelect(D domain){
         domain.setActive(false);
         return loadByNoNullPropertiesNotDelect(domain);
     }
@@ -72,12 +75,11 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
      * @param domain 查找的条件
      * @return 查找的结果
      */
-    public D loadByNoNullPropertiesNotDelect(D domain){
+    public List<D> loadByNoNullPropertiesNotDelect(D domain){
         domain.setDeleted(false);
         // todo 首先在缓存中查找
-        E entity = doLoadByNoNullProperties(extract(domain));
-        entity = doLoadByNoNullProperties(entity);
-        return assemble(entity);
+        List<E> entitys = doLoadByNoNullProperties(extract(domain));
+        return entitys.stream().map((e)->assemble(e)).collect(Collectors.toList());
     }
 
     /**
@@ -116,7 +118,7 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
      * @param entity 条件
      * @return 加载的entity
      */
-    protected  abstract E doLoadByNoNullProperties(E entity);
+    protected  abstract List<E> doLoadByNoNullProperties(E entity);
 
     /**
      * 具体的更新操作

@@ -28,7 +28,7 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
                 .builder()
                 .id(id)
                 .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain);
+        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain).get(0);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
                 .builder()
                 .role(role)
                 .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain);
+        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain).get(0);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
     }
 
     @Override
-    protected Role doLoadByNoNullProperties(Role entity) {
+    protected List<Role> doLoadByNoNullProperties(Role entity) {
         return roleMapper.selectByNoNulProperties(entity);
     }
 

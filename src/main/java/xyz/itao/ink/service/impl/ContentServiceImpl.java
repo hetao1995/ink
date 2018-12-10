@@ -107,26 +107,31 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public void updateArticle(ContentVo contentVo, UserVo userVo) {
-        update(contentVo, userVo.getId())
+        update(contentVo, userVo.getId());
     }
 
     @Override
     public List<ContentVo> selectAllFeedArticles() {
-        return contentRepository.loadAllFeedArticles();
+        List<ContentDomain> contentDomains = contentRepository.loadAllFeedArticles();
+        return contentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
     }
 
     @Override
     public void hit(ContentVo contentVo) {
-        // todo 在缓存中加入hit
+        contentRepository.updateHit(contentVo.getId());
     }
 
     @Override
-    public PageInfo<ContentVo> getArticles(Long id, int page, int limit) {
-
+    public PageInfo<ContentVo> getArticles(Long metaId, int page, int limit) {
+        PageHelper.startPage(page, limit);
+        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomainByMetaId(metaId);
+        List<ContentVo> contentVos = contentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
+        return new PageInfo<>(contentVos);
     }
 
     @Override
     public PageInfo<ContentVo> searchArticles(String keyword, int page, int limit) {
-
+        //todo 通过elasticsearch搜索文章
+        return null;
     }
 }
