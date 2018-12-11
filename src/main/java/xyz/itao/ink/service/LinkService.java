@@ -34,5 +34,5 @@ public interface LinkService {
      * @param userVo 上传者
      * @return 没有上传成功的文件名称
      */
-    List<String> saveFiles(MultipartFile[] multipartFiles, UserVo userVo);
+    List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserVo userVo);
 }

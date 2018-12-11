@@ -1,5 +1,7 @@
 package xyz.itao.ink.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
@@ -57,5 +59,14 @@ public class FileUtils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * 获取文件名后缀
+     * @param fname 文件名
+     * @return 后缀
+     */
+    public static String fileExt(String fname) {
+        return StringUtils.isNoneEmpty(fname) && fname.indexOf('.') != -1 ? fname.substring(fname.lastIndexOf('.') + 1) : null;
     }
 }

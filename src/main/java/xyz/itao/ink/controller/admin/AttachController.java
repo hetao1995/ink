@@ -77,7 +77,7 @@ public class AttachController extends BaseController {
         if(multipartFiles==null){
             RestResponse.fail("请选择文件上传！");
         }
-        List<String> errorFiles = linkService.saveFiles(multipartFiles, userVo);
+        List<LinkVo> uploadFiles = linkService.saveFiles(multipartFiles, userVo);
 //        try {
 //            for (MultipartFile multipartFile : multipartFiles) {
 //                String fname = multipartFile.getOriginalFilename();
@@ -98,7 +98,7 @@ public class AttachController extends BaseController {
 //        } catch (Exception e) {
 //            return RestRestResponse.fail();
 //        }
-        return RestResponse.ok(errorFiles);
+        return RestResponse.ok(uploadFiles);
     }
 
     @DeleteMapping(value = "{id}")

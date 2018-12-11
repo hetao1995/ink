@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.LinkDomain;
-import xyz.itao.ink.domain.entity.Link;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -19,9 +18,9 @@ import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.LinkRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.LinkService;
+import xyz.itao.ink.utils.FileUtils;
 import xyz.itao.ink.utils.IdUtils;
 import xyz.itao.ink.utils.ImageUtils;
-import xyz.itao.ink.utils.InkUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -60,25 +59,12 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
 
 
     @Override
-    public List<String> saveFiles(MultipartFile[] multipartFiles, UserVo userVo)  {
-        List<String> errorFiles = Lists.newArrayList();
+    public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserVo userVo)  {
+        List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {
             String fname = multipartFile.getName(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
-            String fkey = String.valueOf(IdUtils.nextId());
-            // todo 上传到TFS
-            String filePath = WebConstant.UP_DIR + fkey;
-            try {
-                Files.write(Paths.get(filePath), multipartFile.getBytes());
-                if(TypeConst.IMAGE.equals(ftype)){
-                    // todo 上传剪切文件到TFS
-                    String thumbnailFilePath = WebConstant.UP_DIR + fkey.replace(fkey, "thumbnail_" + fkey);
-                    ImageUtils.cutCenterImage(WebConstant.CLASSPATH + fkey, thumbnailFilePath, 270, 380);
-                }
-            } catch (IOException e) {
-                log.debug("上传文件失败！", e);
-                errorFiles.add(fname);
-                continue;
-            }
+            String fid = String.valueOf(IdUtils.nextId());
+            String fkey = WebConstant.UP_DIR+"/upload/"+fid+"."+ FileUtils.fileExt(fname);
             LinkVo linkVo = LinkVo
                     .builder()
                     .fileName(fname)
@@ -86,9 +72,25 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
                     .fileKey(fkey)
                     .fileType(ftype)
                     .build();
-            save(linkVo, userVo.getId());
+
+            // todo 上传到TFS
+            String filePath = WebConstant.UP_DIR + fkey;
+            try {
+                Files.write(Paths.get(filePath), multipartFile.getBytes());
+                if(TypeConst.IMAGE.equals(ftype)){
+                    // todo 上传剪切文件到TFS
+                    String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
+                    ImageUtils.cutCenterImage(WebConstant.CLASSPATH + fkey, thumbnailFilePath, 270, 380);
+                }
+                res.add(save(linkVo, userVo.getId()));
+            } catch (IOException e) {
+                log.debug("上传文件失败！", e);
+                res.add(linkVo);
+                continue;
+            }
+
         }
-        return errorFiles;
+        return res;
     }
 
     @Override
