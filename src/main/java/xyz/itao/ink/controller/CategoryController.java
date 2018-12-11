@@ -2,6 +2,7 @@ package xyz.itao.ink.controller;
 
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,6 +23,7 @@ import java.util.Set;
  * @date 2018-12-06
  * @description
  */
+@Controller
 public class CategoryController extends BaseController {
 
     @Autowired

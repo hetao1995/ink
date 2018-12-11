@@ -19,13 +19,16 @@ spring:
           pool-name: ink
           auto-commit: true
         url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
+
     thymeleaf:
             prefix: classpath:/templates/
             check-template-location: true
             suffix: .html
             encoding: UTF-8
-            mode: HTML5
+            mode: LEGACYHTML5
             cache: false
+            servlet:
+              content-type: text/html
     aop:
       auto: true
       proxy-target-class: true
@@ -51,6 +54,7 @@ pagehelper:
 logging:
   level:
     xyz.itao.ink.dao : DEBUG
+
 
 swagger:
   show: true
