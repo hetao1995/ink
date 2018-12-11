@@ -28,7 +28,11 @@ public interface LinkService {
      */
     void deleteAttachesById(Long id, UserVo userVo);
 
-    PageInfo<LinkVo> getAttachs(int page, int limit);
-
+    /**
+     * 保存上传的文件
+     * @param multipartFiles 上传的文件数据
+     * @param userVo 上传者
+     * @return 没有上传成功的文件名称
+     */
     List<String> saveFiles(MultipartFile[] multipartFiles, UserVo userVo);
 }

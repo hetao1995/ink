@@ -1,7 +1,11 @@
 package xyz.itao.ink.service.impl;
 
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.domain.OptionDomain;
+import xyz.itao.ink.repository.OptionRepository;
 import xyz.itao.ink.service.OptionService;
 
 import java.util.HashMap;
@@ -16,49 +20,49 @@ import java.util.Map;
 @Service("optionService")
 public class OptionServiceImpl implements OptionService {
 
+    @Autowired
+    OptionRepository optionRepository;
 
     @Override
     public Map<String, String> loadAllOptions() {
-        Map<String, String> options = new HashMap<>();
-        AnimaQuery<Options> animaQuery = select().from(Options.class);
-        List<Options> optionsList = animaQuery.all();
-        if (null != optionsList) {
-            optionsList.forEach(option -> options.put(option.getName(), option.getValue()));
+        Map<String, String> options = Maps.newHashMap();
+        List<OptionDomain> optionDomains = optionRepository.loadAllOptionDomain();
+        if (optionDomains.isEmpty()) {
+            optionDomains.forEach(optionDomain -> options.put(optionDomain.getName(), optionDomain.getValue()));
         }
         return options;
     }
 
     @Override
-    public void saveOption(String k, String s) {
-        if (StringKit.isNotBlank(key) && StringKit.isNotBlank(value)) {
-            Options options = new Options();
-            options.setName(key);
-
-            long count = select().from(Options.class).where(Options::getName, key).count();
-
-            if (count == 0) {
-                options = new Options();
-                options.setName(key);
-                options.setValue(value);
-                options.save();
-            } else {
-                options = new Options();
-                options.setValue(value);
-                options.updateById(key);
-            }
+    public void saveOption(String k, String v) {
+        if(StringUtils.isBlank(k) || StringUtils.isBlank(v)){
+            return;
+        }
+        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(k);
+        if(optionDomain != null){
+            optionDomain.setValue(v);
+            optionRepository.updateOptionDomain(optionDomain);
+        }else{
+            optionDomain = OptionDomain
+                    .builder()
+                    .name(k)
+                    .value(v)
+                    .build();
+            optionRepository.saveNewOptionDomain(optionDomain);
         }
     }
 
     @Override
     public void deleteOption(String key) {
-
+        optionRepository.deleteByNameLike(key+"%");
     }
 
     @Override
     public String getOption(String key) {
-        Options options = select().from(Options.class).byId(key);
-        if (null != options) {
-            return options.getValue();
+
+        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(key);
+        if (null != optionDomain) {
+            return optionDomain.getValue();
         }
         return null;
     }
@@ -70,6 +74,6 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     public void deleteAllThemes() {
-
+        optionRepository.deleteByNameLike("theme_option_%");
     }
 }

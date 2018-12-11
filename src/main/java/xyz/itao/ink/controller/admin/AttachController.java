@@ -1,5 +1,6 @@
 package xyz.itao.ink.controller.admin;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
@@ -15,6 +16,7 @@ import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
+import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.LinkService;
@@ -51,14 +53,11 @@ public class AttachController extends BaseController {
      * 附件页面
      *
      * @param request
-     * @param page
-     * @param limit
      * @return
      */
     @GetMapping(value = "")
-    public String index(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "1") int page,
-                        @RequestParam(value = "limit", defaultValue = "12") int limit) {
-        PageInfo<LinkVo> attachPaginator = linkService.getAttachs(page, limit);
+    public String index(HttpServletRequest request, PageParam pageParam) {
+        PageInfo<LinkVo> attachPaginator = linkService.loadAllActiveLinkVo(pageParam);
         request.setAttribute("attachs", attachPaginator);
         request.setAttribute(TypeConst.ATTACH_URL, Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url()));
         request.setAttribute("max_file_size", WebConstant.MAX_FILE_SIZE / 1024);
@@ -75,6 +74,9 @@ public class AttachController extends BaseController {
     @ResponseBody
     @SysLog("上传文件")
     public RestResponse<?> upload( @RequestParam("file") MultipartFile[] multipartFiles, UserVo userVo) throws IOException {
+        if(multipartFiles==null){
+            RestResponse.fail("请选择文件上传！");
+        }
         List<String> errorFiles = linkService.saveFiles(multipartFiles, userVo);
 //        try {
 //            for (MultipartFile multipartFile : multipartFiles) {

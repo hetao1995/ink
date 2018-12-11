@@ -28,6 +28,10 @@ public class WebConstant {
     public static       Boolean     INSTALLED          = false;
     public static       Boolean     ENABLED_CDN        = true;
     public static       Map<String, Object> OPTIONS = Maps.newConcurrentMap();
+    /**
+     * 上传的目录
+     */
+    public static final String UP_DIR = CLASSPATH.substring(0, CLASSPATH.length() - 1);
 
     /**
      * 最大页码
