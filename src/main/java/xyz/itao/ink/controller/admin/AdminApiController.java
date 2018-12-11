@@ -250,7 +250,7 @@ public class AdminApiController {
 
     @SysLog("保存高级选项设置")
     @PostMapping("/advanced")
-    public RestResponse<?> saveAdvance(AdvanceParam advanceParam) {
+    public RestResponse<?> saveAdvance(AdvanceParam advanceParam, UserVo userVo) {
         // 清除缓存
         if (StringUtils.isNotBlank(advanceParam.getCacheKey())) {
             if ("*".equals(advanceParam.getCacheKey())) {
@@ -276,7 +276,7 @@ public class AdminApiController {
             } else {
                 optionService.saveOption(TypeConst.ATTACH_URL, Commons.site_url());
             }
-            optionService.deleteOption(key);
+            optionService.deleteOption(key, userVo);
         }
 
         if (StringUtils.isNotBlank(advanceParam.getCdnURL())) {
@@ -346,10 +346,10 @@ public class AdminApiController {
 
     @SysLog("激活主题")
     @PostMapping("/themes/active")
-    public RestResponse<?> activeTheme( ThemeParam themeParam) {
+    public RestResponse<?> activeTheme( ThemeParam themeParam, UserVo userVo) {
         optionService.saveOption(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
 //        delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
-        optionService.deleteAllThemes();
+        optionService.deleteAllThemes(userVo);
         WebConstant.OPTIONS.put(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
         BaseController.THEME = "themes/" + themeParam.getSiteTheme();
 
