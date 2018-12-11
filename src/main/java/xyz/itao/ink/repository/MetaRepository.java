@@ -14,5 +14,4 @@ public interface MetaRepository {
 
     MetaDomain loadMetaDomainByTypeAndName(String type, String name);
 
-    void deleteMetaDomainById(Long id, Long id1);
 }

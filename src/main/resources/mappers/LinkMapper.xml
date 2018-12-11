@@ -24,20 +24,36 @@
     from links
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from links
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <insert id="insert" parameterType="xyz.itao.ink.domain.entity.Link" >
-    insert into links (id, deleted, active, author_id, 
-      file_name, file_type, file_key, 
-      create_time, update_time, create_by, 
-      update_by)
-    values (#{id,jdbcType=BIGINT}, #{deleted,jdbcType=BIT}, #{active,jdbcType=BIT}, #{authorId,jdbcType=BIGINT}, 
-      #{fileName,jdbcType=VARCHAR}, #{fileType,jdbcType=VARCHAR}, #{fileKey,jdbcType=VARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, 
-      #{updateBy,jdbcType=BIGINT})
-  </insert>
+    <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.Link">
+      select
+      <include refid="Base_Column_List"/>
+      from links
+      where
+      <trim  suffixOverrides="and" >
+      <if test="id != null" >
+        id = #{id,jdbcType=BIGINT} and
+      </if>
+      <if test="deleted != null" >
+        deleted = #{deleted,jdbcType=BIT} and
+      </if>
+      <if test="active != null" >
+        active = #{active,jdbcType=BIT} and
+      </if>
+      <if test="authorId != null" >
+        author_id = #{authorId,jdbcType=BIGINT} and
+      </if>
+      <if test="fileName != null" >
+        file_name = #{fileName,jdbcType=VARCHAR} and
+      </if>
+      <if test="fileType != null" >
+        file_type = #{fileType,jdbcType=VARCHAR} and
+      </if>
+      <if test="fileKey != null" >
+        file_key = #{fileKey,jdbcType=VARCHAR} and
+      </if>
+      </trim>
+    </select>
+
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Link" >
     insert into links
     <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -145,20 +161,6 @@
         update_by = #{updateBy,jdbcType=BIGINT},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="xyz.itao.ink.domain.entity.Link" >
-    update links
-    set deleted = #{deleted,jdbcType=BIT},
-      active = #{active,jdbcType=BIT},
-      author_id = #{authorId,jdbcType=BIGINT},
-      file_name = #{fileName,jdbcType=VARCHAR},
-      file_type = #{fileType,jdbcType=VARCHAR},
-      file_key = #{fileKey,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=BIGINT},
-      update_by = #{updateBy,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

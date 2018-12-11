@@ -1,5 +1,7 @@
 package xyz.itao.ink.service;
 
+import xyz.itao.ink.domain.vo.UserVo;
+
 import java.util.Map;
 
 /**
@@ -26,7 +28,7 @@ public interface OptionService {
      *
      * @param key 配置key
      */
-    void deleteOption(String key);
+    void deleteOption(String key, UserVo userVo);
 
     /**
      * 根据key获取value
@@ -35,5 +37,5 @@ public interface OptionService {
 
     Map<String, Object> loadOptions();
 
-    void deleteAllThemes();
+    void deleteAllThemes(UserVo userVo);
 }

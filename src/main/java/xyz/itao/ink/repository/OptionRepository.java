@@ -18,5 +18,5 @@ public interface OptionRepository {
 
     void saveNewOptionDomain(OptionDomain optionDomain) ;
 
-    void deleteByNameLike(String key) ;
+    List<OptionDomain> loadAllOptionDomainNotDeleteLike(String pattern);
 }

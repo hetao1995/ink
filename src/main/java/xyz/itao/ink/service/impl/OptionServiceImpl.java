@@ -5,7 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.domain.OptionDomain;
+import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.OptionRepository;
+import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.OptionService;
 
 import java.util.HashMap;
@@ -53,8 +55,8 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public void deleteOption(String key) {
-        optionRepository.deleteByNameLike(key+"%");
+    public void deleteOption(String key, UserVo userVo) {
+        deleteByNameLike(key+"%", userVo);
     }
 
     @Override
@@ -73,7 +75,16 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public void deleteAllThemes() {
-        optionRepository.deleteByNameLike("theme_option_%");
+    public void deleteAllThemes(UserVo userVo) {
+        deleteByNameLike("theme_option_%", userVo);
+    }
+
+    private void deleteByNameLike(String pattern, UserVo userVo){
+        List<OptionDomain> optionDomains = optionRepository.loadAllOptionDomainNotDeleteLike(pattern);
+        optionDomains.forEach(optionDomain -> {
+            optionDomain.setUpdateBy(userVo.getId());
+            optionDomain.setDeleted(true);
+            optionRepository.updateOptionDomain(optionDomain);
+        });
     }
 }

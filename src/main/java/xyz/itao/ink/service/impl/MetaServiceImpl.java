@@ -92,7 +92,7 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
 
     @Override
     public void deleteMetaById(Long id, UserVo userVo) {
-        metaRepository.deleteMetaDomainById(id, userVo.getId());
+        delete(MetaVo.builder().id(id).build(), userVo.getId());
     }
 
     @Override
