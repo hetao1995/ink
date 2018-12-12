@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.utils.CryptoUtils;
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
  * @date 2018-12-07
  * @description 主题公共函数
  */
+@Component
 public final class Commons {
 
     public static String THEME = "themes/default";

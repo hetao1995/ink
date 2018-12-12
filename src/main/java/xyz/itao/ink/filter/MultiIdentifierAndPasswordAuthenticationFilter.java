@@ -27,7 +27,7 @@ public class MultiIdentifierAndPasswordAuthenticationFilter extends AbstractAuth
 
     public MultiIdentifierAndPasswordAuthenticationFilter() {
         //拦截url为 "/admin/login" 的POST请求
-        super(new AntPathRequestMatcher("/admin/login", "POST"));
+        super(new AntPathRequestMatcher("/login", "POST"));
     }
 
     @Override

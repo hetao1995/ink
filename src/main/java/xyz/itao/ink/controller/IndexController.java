@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.Content;
+import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ArchiveVo;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.ContentService;
@@ -42,6 +43,14 @@ public class IndexController extends BaseController{
     public String index(HttpServletRequest request, @RequestParam(value = "limit", defaultValue = "12") int limit) {
         return this.index(request, 1, limit);
     }
+
+    /**
+     * 首页分页显示
+     * @param request request
+     * @param page 第几页
+     * @param limit 每页大小
+     * @return
+     */
     @GetMapping(value = "/page/{page}")
     public String index(HttpServletRequest request, @PathVariable int page, @RequestParam(value = "limit", defaultValue = "12") int limit) {
 //        p = p < 0 || p > WebConst.MAX_PAGE ? 1 : p;
@@ -49,10 +58,14 @@ public class IndexController extends BaseController{
         if (page > 1) {
             this.title(request, "第" + page + "页");
         }
-        request.setAttribute("page_num", page);
-        request.setAttribute("limit", limit);
-        request.setAttribute("is_home", true);
-        request.setAttribute("page_prefix", "/page");
+        ArticleParam articleParam = ArticleParam.builder().build();
+        articleParam.setPageNum(page);
+        articleParam.setPageSize(limit);
+        request.setAttribute("articles", contentService.loadAllActiveContentVo(articleParam));
+//        request.setAttribute("page_num", page);
+//        request.setAttribute("limit", limit);
+//        request.setAttribute("is_home", true);
+//        request.setAttribute("page_prefix", "/page");
         return this.render("index");
     }
     /**
@@ -141,5 +154,12 @@ public class IndexController extends BaseController{
         return xml;
     }
 
-
+    /**
+     * 登录视图
+     * @return
+     */
+    @GetMapping(value = "/login")
+    public String login(){
+        return "admin/login";
+    }
 }

@@ -38,6 +38,7 @@
       select
       <include refid="Base_Column_List"/>
       from contents
+      where
       <trim suffixOverrides="and" >
       <if test="id != null" >
         id = #{id,jdbcType=BIGINT} and
