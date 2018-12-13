@@ -1,4 +1,8 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='编辑模板',active='template'">
+<header th:replace="admin/header::headerFragment(${title},${active})"/>
 #include('./header.html',{has_sub:'other', active:'template', title:'编辑模板'})
+
 <div id="app" class="row" v-cloak>
     <loading :active.sync="isLoading" :can-cancel="true"></loading>
     <div class="col-lg-12">
@@ -26,7 +30,7 @@
     </div>
 </div>
 
-#include('./footer.html')
+<header th:replace="admin/footer"/>
 <script>
     var tale = new $.tale();
 

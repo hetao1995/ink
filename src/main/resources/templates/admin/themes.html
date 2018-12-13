@@ -1,4 +1,6 @@
-#include('./header.html',{active:'themes', title:'主题管理'})
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='主题管理',active='themes'">
+<header th:replace="admin/header::headerFragment(${title},${active})"/>
 <div id="app" class="row" v-cloak>
     <loading :active.sync="isLoading" :can-cancel="true"></loading>
     <div class="col-lg-12">

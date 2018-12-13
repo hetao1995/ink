@@ -1,5 +1,7 @@
-#include('../header.html',{active: 'articles', title:'编辑文章'})
-#include('./_header.html')
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='编辑文章',active='article'">
+<header th:replace="admin/header::headerFragment(${title},${active})"/>
+<header th:replace="admin/article/_header"/>
 <div id="app" class="row" v-cloak>
     <loading :active.sync="isLoading" :can-cancel="true"></loading>
     <div class="col-lg-12">
@@ -115,7 +117,7 @@
         </div>
     </div>
 </div>
-#include('./_footer.html')
+<footer th:replace="admin/article/_footer"/>
 <script src="/static/admin/js/edit_article.js?v=${version}" ></script>
 </body>
 </html>
