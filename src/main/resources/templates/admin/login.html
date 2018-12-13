@@ -60,8 +60,8 @@
             <form class="form-horizontal m-t-20" method="post" id="loginForm" onsubmit="return checkForm()">
                 <div class="form-group">
                     <div class="col-xs-12">
-                        <input class=" input-lg input-border" name="username" type="text" required=""
-                               placeholder="账号:"/>
+                        <input class=" input-lg input-border" name="identifier" type="text" required=""
+                               placeholder="账号或者邮箱:"/>
                     </div>
                 </div>
                 <div class="form-group">
@@ -89,7 +89,9 @@
     </div>
 </div>
 <!-- Main  -->
+<script th:src="@{//cdn.bootcss.com/vue/2.5.17/vue.min.js}"></script>
 <script th:src="@{//cdn.bootcss.com/jquery/2.2.3/jquery.min.js}"></script>
+<script th:src="@{//cdn.bootcss.com/jquery.serializeJSON/2.9.0/jquery.serializejson.min.js}"></script>
 <script th:src="@{//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
 <script th:src="@{//cdn.bootcss.com/limonte-sweetalert2/6.4.1/sweetalert2.min.js}"></script>
 <script th:src="@{/admin/js/base.js}"></script>

@@ -40,7 +40,7 @@ public class MultiIdentifierAndPasswordAuthenticationFilter extends AbstractAuth
             JSONObject jsonObj = JSON.parseObject(body);
             identifier = jsonObj.getString("identifier");
             password = jsonObj.getString("password");
-            rememberMe = jsonObj.getBoolean("rememberMe");
+            rememberMe = jsonObj.getBoolean("remember_me");
         }
 
         if (identifier == null){
