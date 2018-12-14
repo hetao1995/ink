@@ -5,6 +5,7 @@ import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.utils.CryptoUtils;
@@ -349,5 +350,9 @@ public final class Commons {
 
     public static String site_theme() {
         return site_option("site_theme", "default");
+    }
+
+    public static String cdnURL(){
+        return Commons.site_option(TypeConst.CDN_URL, "/admin");
     }
 }

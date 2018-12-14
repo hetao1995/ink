@@ -41,8 +41,9 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .permanent(true)
                 .active(true)
                 .build();
-        user = doLoadByNoNullProperties(user).get(0);
-        return assemble(user);
+        List<User> users = doLoadByNoNullProperties(user);
+        if(users.isEmpty()) return null;
+        return assemble(users.get(0));
     }
 
     @Override
@@ -54,8 +55,9 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .permanent(true)
                 .active(true)
                 .build();
-        user = doLoadByNoNullProperties(user).get(0);
-        return assemble(user);
+        List<User> users = doLoadByNoNullProperties(user);
+        if(users.isEmpty()) return null;
+        return assemble(users.get(0));
     }
 
     @Override
@@ -67,8 +69,9 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .permanent(true)
                 .active(true)
                 .build();
-        user = doLoadByNoNullProperties(user).get(0);
-        return assemble(user);
+        List<User> users = doLoadByNoNullProperties(user);
+        if(users.isEmpty()) return null;
+        return assemble(users.get(0));
     }
 
     @Override

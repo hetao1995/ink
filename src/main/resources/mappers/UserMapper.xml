@@ -44,8 +44,8 @@
             <if test="permanent != null">
                 permanent=#{permanent,jdbcType=BIT} and
             </if>
-            <if test="actived != null">
-                actived=#{actived,jdbcType=BIT} and
+            <if test="active != null">
+                active=#{active,jdbcType=BIT} and
             </if>
             <if test="username != null">
                 username=#{username,jdbcType=VARCHAR} and
