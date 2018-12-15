@@ -1,5 +1,6 @@
 package xyz.itao.ink.service.impl;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,10 +9,7 @@ import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.TipException;
-import xyz.itao.ink.service.AbstractBaseService;
-import xyz.itao.ink.service.RoleService;
-import xyz.itao.ink.service.SiteService;
-import xyz.itao.ink.service.UserService;
+import xyz.itao.ink.service.*;
 import xyz.itao.ink.utils.InkUtils;
 
 import java.util.List;
@@ -27,6 +25,8 @@ public class SiteServiceImpl implements SiteService {
     UserService userService;
     @Autowired
     RoleService roleService;
+    @Autowired
+    ContentService contentService;
     @Override
     public void cleanCache(String key) {
 
@@ -44,7 +44,8 @@ public class SiteServiceImpl implements SiteService {
 
     @Override
     public List<CommentVo> recentComments(int i) {
-        return null;
+        // TODO 获取最近的评论
+        return Lists.newArrayList();
     }
 
     @Override
@@ -54,7 +55,15 @@ public class SiteServiceImpl implements SiteService {
 
     @Override
     public StatisticsVo getStatistics() {
-        return null;
+        // todo 从数据库和缓存获取统计数据
+        StatisticsVo statisticsVo = StatisticsVo
+                .builder()
+                .articles(0L)
+                .comments(0L)
+                .attachs(0L)
+                .build();
+        return statisticsVo;
+
     }
 
     @Override

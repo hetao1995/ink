@@ -1,5 +1,6 @@
 package xyz.itao.ink.domain.vo;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @description 后台统计对象
  */
 @Data
+@Builder
 public class StatisticsVo implements Serializable {
 
     private static final long serialVersionUID = 2329863829741481287L;
@@ -25,5 +27,7 @@ public class StatisticsVo implements Serializable {
     private long tags;
     // 附件数
     private long attachs;
+    // 友链数
+    private long links;
 
 }

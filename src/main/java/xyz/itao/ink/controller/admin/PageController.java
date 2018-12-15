@@ -58,12 +58,12 @@ public class PageController extends BaseController {
         return "admin/" + module + "/" + page + ".html";
     }
 
-    @GetMapping("/article/edit/:cid")
+    @GetMapping("/article/edit/{cid}")
     public String editArticle(@PathVariable String cid) {
         return "admin/article/edit.html";
     }
 
-    @GetMapping("/page/edit/:cid")
+    @GetMapping("/page/edit/{cid}")
     public String editPage(@PathVariable String cid) {
         return "admin/page/edit.html";
     }
