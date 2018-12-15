@@ -86,7 +86,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .and()
                 .sessionManagement().disable();
         // 禁用缓存
-        http.headers().cacheControl();
+        http.headers().frameOptions().sameOrigin().cacheControl();
 
     }
     //配置provider

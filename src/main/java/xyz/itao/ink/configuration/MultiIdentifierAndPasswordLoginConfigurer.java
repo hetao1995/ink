@@ -29,7 +29,7 @@ public class MultiIdentifierAndPasswordLoginConfigurer<T extends MultiIdentifier
         authFilter.setSessionAuthenticationStrategy(new NullAuthenticatedSessionStrategy());
         //将filter放到logoutFilter之前
         MultiIdentifierAndPasswordAuthenticationFilter filter = postProcess(authFilter);
-        http.addFilterAfter(filter, LogoutFilter.class);
+        http.addFilterBefore(filter, LogoutFilter.class);
     }
 
     public MultiIdentifierAndPasswordLoginConfigurer<T,B> loginSuccessHandler(AuthenticationSuccessHandler authSuccessHandler){
