@@ -23,7 +23,7 @@
     from user_roles
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.UserRole">
+  <select id="selectByNoNulProperties" resultMap="BaseResultMap">
     SELECT
     <include refid="Base_Column_List"/>
     FROM user_roles

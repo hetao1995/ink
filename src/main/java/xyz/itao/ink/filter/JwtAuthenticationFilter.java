@@ -22,6 +22,7 @@ import xyz.itao.ink.domain.token.JwtAuthenticationToken;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -55,8 +56,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     protected String getJwtToken(HttpServletRequest request) {
-        String authInfo = request.getHeader("Authorization");
+        Cookie[] cookies = request.getCookies();
+        String authInfo = null;
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("Authorization")) authInfo = cookie.getValue();
+        }
+//        authInfo = request.getHeader("Authorization");
+        System.out.println("jwtbarrir:"+StringUtils.removeStart(authInfo, "Bearer "));
         return StringUtils.removeStart(authInfo, "Bearer ");
+
     }
 
     @Override
@@ -94,7 +102,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             unsuccessfulAuthentication(request, response, failed);
             return;
         }
-
         filterChain.doFilter(request, response);
     }
 

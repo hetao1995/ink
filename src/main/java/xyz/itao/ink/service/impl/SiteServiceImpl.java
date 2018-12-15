@@ -9,6 +9,7 @@ import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.TipException;
 import xyz.itao.ink.service.AbstractBaseService;
+import xyz.itao.ink.service.RoleService;
 import xyz.itao.ink.service.SiteService;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.InkUtils;
@@ -24,7 +25,8 @@ import java.util.List;
 public class SiteServiceImpl implements SiteService {
     @Autowired
     UserService userService;
-
+    @Autowired
+    RoleService roleService;
     @Override
     public void cleanCache(String key) {
 
@@ -70,6 +72,8 @@ public class SiteServiceImpl implements SiteService {
                 .email(installParam.getAdminEmail())
                 .build();
         userVo = userService.registerPermanentUser(userVo);
+        roleService.addRole("ADMIN", "管理员", 0L);
+        roleService.addRoleToUser("ADMIN", userVo.getId(), 0L);
         return userVo;
     }
 }

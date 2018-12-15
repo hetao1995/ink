@@ -60,7 +60,7 @@ public class AdminApiController {
 
     @SysLog("删除页面")
     @DeleteMapping(value = "/page/{id}")
-    public RestResponse<?> deletePage(@PathVariable Long id, UserVo userVo) {
+    public RestResponse<?> deletePage(@PathVariable Long id,@RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         contentService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -80,7 +80,7 @@ public class AdminApiController {
     }
 
     @PostMapping(value = "/articles")
-    public RestResponse newArticle(ContentVo contentVo, UserVo userVo) {
+    public RestResponse newArticle(ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
 
         contentVo.setType(TypeConst.ARTICLE);
@@ -98,14 +98,14 @@ public class AdminApiController {
     }
 
     @DeleteMapping(value = "/articles/{id}")
-    public RestResponse<?> deleteArticle(@PathVariable Long id, UserVo userVo) {
+    public RestResponse<?> deleteArticle(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         contentService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @PutMapping(value = "/articles/{id}")
-    public RestResponse updateArticle(@PathVariable Long id, ContentVo contentVo, UserVo userVo) {
+    public RestResponse updateArticle(@PathVariable Long id, ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         if (null == contentVo || null == id) {
             return RestResponse.fail("缺少参数，请重试");
         }
@@ -133,7 +133,7 @@ public class AdminApiController {
 
     @SysLog("发布页面")
     @PostMapping("/pages")
-    public RestResponse<?> newPage( ContentVo contentVo, UserVo userVo) {
+    public RestResponse<?> newPage( ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
 
         CommonValidator.valid(contentVo);
 
@@ -147,7 +147,7 @@ public class AdminApiController {
 
     @SysLog("修改页面")
     @PutMapping("/pages/{id}")
-    public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo, UserVo userVo) {
+    public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
 
         if (null == id) {
@@ -161,7 +161,7 @@ public class AdminApiController {
 
     @SysLog("保存分类")
     @PostMapping("/category")
-    public RestResponse<?> saveCategory(MetaParam metaParam, UserVo userVo) {
+    public RestResponse<?> saveCategory(MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid(), userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -169,7 +169,7 @@ public class AdminApiController {
 
     @SysLog("删除分类/标签")
     @DeleteMapping("category/{id}")
-    public RestResponse<?> deleteMeta(@PathVariable Long id, UserVo userVo) {
+    public RestResponse<?> deleteMeta(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         metaService.deleteMetaById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -184,7 +184,7 @@ public class AdminApiController {
 
     @SysLog("删除评论")
     @DeleteMapping("/comments/{id}")
-    public RestResponse<?> deleteComment(@PathVariable Long id, UserVo userVo) {
+    public RestResponse<?> deleteComment(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
 
         boolean commentVo = commentService.deleteCommentById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
@@ -193,7 +193,7 @@ public class AdminApiController {
 
     @SysLog("修改评论状态")
     @PutMapping("/comments")
-    public RestResponse<?> updateStatus( CommentVo commentVo, UserVo userVo) {
+    public RestResponse<?> updateStatus( CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         commentService.updateCommentVo(commentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -201,7 +201,7 @@ public class AdminApiController {
 
     @SysLog("回复评论")
     @PostMapping("/comment")
-    public RestResponse<?> postComment(CommentVo commentVo, UserParam userParam, UserVo userVo) {
+    public RestResponse<?> postComment(CommentVo commentVo, UserParam userParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(commentVo);
         commentService.postNewComment(commentVo, userParam, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
@@ -218,7 +218,7 @@ public class AdminApiController {
 
     @SysLog("删除附件")
     @DeleteMapping("/attaches/{id}")
-    public RestResponse<?> deleteAttach(@PathVariable Long id, UserVo userVo) throws IOException {
+    public RestResponse<?> deleteAttach(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         linkService.deleteAttachesById(id, userVo);
         return RestResponse.ok();
     }
@@ -250,7 +250,7 @@ public class AdminApiController {
 
     @SysLog("保存高级选项设置")
     @PostMapping("/advanced")
-    public RestResponse<?> saveAdvance(AdvanceParam advanceParam, UserVo userVo) {
+    public RestResponse<?> saveAdvance(AdvanceParam advanceParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         // 清除缓存
         if (StringUtils.isNotBlank(advanceParam.getCacheKey())) {
             if ("*".equals(advanceParam.getCacheKey())) {
@@ -346,7 +346,7 @@ public class AdminApiController {
 
     @SysLog("激活主题")
     @PostMapping("/themes/active")
-    public RestResponse<?> activeTheme( ThemeParam themeParam, UserVo userVo) {
+    public RestResponse<?> activeTheme( ThemeParam themeParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         optionService.saveOption(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
 //        delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
         optionService.deleteAllThemes(userVo);

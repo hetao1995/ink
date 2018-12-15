@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.common.CommonValidator;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -36,7 +37,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     /**
      * 长期token，一个月后过期
      */
-    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = 100*60*60*24*30L;
+    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = Long.valueOf(WebConstant.REMEMBER_ME_INTERVAL);
 
     @Autowired
     UserRepository userRepository;
@@ -46,6 +47,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     public UserVo registerTemporaryUser(UserVo userVo) {
         CommonValidator.valid(userVo, false);
         userVo.setActive(true);
+        userVo.setPermanent(false);
         return save(userVo, 0L);
     }
 
@@ -123,6 +125,9 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
             throw new TipException(ExceptionEnum.HOME_URL_USED);
         }
         userVo.setActive(true);
+        userVo.setPermanent(true);
+        userVo.setPassword(passwordEncoder.encode(userVo.getPassword()));
+        userVo.setSalt(BCrypt.gensalt());
         return save(userVo, 0L);
     }
 
@@ -151,6 +156,11 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     }
 
     @Override
+    public UserVo extractVo(UserDomain userDomain) {
+        return extract(userDomain);
+    }
+
+    @Override
     protected UserDomain doAssemble(UserVo vo) {
         return UserDomain
                 .builder()
@@ -163,6 +173,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
                 .lastLogin(vo.getLastLogin())
                 .salt(vo.getSalt())
                 .username(vo.getUsername())
+                .password(vo.getPassword())
                 .build();
 
     }
@@ -180,6 +191,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
                 .lastLogin(domain.getLastLogin())
                 .salt(domain.getSalt())
                 .username(domain.getUsername())
+                .password(domain.getPassword())
                 .build();
     }
 

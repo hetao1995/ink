@@ -199,7 +199,7 @@ public class PatternUtils {
      * @return 是否验证成功
      */
     public static boolean isUsername(String username){
-        String regex = "^[a-zA-Z]\\w{5,17}$";
+        String regex = "^[a-zA-Z]\\w{2,20}$";
         return Pattern.matches(regex, username);
     }
 

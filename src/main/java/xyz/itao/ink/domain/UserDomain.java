@@ -117,7 +117,7 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
             return roles;
         }
         List<UserRoleDomain> userRoleDomains = userRoleRepository.loadAllActiveUserRolesByUserId(id);
-
+        System.out.println("userroleDomain:"+userRoleDomains);
         roles = Lists.newArrayList();
         for (UserRoleDomain userRoleDomain : userRoleDomains) {
             roles.add(userRoleDomain.getRole());

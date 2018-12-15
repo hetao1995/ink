@@ -106,4 +106,11 @@ public interface UserService {
      * @param userVo 修改谁的
      */
     void updatePassword(String old_password, String password, UserVo userVo);
+
+    /**
+     * 提取uservo
+     * @param userDomain 传入的userdomain
+     * @return 提取的结果
+     */
+    UserVo extractVo(UserDomain userDomain);
 }

@@ -1,6 +1,7 @@
 package xyz.itao.ink.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import xyz.itao.ink.domain.RoleDomain;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.UserRoleDomain;
@@ -16,6 +17,7 @@ import xyz.itao.ink.service.RoleService;
  * @date 2018-12-04
  * @description
  */
+@Service("roleService")
 public class RoleServiceImpl implements RoleService {
     @Autowired
     RoleRepository roleRepository;

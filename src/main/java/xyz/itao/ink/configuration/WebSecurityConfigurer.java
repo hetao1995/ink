@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
@@ -16,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import xyz.itao.ink.filter.JwtAuthenticationFilter;
 import xyz.itao.ink.filter.OptionRequestFilter;
 import xyz.itao.ink.handler.MultiIdentifierAndPasswordLoginSuccessHandler;
 import xyz.itao.ink.handler.JwtLoginSuccessHandler;
@@ -38,14 +40,14 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //静态资源访问无需认证
                 .antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html", "/**/*.png").permitAll()
                 .antMatchers("/*").permitAll()
-                .antMatchers("/admin/login").permitAll()
+//                .antMatchers("/admin/login").permitAll()
                 //admin开头的请求，需要admin权限
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 //需登陆才能访问的url
                 .antMatchers("/article/**").hasRole("USER")
                 //默认其它的请求都需要认证
-//                .anyRequest().authenticated()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
+//                .anyRequest().permitAll()
                 .and()
                 //CRSF禁用，因为不使用session
                 .csrf().disable()
@@ -53,8 +55,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .sessionManagement().disable()
                 .formLogin()
                 .loginPage("/login")
-                .failureForwardUrl("/login?error")
-                .successForwardUrl("/admin/index")
+//                .failureForwardUrl("/login?error")
+//                .successForwardUrl("/admin/index")
                 //拒绝form登录
 //                .disable()
                 .and()
@@ -63,8 +65,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //添加header设置，支持跨域和ajax请求
                 .and()
                 .headers().addHeaderWriter(new StaticHeadersWriter(Arrays.asList(
-                new Header("Access-control-Allow-Origin","*"),
-                new Header("Access-Control-Expose-Headers","Authorization"))))
+                new Header("Access-control-Allow-Origin","*"))))
+//                new Header("Access-Control-Expose-Headers","Authorization"))))
                 .and()
                 //拦截OPTIONS请求，直接返回header
                 .addFilterAfter(new OptionRequestFilter(), CorsFilter.class)
@@ -83,6 +85,9 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                 .and()
                 .sessionManagement().disable();
+        // 禁用缓存
+        http.headers().cacheControl();
+
     }
     //配置provider
     @Override

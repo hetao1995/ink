@@ -33,15 +33,16 @@ public class MultiIdentifierAndPasswordAuthenticationFilter extends AbstractAuth
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException, ServletException {
         //从json中获取identifier和password
-        String body = StreamUtils.copyToString(request.getInputStream(), Charset.forName("UTF-8"));
-        String identifier = null, password = null;
-        Boolean rememberMe = false;
-        if (StringUtils.hasText(body)) {
-            JSONObject jsonObj = JSON.parseObject(body);
-            identifier = jsonObj.getString("identifier");
-            password = jsonObj.getString("password");
-            rememberMe = jsonObj.getBoolean("remember_me");
-        }
+//        String body = StreamUtils.copyToString(request.getInputStream(), Charset.forName("UTF-8"));
+        //从请求参数中获取账号、密码、rememberMe
+        String identifier = request.getParameter("identifier"), password = request.getParameter("password");
+        Boolean rememberMe = Boolean.valueOf(request.getParameter("remember_me"));
+//        if (StringUtils.hasText(body)) {
+//            JSONObject jsonObj = JSON.parseObject(body);
+//            identifier = jsonObj.getString("identifier");
+//            password = jsonObj.getString("password");
+//            rememberMe = jsonObj.getBoolean("remember_me");
+//        }
 
         if (identifier == null){
             identifier = "";

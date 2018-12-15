@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
@@ -72,7 +69,7 @@ public class PageController extends BaseController {
     }
 
     @GetMapping("login")
-    public String login(HttpServletResponse response, UserVo userVo) throws IOException {
+    public String login(HttpServletResponse response, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo)  throws IOException {
         if (null != userVo) {
             response.sendRedirect("/admin/index");
             return null;

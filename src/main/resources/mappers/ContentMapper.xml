@@ -34,7 +34,7 @@
     from contents
     where id = #{id,jdbcType=BIGINT}
   </select>
-    <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.Content">
+    <select id="selectByNoNulProperties" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List"/>
       from contents

@@ -12,6 +12,7 @@ import org.springframework.web.util.WebUtils;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.service.LogService;
@@ -53,6 +54,7 @@ public class IndexController extends BaseController {
 
         request.setAttribute("comments", commentVos);
         request.setAttribute("articles", contentVo);
+        System.out.println(request.getAttribute("indexUser:"+WebConstant.LOGIN_USER));
         request.setAttribute("statistics", statisticsVo);
         return "admin/index";
     }

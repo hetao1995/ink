@@ -49,6 +49,9 @@ public class OptionServiceImpl implements OptionService {
                     .builder()
                     .name(k)
                     .value(v)
+                    .active(true)
+                    .createBy(0L)
+                    .updateBy(0L)
                     .build();
             optionRepository.saveNewOptionDomain(optionDomain);
         }

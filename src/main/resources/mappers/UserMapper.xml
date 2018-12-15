@@ -29,7 +29,7 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
 
-    <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.User">
+    <select id="selectByNoNulProperties" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         from users

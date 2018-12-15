@@ -22,7 +22,7 @@
     from options
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.Option">
+  <select id="selectByNoNulProperties" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from options
@@ -32,7 +32,7 @@
       id = #{id,jdbcType=BIGINT} and
     </if>
     <if test="deleted != null" >
-      deleted = #{deleted,jdbcType=BIT} and,
+      deleted = #{deleted,jdbcType=BIT} and
     </if>
     <if test="active != null" >
       active = #{active,jdbcType=BIT} and

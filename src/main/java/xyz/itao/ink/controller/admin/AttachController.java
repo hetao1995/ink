@@ -73,7 +73,7 @@ public class AttachController extends BaseController {
     @PostMapping(value = "upload")
     @ResponseBody
     @SysLog("上传文件")
-    public RestResponse<?> upload( @RequestParam("file") MultipartFile[] multipartFiles, UserVo userVo) throws IOException {
+    public RestResponse<?> upload( @RequestParam("file") MultipartFile[] multipartFiles, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         if(multipartFiles==null){
             RestResponse.fail("请选择文件上传！");
         }
@@ -104,7 +104,7 @@ public class AttachController extends BaseController {
     @DeleteMapping(value = "{id}")
     @ResponseBody
     @SysLog(value = "删除附件")
-    public RestResponse delete(@PathVariable Long id, UserVo userVo) {
+    public RestResponse delete(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         linkService.deleteAttachesById(id, userVo);
 //        try {
 //            LinkVo linkVo = linkService.selectById(id);

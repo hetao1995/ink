@@ -10,6 +10,7 @@ import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.JwtAuthenticationToken;
 import xyz.itao.ink.service.UserService;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.file.Watchable;
@@ -35,10 +36,14 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         DecodedJWT jwt = ((JwtAuthenticationToken) authentication).getToken();
         boolean shouldRefresh = shouldTokenRefresh(jwt.getIssuedAt());
         UserDomain userDomain = (UserDomain) authentication.getPrincipal();
-        request.setAttribute(WebConstant.LOGIN_USER, userDomain);
+        request.setAttribute(WebConstant.LOGIN_USER, userService.extractVo(userDomain));
+        System.out.println("jwtLoginuser:"+request.getAttribute(WebConstant.LOGIN_USER));
         if (shouldRefresh) {
             String newToken = userService.getJwtLoginToken(userDomain, false);
-            response.setHeader("Authorization", newToken);
+//            response.setHeader("Authorization", newToken);
+            Cookie cookie = new Cookie("Authorization", newToken);
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
         }
     }
 

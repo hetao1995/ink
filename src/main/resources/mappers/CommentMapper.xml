@@ -26,7 +26,7 @@
     from comments
     where id = #{id,jdbcType=BIGINT}
   </select>
-    <select id="selectByNoNulProperties" resultType="xyz.itao.ink.domain.entity.Comment">
+    <select id="selectByNoNulProperties" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List"/>
       from comments

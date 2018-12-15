@@ -27,7 +27,7 @@ public class JwtLoginConfigurer<T extends JwtLoginConfigurer<T, B>, B extends Ht
         authFilter.setAuthenticationFailureHandler(new HttpStatusLoginFailureHandler());
         //将filter放到logoutFilter之前
         JwtAuthenticationFilter filter = postProcess(authFilter);
-        http.addFilterBefore(filter, LogoutFilter.class);
+        http.addFilterAfter(filter, LogoutFilter.class);
     }
     //设置匿名用户可访问url
     public JwtLoginConfigurer<T, B> permissiveRequestUrls(String ... urls){

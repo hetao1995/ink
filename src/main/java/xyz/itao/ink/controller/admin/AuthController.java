@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.RestResponse;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.UserService;
@@ -31,14 +33,14 @@ public class AuthController  {
 
     @SysLog("保存个人信息")
     @PutMapping("/profile")
-    public RestResponse saveProfile(String screenName, String email, UserVo userVo) {
+    public RestResponse saveProfile(String screenName, String email, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         userService.updateProfile(screenName, email, userVo);
         return RestResponse.ok();
     }
 
     @SysLog("修改登录密码")
     @PutMapping("/password")
-    public RestResponse upPwd(String old_password, String password, UserVo userVo) {
+    public RestResponse upPwd(String old_password, String password, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         if (StringUtils.isBlank(old_password) || StringUtils.isBlank(password)) {
             return RestResponse.fail("请确认信息输入完整");
         }
