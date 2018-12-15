@@ -38,6 +38,5 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
         }
         response.addCookie(cookie);
         request.setAttribute(WebConstant.LOGIN_USER, userService.extractVo((UserDomain) authentication.getPrincipal()));
-        System.out.println("successUser:"+request.getAttribute(WebConstant.LOGIN_USER));
     }
 }

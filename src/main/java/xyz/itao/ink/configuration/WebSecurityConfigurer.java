@@ -52,7 +52,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //CRSF禁用，因为不使用session
                 .csrf().disable()
                 //禁用session
-                .sessionManagement().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and()
                 .formLogin()
                 .loginPage("/login")
 //                .failureForwardUrl("/login?error")
@@ -87,7 +87,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .sessionManagement().disable();
         // 禁用缓存
         http.headers().frameOptions().sameOrigin().cacheControl();
-
     }
     //配置provider
     @Override

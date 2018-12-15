@@ -54,7 +54,6 @@ public class IndexController extends BaseController {
 
         request.setAttribute("comments", commentVos);
         request.setAttribute("articles", contentVo);
-        System.out.println(request.getAttribute("indexUser:"+WebConstant.LOGIN_USER));
         request.setAttribute("statistics", statisticsVo);
         return "admin/index";
     }

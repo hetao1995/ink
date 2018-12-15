@@ -45,7 +45,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private AuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
 
     public JwtAuthenticationFilter() {
-        this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
+//        this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
+        this.requiresAuthenticationRequestMatcher = request -> {
+            Cookie[] cookies = request.getCookies();
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("Authorization")) return true;
+            }
+            return false;
+        };
     }
 
     @Override
@@ -62,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(cookie.getName().equals("Authorization")) authInfo = cookie.getValue();
         }
 //        authInfo = request.getHeader("Authorization");
-        System.out.println("jwtbarrir:"+StringUtils.removeStart(authInfo, "Bearer "));
+
         return StringUtils.removeStart(authInfo, "Bearer ");
 
     }
@@ -78,6 +85,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         AuthenticationException failed = null;
         try {
             String token = getJwtToken(request);
+            System.out.println("jwtbarrir:"+token);
             if(StringUtils.isNotBlank(token)) {
                 JwtAuthenticationToken authToken = new JwtAuthenticationToken(JWT.decode(token));
                 authResult = this.getAuthenticationManager().authenticate(authToken);
@@ -102,6 +110,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             unsuccessfulAuthentication(request, response, failed);
             return;
         }
+
         filterChain.doFilter(request, response);
     }
 
