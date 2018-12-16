@@ -26,11 +26,7 @@ public class ContentVo {
      * 作者的id
      */
     private Long authorId;
-
-    /**
-     * 是否被删除
-     */
-    private Boolean deleted;
+    
 
     /**
      * 是否处于激活状态
