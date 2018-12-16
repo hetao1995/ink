@@ -22,9 +22,11 @@ import xyz.itao.ink.utils.FileUtils;
 import xyz.itao.ink.utils.IdUtils;
 import xyz.itao.ink.utils.ImageUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,29 +64,33 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
     public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserVo userVo)  {
         List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {
-            String fname = multipartFile.getName(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
+            String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
+            System.out.println("fname:"+fname);
             String fid = String.valueOf(IdUtils.nextId());
-            String fkey = WebConstant.UP_DIR+"/upload/"+fid+"."+ FileUtils.fileExt(fname);
+            String fkey = File.separator+"upload"+File.separator+fid+"."+ FileUtils.fileExt(fname);
             LinkVo linkVo = LinkVo
                     .builder()
                     .fileName(fname)
                     .authorId(userVo.getId())
                     .fileKey(fkey)
                     .fileType(ftype)
+                    .active(true)
                     .build();
 
             // todo 上传到TFS
             String filePath = WebConstant.UP_DIR + fkey;
+            System.out.println("filePath:"+filePath);
             try {
                 Files.write(Paths.get(filePath), multipartFile.getBytes());
                 if(TypeConst.IMAGE.equals(ftype)){
                     // todo 上传剪切文件到TFS
                     String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
-                    ImageUtils.cutCenterImage(WebConstant.CLASSPATH + fkey, thumbnailFilePath, 270, 380);
+                    ImageUtils.cutCenterImage(WebConstant.UP_DIR + fkey, WebConstant.UP_DIR +thumbnailFilePath, 270, 380);
                 }
                 res.add(save(linkVo, userVo.getId()));
             } catch (IOException e) {
                 log.debug("上传文件失败！", e);
+                e.printStackTrace();
                 res.add(linkVo);
                 continue;
             }

@@ -10,7 +10,7 @@ var vm = new Vue({
     el: '#app',
     data: {
         article: {
-            cid: '',
+            id: '',
             title: '',
             slug: '',
             tags: '',
@@ -22,7 +22,7 @@ var vm = new Vue({
             allowPing: true,
             allowFeed: true,
             created: moment().unix(),
-            createdTime: moment().format('YYYY-MM-DD HH:mm'),
+            createTime: moment().format('YYYY-MM-DD HH:mm'),
             selected: ['默认分类']
         },
         categories: [],
@@ -62,12 +62,10 @@ var vm = new Vue({
 
                 var params = tale.copy($vm.article);
                 params.selected = null;
-                params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
+                params.createTime = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
                 params.tags = $('#tags').val();
-
-                var url = $vm.article.cid !== '' ? '/admin/api/article/update' : '/admin/api/article/new';
-                tale.post({
-                    url: url,
+                var options = {
+                    url: '/admin/api/article/',
                     data: params,
                     success: function (result) {
                         if (result && result.success) {
@@ -81,7 +79,8 @@ var vm = new Vue({
                         console.log(error);
                         clearInterval(refreshIntervalId);
                     }
-                });
+                };
+                $vm.article.id !== '' ? tale.put(options) : tale.post(options);
             }
         },
         switchEditor: function (event) {
@@ -167,7 +166,7 @@ $(document).ready(function () {
                 data.append('image_up', files[0]);
                 tale.showLoading();
                 $.ajax({
-                    url: '/admin/api/attach/upload',
+                    url: '/admin/api/attach/',
                     method: 'POST',
                     data: data,
                     processData: false,
@@ -179,7 +178,7 @@ $(document).ready(function () {
                     success: function (result) {
                         tale.hideLoading();
                         if (result && result.success) {
-                            var url = $('#attach_url').val() + result.payload[0].fkey;
+                            var url = $('#attach_url').val() + result.payload[0].fileKey;
                             console.log('url =>' + url);
                             htmlEditor.summernote('insertImage', url);
                         } else {
@@ -261,7 +260,7 @@ $(document).ready(function () {
 
     // 缩略图上传
     $("#dropzone").dropzone({
-        url: "/admin/api/attach/upload",
+        url: "/admin/api/attach/",
         filesizeBase: 1024,//定义字节算法 默认1000
         maxFilesize: '10', //MB
         fallback: function () {
@@ -270,9 +269,9 @@ $(document).ready(function () {
         acceptedFiles: 'image/*',
         dictFileTooBig: '您的文件超过10MB!',
         dictInvalidInputType: '不支持您上传的类型',
-        headers: {
-            'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content
-        },
+        // headers: {
+        //     'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content
+        // },
         init: function () {
             this.on('success', function (files, result) {
                 console.log("upload success..");

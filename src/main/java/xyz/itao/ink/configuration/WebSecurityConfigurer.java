@@ -38,7 +38,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 //静态资源访问无需认证
-                .antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html", "/**/*.png").permitAll()
+                .antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html", "/**/*.png","/**/*.svg","/**/*.otf","/**/*.eot", "/**/*.ttf","/**/*.woff","/**/*.woff2").permitAll()
                 .antMatchers("/*").permitAll()
 //                .antMatchers("/admin/login").permitAll()
                 //admin开头的请求，需要admin权限

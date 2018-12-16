@@ -102,7 +102,7 @@ $.tale.prototype.alertBox = function (options) {
 };
 
 window.axios.defaults.headers.common = {
-    'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content,
+    // 'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content,
     'X-Requested-With': 'XMLHttpRequest'
 };
 
@@ -130,6 +130,32 @@ $.tale.prototype.post = function (options) {
         options.error && options.error(error)
     });
 };
+/**
+ * 全局put函数
+ * @param options
+ */
+$.tale.prototype.put = function(options){
+    var self = this;
+    axios.put(options.url, options.data || {}).then(function (response) {
+        self.hideLoading();
+        options.success && options.success(response.data);
+    }).catch(function (error) {
+        options.error && options.error(error)
+    })
+}
+/**
+ * 全局delete函数
+ * @param options
+ */
+$.tale.prototype.delete = function(options){
+    var self = this;
+    axios.delete(options.url, options.data || {}).then(function (response) {
+        self.hideLoading();
+        options.success && options.success(response.data);
+    }).catch(function (error) {
+        options.error && options.error(error);
+    })
+}
 
 /**
  * 通过 FORM 表单方式提交

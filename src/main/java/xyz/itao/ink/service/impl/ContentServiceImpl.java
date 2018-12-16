@@ -94,6 +94,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public ContentVo publishNewContent(ContentVo contentVo, UserVo userVo) {
+        contentVo.setActive(true);
         return save(contentVo, userVo.getId());
     }
 

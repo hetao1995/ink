@@ -3,6 +3,8 @@ package xyz.itao.ink.domain.vo;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author hetao
  * @date 2018-12-05
@@ -51,4 +53,9 @@ public class CommentVo {
      * 评论状态
      */
     private String status;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

@@ -88,7 +88,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         AuthenticationException failed = null;
         try {
             String token = getJwtToken(request);
-            System.out.println("jwtbarrir:"+token);
             if(StringUtils.isNotBlank(token)) {
                 JwtAuthenticationToken authToken = new JwtAuthenticationToken(JWT.decode(token));
                 authResult = this.getAuthenticationManager().authenticate(authToken);

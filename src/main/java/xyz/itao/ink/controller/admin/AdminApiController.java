@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.bootstrap.InkLoader;
 import xyz.itao.ink.common.CommonValidator;
@@ -66,25 +67,26 @@ public class AdminApiController {
         return RestResponse.ok();
     }
 
-    @GetMapping(value = "/articles/{id}")
+    @GetMapping(value = "/article/{id}")
     public RestResponse article(@PathVariable Long id) {
         ContentVo contentVo = contentService.loadContentVoById(id);
         contentVo.setContent("");
         return RestResponse.ok(contentVo);
     }
 
-    @GetMapping(value = "/articles/content/{id}")
+    @GetMapping(value = "/article/content/{id}")
     public String articleContent(@PathVariable Long id) {
         ContentVo contentVo = contentService.loadContentVoById(id);
         return contentVo.getContent();
     }
 
-    @PostMapping(value = "/articles")
+    @PostMapping(value = "/article")
     public RestResponse newArticle(ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
 
         contentVo.setType(TypeConst.ARTICLE);
         contentVo.setAuthorId(userVo.getId());
+        System.out.println("commentVo:"+contentVo);
         //将点击数设初始化为0
         contentVo.setHits(0L);
         //将评论数设初始化为0
@@ -97,25 +99,24 @@ public class AdminApiController {
         return RestResponse.ok(cid);
     }
 
-    @DeleteMapping(value = "/articles/{id}")
+    @DeleteMapping(value = "/article/{id}")
     public RestResponse<?> deleteArticle(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         contentService.deleteById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
-    @PutMapping(value = "/articles/{id}")
-    public RestResponse updateArticle(@PathVariable Long id, ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        if (null == contentVo || null == id) {
+    @PutMapping(value = "/article")
+    public RestResponse updateArticle(ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+        if (null == contentVo || contentVo.getId() == null) {
             return RestResponse.fail("缺少参数，请重试");
         }
-        contentVo.setId(id);
         CommonValidator.valid(contentVo);
         contentService.updateArticle(contentVo, userVo);
-        return RestResponse.ok(id);
+        return RestResponse.ok(contentVo.getId());
     }
 
-    @GetMapping("/articles")
+    @GetMapping("/article")
     public RestResponse articleList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setOrderBy("create_time desc");
@@ -208,7 +209,7 @@ public class AdminApiController {
         return RestResponse.ok();
     }
 
-    @GetMapping("/attaches")
+    @GetMapping("/attach")
     public RestResponse attachList(PageParam pageParam) {
 
         PageInfo<LinkVo> linkVoPageInfo = linkService.loadAllActiveLinkVo(pageParam);
@@ -217,10 +218,21 @@ public class AdminApiController {
     }
 
     @SysLog("删除附件")
-    @DeleteMapping("/attaches/{id}")
+    @DeleteMapping("/attach/{id}")
     public RestResponse<?> deleteAttach(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         linkService.deleteAttachesById(id, userVo);
         return RestResponse.ok();
+    }
+
+    @PostMapping(value = "/attach")
+    @ResponseBody
+    @SysLog("上传文件")
+    public RestResponse<?> uploadAttach(@RequestParam("file") MultipartFile[] multipartFiles, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+        if(multipartFiles==null){
+            RestResponse.fail("请选择文件上传！");
+        }
+        List<LinkVo> uploadFiles = linkService.saveFiles(multipartFiles, userVo);
+        return RestResponse.ok(uploadFiles);
     }
 
     @GetMapping("/categories")
