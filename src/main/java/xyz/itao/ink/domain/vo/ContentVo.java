@@ -23,17 +23,6 @@ public class ContentVo {
     private Long id;
 
     /**
-     * 作者的id
-     */
-    private Long authorId;
-
-
-    /**
-     * 是否处于激活状态
-     */
-    private Boolean active;
-
-    /**
      * 内容标题
      */
     private String title;
@@ -44,9 +33,14 @@ public class ContentVo {
     private String slug;
 
     /**
-     * 内容类别
+     * 标签列表
      */
-    private String type;
+    private String tags;
+
+    /**
+     * 内容文字
+     */
+    private String content;
 
     /**
      * 内容状态
@@ -54,29 +48,19 @@ public class ContentVo {
     private String status;
 
     /**
-     * 标签列表
+     * 是那种格式的，Markdown或者html
      */
-    private String tags;
+    private String fmtType;
 
     /**
-     * 分类列表
+     * 缩略图的地址
      */
-    private String categories;
-
-    /**
-     * 点击次数
-     */
-    private Long hits;
+    private String thumbImg;
 
     /**
      * 是否允许评论
      */
     private Boolean allowComment;
-
-    /**
-     * 内容所属评论数目
-     */
-    private Long commentsNum;
 
     /**
      * 是否允许ping
@@ -89,24 +73,39 @@ public class ContentVo {
     private Boolean allowFeed;
 
     /**
-     * 内容文字
-     */
-    private String content;
-
-    /**
-     * 缩略图的地址
-     */
-    private String thumbImg;
-
-    /**
-     * 是那种格式的，Markdown或者html
-     */
-    private String fmtType;
-
-    /**
      * 显示的创建时间戳
      */
     private Integer created;
+
+    /**
+     * 分类列表
+     */
+    private String categories;
+
+    /**
+     * 作者的id
+     */
+    private Long authorId;
+
+    /**
+     * 是否处于激活状态
+     */
+    private Boolean active;
+
+    /**
+     * 内容类别
+     */
+    private String type;
+
+    /**
+     * 点击次数
+     */
+    private Long hits;
+
+    /**
+     * 内容所属评论数目
+     */
+    private Long commentsNum;
 
     /**
      * 展示的修改时间戳

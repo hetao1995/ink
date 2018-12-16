@@ -18,10 +18,10 @@ import xyz.itao.ink.utils.PatternUtils;
 public class CommonValidator {
 
     public static void valid(ContentVo contentVo) {
-        if(stringLengthBetween(contentVo.getTitle(), WebConstant.MIN_CONTENT_TITLE_LENGTH, WebConstant.MAX_CONTENT_TITLE_LENGTH)){
+        if(!stringLengthBetween(contentVo.getTitle(), WebConstant.MIN_CONTENT_TITLE_LENGTH, WebConstant.MAX_CONTENT_TITLE_LENGTH)){
             throw new TipException(ExceptionEnum.CONTENT_TITLE_ILLEGAL);
         }
-        if(stringLengthBetween(contentVo.getContent(), WebConstant.MIN_CONTENT_TEXT_LENGTH, WebConstant.MAX_CONTENT_TEXT_LENGTH)){
+        if(!stringLengthBetween(contentVo.getContent(), WebConstant.MIN_CONTENT_TEXT_LENGTH, WebConstant.MAX_CONTENT_TEXT_LENGTH)){
             throw  new TipException(ExceptionEnum.CONTENT_TEXT_ILLEGAL);
         }
 

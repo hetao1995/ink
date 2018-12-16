@@ -107,7 +107,7 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // var tale = new $.tale();
+    var tale = new $.tale();
     // function checkForm() {
     //     tale.post({
     //         url: '/admin/login',
@@ -140,7 +140,7 @@
                         window.location.href = '/admin/index';
                     },
                     function (res) {
-                        alert("error");
+                        tale.alertError(res.msg || '登录失败');
                     })
             }
         }

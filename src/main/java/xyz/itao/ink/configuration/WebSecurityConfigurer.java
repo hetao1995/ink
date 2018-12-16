@@ -44,7 +44,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //admin开头的请求，需要admin权限
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 //需登陆才能访问的url
-                .antMatchers("/article/**").hasRole("USER")
+                .antMatchers("/backend/**").hasRole("USER")
                 //默认其它的请求都需要认证
                 .anyRequest().authenticated()
 //                .anyRequest().permitAll()

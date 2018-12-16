@@ -329,8 +329,8 @@ public final class Commons {
      * @param cid
      * @return
      */
-    public static String show_icon(int cid) {
-        return ICONS[cid % ICONS.length];
+    public static String show_icon(long cid) {
+        return ICONS[(int) (cid % ICONS.length)];
     }
 
     /**

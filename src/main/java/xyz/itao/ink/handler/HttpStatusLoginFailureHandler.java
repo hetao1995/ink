@@ -19,6 +19,9 @@ public class HttpStatusLoginFailureHandler implements AuthenticationFailureHandl
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            return;
+        }
         for(Cookie cookie : cookies){
             cookie.setMaxAge(0);
             response.addCookie(cookie);

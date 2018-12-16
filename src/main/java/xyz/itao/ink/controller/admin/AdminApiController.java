@@ -81,12 +81,11 @@ public class AdminApiController {
     }
 
     @PostMapping(value = "/article")
-    public RestResponse newArticle(ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse newArticle(@RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
 
         contentVo.setType(TypeConst.ARTICLE);
         contentVo.setAuthorId(userVo.getId());
-        System.out.println("commentVo:"+contentVo);
         //将点击数设初始化为0
         contentVo.setHits(0L);
         //将评论数设初始化为0

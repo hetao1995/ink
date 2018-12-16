@@ -2,6 +2,7 @@ package xyz.itao.ink.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -665,4 +666,7 @@ public class DateUtils {
         return Long.valueOf(String.valueOf(tomorrow.getTimeInMillis()).substring(0, 10));
     }
 
+    public static Date toDate(long unixTime) {
+        return Date.from(Instant.ofEpochSecond(unixTime));
+    }
 }

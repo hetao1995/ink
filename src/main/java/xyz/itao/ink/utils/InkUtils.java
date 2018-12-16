@@ -180,7 +180,7 @@ public class InkUtils {
             content.setValue(value);
             item.setContent(content);
             item.setLink(permalink(post.getId(), post.getSlug()));
-            item.setPubDate(post.getCreateTime());
+            item.setPubDate(DateUtils.toDate(post.getCreated()));
             items.add(item);
         });
         channel.setItems(items);
@@ -221,7 +221,7 @@ public class InkUtils {
 
     private static Url parse(ContentVo contentVo) {
         Url url = new Url(Commons.site_url() + "/article/" + contentVo.getId());
-        url.lastmod = DateUtils.dateFormat(contentVo.getUpdateTime(), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+        url.lastmod = DateUtils.dateFormat(DateUtils.toDate(contentVo.getModified()), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         return url;
     }
 
