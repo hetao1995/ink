@@ -62,7 +62,7 @@ var vm = new Vue({
 
                 var params = tale.copy($vm.article);
                 params.selected = null;
-                params.createTime = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
+                params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
                 params.tags = $('#tags').val();
                 var options = {
                     url: '/admin/api/article/',
