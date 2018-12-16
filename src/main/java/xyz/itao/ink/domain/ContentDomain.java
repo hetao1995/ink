@@ -94,6 +94,26 @@ public class ContentDomain extends BaseDomain{
     private String content;
 
     /**
+     * 缩略图的地址
+     */
+    private String thumbImg;
+
+    /**
+     * 是那种格式的，Markdown或者html
+     */
+    private String fmtType;
+
+    /**
+     * 显示的创建时间
+     */
+    private Date created;
+
+    /**
+     * 展示的修改时间
+     */
+    private Date modified;
+
+    /**
      * 创建时间
      */
     private Date createTime;

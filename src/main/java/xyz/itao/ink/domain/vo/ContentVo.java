@@ -28,6 +28,11 @@ public class ContentVo {
     private Long authorId;
 
     /**
+     * 是否被删除
+     */
+    private Boolean deleted;
+
+    /**
      * 是否处于激活状态
      */
     private Boolean active;
@@ -93,12 +98,23 @@ public class ContentVo {
     private String content;
 
     /**
-     * 创建时间
+     * 缩略图的地址
      */
-    private Date createTime;
+    private String thumbImg;
 
     /**
-     * 修改时间
+     * 是那种格式的，Markdown或者html
      */
-    private Date updateTime;
+    private String fmtType;
+
+    /**
+     * 显示的创建时间
+     */
+    private Date created;
+
+    /**
+     * 展示的修改时间
+     */
+    private Date modified;
+
 }
