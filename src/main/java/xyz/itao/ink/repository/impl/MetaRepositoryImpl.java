@@ -41,6 +41,15 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
     }
 
     @Override
+    public List<MetaDomain> loadMetaDomainsByType(String type) {
+        MetaDomain metaDomain = MetaDomain
+                .builder()
+                .type(type)
+                .build();
+        return loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
+    }
+
+    @Override
     protected boolean doSave(Meta entity) {
         return metaMapper.insertSelective(entity);
     }

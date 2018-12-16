@@ -43,4 +43,11 @@ public interface MetaService {
      * @return
      */
     MetaVo getMeta(String type, String keyword);
+
+    /**
+     * 根据type获取meta
+     * @param type
+     * @return
+     */
+    List<MetaVo> getMetasByType(String type);
 }

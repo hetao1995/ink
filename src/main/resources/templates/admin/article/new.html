@@ -119,6 +119,6 @@
     </div>
 </div>
 <footer th:replace="admin/article/_footer"/>
-<script src="/static/admin/js/new_article.js?v=${version}" ></script>
+<script th:src="${commons.cdnURL()}+'/js/new_article.js'" ></script>
 </body>
 </html>

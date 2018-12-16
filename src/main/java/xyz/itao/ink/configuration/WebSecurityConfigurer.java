@@ -52,7 +52,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //CRSF禁用，因为不使用session
                 .csrf().disable()
                 //禁用session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .formLogin()
                 .loginPage("/login")
 //                .failureForwardUrl("/login?error")

@@ -48,6 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
         this.requiresAuthenticationRequestMatcher = request -> {
             Cookie[] cookies = request.getCookies();
+            if(cookies == null){
+                return false;
+            }
             for(Cookie cookie : cookies){
                 if(cookie.getName().equals("Authorization")) return true;
             }

@@ -16,6 +16,7 @@ import xyz.itao.ink.service.MetaService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -103,5 +104,11 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     @Override
     public MetaVo getMeta(String type, String keyword) {
         return null;
+    }
+
+    @Override
+    public List<MetaVo> getMetasByType(String type) {
+        List<MetaDomain> metaDomains = metaRepository.loadMetaDomainsByType(type);
+        return metaDomains.stream().map(d->extract(d)).collect(Collectors.toList());
     }
 }

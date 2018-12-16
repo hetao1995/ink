@@ -19,8 +19,6 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     BaseInterceptor baseInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/mystatic/**")
-                .addResourceLocations("classpath:/mystatic/");
         registry.addResourceHandler("/user/**").addResourceLocations("classpath:/templates/themes/default/static/");
         registry.addResourceHandler("/admin/**").addResourceLocations("classpath:/templates/admin/static/");
         super.addResourceHandlers(registry);

@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.common.Commons;
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
+import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.MetaService;
@@ -32,21 +34,23 @@ import java.util.stream.Collectors;
  * @description
  */
 @Controller
-@RequestMapping("/admin/article")
+@RequestMapping("/admin/page")
 @Slf4j
 public class PageController extends BaseController {
 
     @Autowired
     private ContentService contentService;
-
-    @Autowired
-    private MetaService metaService;
-
     @Autowired
     private OptionService optionService;
 
+
+    
+
     @Autowired
     private SiteService siteService;
+
+
+
 
     @GetMapping("/{page}")
     public String commonPage(@PathVariable String page) {
@@ -58,27 +62,30 @@ public class PageController extends BaseController {
         return "admin/" + module + "/" + page + ".html";
     }
 
-    @GetMapping("/article/edit/{cid}")
-    public String editArticle(@PathVariable String cid) {
-        return "admin/article/edit.html";
-    }
+    /**
+     * 主题设置页面
+     */
+    @GetMapping("theme/setting")
+    public String setting(HttpServletRequest request) {
+        String currentTheme = Commons.site_theme();
+        String key          = "theme_" + currentTheme + "_options";
 
-    @GetMapping("/page/edit/{cid}")
-    public String editPage(@PathVariable String cid) {
-        return "admin/page/edit.html";
-    }
-
-    @GetMapping("login")
-    public String login(HttpServletResponse response, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo)  throws IOException {
-        if (null != userVo) {
-            response.sendRedirect("/admin/index");
-            return null;
+        String              option = optionService.getOption(key);
+        Map<String, Object> map    = new HashMap<>();
+        try {
+            if (StringUtils.isNotBlank(option)) {
+                map = JSON.parseObject(option);
+            }
+            request.setAttribute("options", map);
+        } catch (Exception e) {
+            log.error("解析主题设置出现异常", e);
         }
-        return "admin/login";
+        request.setAttribute("theme_options", map);
+        return this.render("setting");
     }
 
     @GetMapping("template")
-    public String index(HttpServletRequest request) {
+    public String templateIndex(HttpServletRequest request) {
         String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
         try {
             List<String> files = Files.list(Paths.get(themePath))
@@ -121,27 +128,11 @@ public class PageController extends BaseController {
         return content;
     }
 
-    /**
-     * 主题设置页面
-     */
-    @GetMapping("theme/setting")
-    public String setting(HttpServletRequest request) {
-        String currentTheme = Commons.site_theme();
-        String key          = "theme_" + currentTheme + "_options";
-
-        String              option = optionService.getOption(key);
-        Map<String, Object> map    = new HashMap<>();
-        try {
-            if (StringUtils.isNotBlank(option)) {
-                map = JSON.parseObject(option);
-            }
-            request.setAttribute("options", map);
-        } catch (Exception e) {
-            log.error("解析主题设置出现异常", e);
-        }
-        request.setAttribute("theme_options", map);
-        return this.render("setting");
+    @GetMapping("/page/edit/{cid}")
+    public String editPage(@PathVariable String cid) {
+        return "admin/page/edit.html";
     }
+    
+
 
 }
-
