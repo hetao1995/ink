@@ -26,7 +26,7 @@ public class ContentVo {
      * 作者的id
      */
     private Long authorId;
-    
+
 
     /**
      * 是否处于激活状态
@@ -104,13 +104,13 @@ public class ContentVo {
     private String fmtType;
 
     /**
-     * 显示的创建时间
+     * 显示的创建时间戳
      */
-    private Date created;
+    private Integer created;
 
     /**
-     * 展示的修改时间
+     * 展示的修改时间戳
      */
-    private Date modified;
+    private Integer modified;
 
 }

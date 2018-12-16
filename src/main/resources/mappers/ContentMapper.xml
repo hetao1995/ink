@@ -20,8 +20,8 @@
     <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="thumb_img" property="thumbImg" jdbcType="VARCHAR" />
     <result column="fmt_type" property="fmtType" jdbcType="VARCHAR" />
-    <result column="created" property="created" jdbcType="TIMESTAMP" />
-    <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+    <result column="created" property="created" jdbcType="INTEGER" />
+    <result column="modified" property="modified" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
     <result column="create_by" property="createBy" jdbcType="BIGINT" />
@@ -38,7 +38,8 @@
     from contents
     where id = #{id,jdbcType=BIGINT}
   </select>
-    <select id="selectByNoNulProperties" resultMap="BaseResultMap">
+
+  <select id="selectByNoNulProperties" resultMap="BaseResultMap">
       select
       <include refid="Base_Column_List"/>
       from contents
@@ -224,10 +225,10 @@
         #{fmtType,jdbcType=VARCHAR},
       </if>
       <if test="created != null" >
-        #{created,jdbcType=TIMESTAMP},
+        #{created,jdbcType=INTEGER},
       </if>
       <if test="modified != null" >
-        #{modified,jdbcType=TIMESTAMP},
+        #{modified,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -298,10 +299,10 @@
         fmt_type = #{fmtType,jdbcType=VARCHAR},
       </if>
       <if test="created != null" >
-        created = #{created,jdbcType=TIMESTAMP},
+        created = #{created,jdbcType=INTEGER},
       </if>
       <if test="modified != null" >
-        modified = #{modified,jdbcType=TIMESTAMP},
+        modified = #{modified,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},

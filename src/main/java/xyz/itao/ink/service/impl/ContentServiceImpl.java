@@ -45,6 +45,10 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
                 .commentsNum(vo.getCommentsNum())
                 .allowFeed(vo.getAllowFeed())
                 .allowPing(vo.getAllowPing())
+                .created(vo.getCreated())
+                .modified(vo.getModified())
+                .thumbImg(vo.getThumbImg())
+                .fmtType(vo.getFmtType())
                 .build();
     }
 
@@ -67,6 +71,10 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
                 .commentsNum(domain.getCommentsNum())
                 .allowFeed(domain.getAllowFeed())
                 .allowPing(domain.getAllowPing())
+                .created(domain.getCreated())
+                .modified(domain.getModified())
+                .thumbImg(domain.getThumbImg())
+                .fmtType(domain.getFmtType())
                 .build();
 
     }

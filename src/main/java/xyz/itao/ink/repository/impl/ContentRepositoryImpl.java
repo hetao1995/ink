@@ -59,6 +59,10 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
                 .slug(entity.getSlug())
                 .title(entity.getTitle())
                 .content(entity.getContent())
+                .created(entity.getCreated())
+                .modified(entity.getModified())
+                .thumbImg(entity.getThumbImg())
+                .fmtType(entity.getFmtType())
                 .build();
     }
 
@@ -86,6 +90,10 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
                 .slug(domain.getSlug())
                 .title(domain.getTitle())
                 .content(domain.getContent())
+                .created(domain.getCreated())
+                .modified(domain.getModified())
+                .thumbImg(domain.getThumbImg())
+                .fmtType(domain.getFmtType())
                 .build();
     }
 
