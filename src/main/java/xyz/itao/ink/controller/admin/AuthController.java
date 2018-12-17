@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.WebConstant;
@@ -33,6 +30,7 @@ public class AuthController  {
 
     @SysLog("保存个人信息")
     @PutMapping("/profile")
+    @ResponseBody
     public RestResponse saveProfile(String screenName, String email, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         userService.updateProfile(screenName, email, userVo);
         return RestResponse.ok();
@@ -40,11 +38,12 @@ public class AuthController  {
 
     @SysLog("修改登录密码")
     @PutMapping("/password")
-    public RestResponse upPwd(String old_password, String password, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        if (StringUtils.isBlank(old_password) || StringUtils.isBlank(password)) {
+    @ResponseBody
+    public RestResponse upPwd(@RequestParam(value = "old_password") String oldPassword, @RequestParam(value = "password") String password, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+        if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(password)) {
             return RestResponse.fail("请确认信息输入完整");
         }
-        userService.updatePassword(old_password, password, userVo);
+        userService.updatePassword(oldPassword, password, userVo);
 
         return RestResponse.ok();
     }

@@ -1,8 +1,10 @@
-#include('/admin/header.html',{active:'themes', title:'主题设置'})
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='主题设置',active='themes', has_sub=''">
+<header th:replace="admin/header::headerFragment(${title},${active},${has_sub})"></header>
 <div class="row">
 ${bodyContent}
 </div>
-#include('/admin/footer.html')
+<div th:replace="admin/footer :: footer"></div>
 <script >
 
     var tale = new $.tale();

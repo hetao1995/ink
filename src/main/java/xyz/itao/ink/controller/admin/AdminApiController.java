@@ -319,7 +319,7 @@ public class AdminApiController {
     @GetMapping("themes")
     public RestResponse getThemes() {
         // 读取主题
-        String         themesDir  = WebConstant.CLASSPATH + "templates/themes";
+        String         themesDir  = WebConstant.CLASSPATH + "templates"+File.separator+"themes";
         File[]         themesFile = new File(themesDir).listFiles();
         List<ThemeDto> themes     = new ArrayList<>(themesFile.length);
         for (File f : themesFile) {

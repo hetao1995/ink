@@ -176,7 +176,7 @@ $.tale.prototype.postWithForm = function (options) {
             return ret.join('');
         }],
         headers: {
-            'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content,
+            // 'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content,
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/x-www-form-urlencoded'
         }

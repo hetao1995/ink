@@ -25,8 +25,8 @@ import java.util.Date;
  */
 public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    //刷新间隔5分钟
-    private static final int tokenRefreshInterval = 300;
+    //少于5分钟刷新
+    private static final int TOKEN_REFRESH_INTERVAL = 5*60;
     @Autowired
     private UserService userService;
 
@@ -34,7 +34,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) {
         DecodedJWT jwt = ((JwtAuthenticationToken) authentication).getToken();
-        boolean shouldRefresh = shouldTokenRefresh(jwt.getIssuedAt());
+        boolean shouldRefresh = shouldTokenRefresh(jwt.getExpiresAt());
         UserDomain userDomain = (UserDomain) authentication.getPrincipal();
         request.setAttribute(WebConstant.LOGIN_USER, userService.extractVo(userDomain));
         if (shouldRefresh) {
@@ -42,13 +42,19 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 //            response.setHeader("Authorization", newToken);
             Cookie cookie = new Cookie("Authorization", newToken);
             cookie.setHttpOnly(true);
+            cookie.setMaxAge(-1);
             response.addCookie(cookie);
         }
     }
 
-    protected boolean shouldTokenRefresh(Date issueAt) {
-        LocalDateTime issueTime = LocalDateTime.ofInstant(issueAt.toInstant(), ZoneId.systemDefault());
-        return LocalDateTime.now().minusSeconds(tokenRefreshInterval).isAfter(issueTime);
+    /**
+     * 少于tokenRefreshToken时候刷新
+     * @param expiresAt:过期时间
+     * @return
+     */
+    protected boolean shouldTokenRefresh(Date expiresAt) {
+        LocalDateTime expiresTime = LocalDateTime.ofInstant(expiresAt.toInstant(), ZoneId.systemDefault());
+        return LocalDateTime.now().minusSeconds(TOKEN_REFRESH_INTERVAL).isAfter(expiresTime);
     }
 
 }

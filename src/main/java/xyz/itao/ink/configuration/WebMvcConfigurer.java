@@ -1,7 +1,10 @@
 package xyz.itao.ink.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.FormContentFilter;
+import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -28,5 +31,14 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     protected void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(baseInterceptor);
         super.addInterceptors(registry);
+    }
+
+    /**
+     * 解决put、delete form传值
+     * @return
+     */
+    @Bean
+    public FormContentFilter formContentFilter(){
+        return new FormContentFilter();
     }
 }

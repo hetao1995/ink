@@ -37,7 +37,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     /**
      * 长期token，一个月后过期
      */
-    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = Long.valueOf(WebConstant.REMEMBER_ME_INTERVAL);
+    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = Long.valueOf(WebConstant.REMEMBER_ME_INTERVAL)*1000;
 
     @Autowired
     UserRepository userRepository;
