@@ -133,9 +133,10 @@ public class AdminApiController {
 
     @SysLog("发布页面")
     @PostMapping("/pages")
-    public RestResponse<?> newPage( ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> newPage( @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
 
         CommonValidator.valid(contentVo);
+        System.out.println("contentVo:"+contentVo);
 
         contentVo.setType(TypeConst.PAGE);
         contentVo.setAllowPing(true);
@@ -161,7 +162,7 @@ public class AdminApiController {
 
     @SysLog("保存分类")
     @PostMapping("/category")
-    public RestResponse<?> saveCategory(MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> saveCategory(@RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid(), userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();

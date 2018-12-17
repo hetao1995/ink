@@ -8,7 +8,7 @@ var vm = new Vue({
     el: '#app',
     data: {
         article: {
-            cid: '',
+            id: '',
             title: '',
             slug: '',
             tags: '',
@@ -38,9 +38,8 @@ var vm = new Vue({
                 var params = tale.copy($vm.article);
                 params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
 
-                var url = $vm.article.cid !== '' ? '/admin/api/page/update' : '/admin/api/page/new';
-                tale.post({
-                    url: url,
+                var options = {
+                    url: '/admin/api/pages',
                     data: params,
                     success: function (result) {
                         if (result && result.success) {
@@ -54,7 +53,8 @@ var vm = new Vue({
                         console.log(error);
                         clearInterval(refreshIntervalId);
                     }
-                });
+                };
+                $vm.article.id !== '' ? tale.put(options) : tale.post(options);
             }
         },
         switchEditor: function (event) {

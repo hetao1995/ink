@@ -26,7 +26,7 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
 
     @Override
     public List<OptionDomain> loadAllOptionDomain() {
-        return null;
+        return loadByNoNullPropertiesNotDelect(OptionDomain.builder().build());
     }
 
     @Override

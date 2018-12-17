@@ -37,7 +37,8 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
                 .type(type)
                 .name(name)
                 .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(metaDomain).get(0);
+        List<MetaDomain> metaDomains = loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
+        return metaDomains.isEmpty() ? null : metaDomains.get(0);
     }
 
     @Override

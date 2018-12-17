@@ -132,6 +132,6 @@ public class WebConstant {
     public static final String OPTION_ALLOW_CLOUD_CDN     = "allow_cloud_CDN";
     public static final String OPTION_SAFE_REMEMBER_ME    = "safe_remember_me";
 
-    public static final int REMEMBER_ME_INTERVAL = 100*60*60*24*30;
+    public static final int REMEMBER_ME_INTERVAL = 1000*60*60*24*30;
 
 }

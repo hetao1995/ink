@@ -17,6 +17,9 @@ import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.vo.ContentVo;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.io.InputStream;
 import java.text.Normalizer;
@@ -258,5 +261,21 @@ public class InkUtils {
             return mdToHtml(value);
         }
         return "";
+    }
+
+    /**
+     * 清楚cookie
+     * @param request
+     * @param response
+     */
+    public static void clearCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            return;
+        }
+        for(Cookie cookie : cookies){
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
     }
 }

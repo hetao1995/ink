@@ -86,6 +86,8 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
                 .name(name)
                 .id(mid)
                 .type(type)
+                .active(true)
+                .parentId(0L)
                 .build();
         save(metaVo, userVo.getId());
 

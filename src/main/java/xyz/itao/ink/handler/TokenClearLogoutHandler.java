@@ -3,6 +3,8 @@ package xyz.itao.ink.handler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.utils.IdUtils;
+import xyz.itao.ink.utils.InkUtils;
 
 
 import javax.servlet.http.Cookie;
@@ -21,14 +23,7 @@ public class TokenClearLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 //        response.setHeader("Authorization", "");
         request.removeAttribute(WebConstant.LOGIN_USER);
-        Cookie[] cookies = request.getCookies();
-        if(cookies==null){
-            return;
-        }
-        for(Cookie cookie : cookies){
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+        InkUtils.clearCookies(request, response);
     }
 
 }

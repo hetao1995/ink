@@ -3,6 +3,7 @@ package xyz.itao.ink.handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import xyz.itao.ink.utils.InkUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -17,15 +18,10 @@ import java.io.IOException;
  */
 public class HttpStatusLoginFailureHandler implements AuthenticationFailureHandler {
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        Cookie[] cookies = request.getCookies();
-        if(cookies==null){
-            return;
-        }
-        for(Cookie cookie : cookies){
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-        }
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        InkUtils.clearCookies(request, response);
     }
+
+
 }

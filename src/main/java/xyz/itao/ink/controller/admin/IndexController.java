@@ -49,7 +49,7 @@ public class IndexController extends BaseController {
     /**
      * 仪表盘
      */
-    @GetMapping(value = {"/", "/index"})
+    @GetMapping(value = {"", "/index"})
     public String index(HttpServletRequest request) {
         List<CommentVo> commentVos   = siteService.recentComments(5);
         List<ContentVo> contentVo   = siteService.getContens(TypeConst.RECENT_ARTICLE, 5);

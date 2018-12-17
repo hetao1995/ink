@@ -65,4 +65,9 @@ public class PageController extends BaseController {
         return "admin/page/edit.html";
     }
 
+    @GetMapping("/new")
+    public String newPage(){
+        return "admin/page/new";
+    }
+
 }

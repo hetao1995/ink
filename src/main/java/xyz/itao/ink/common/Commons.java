@@ -355,4 +355,8 @@ public final class Commons {
     public static String cdnURL(){
         return Commons.site_option(TypeConst.CDN_URL, "/admin");
     }
+
+    public static String attachURL(){
+        return Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url());
+    }
 }
