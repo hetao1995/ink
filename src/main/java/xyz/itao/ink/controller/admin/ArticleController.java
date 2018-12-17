@@ -6,8 +6,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
+import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.MetaService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +27,14 @@ import java.util.List;
 public class ArticleController {
     @Autowired
     private MetaService metaService;
+    @Autowired
+    private ContentService contentService;
+
+    @GetMapping(value = "")
+    public String index() {
+        return "admin/articles";
+    }
+
     @GetMapping("/edit/{cid}")
     public String editArticle(@PathVariable String cid) {
         return "admin/article/edit.html";

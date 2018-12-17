@@ -1,8 +1,6 @@
 package xyz.itao.ink.domain.params;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author hetao
@@ -11,6 +9,8 @@ import lombok.ToString;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString(callSuper = true)
 public class ArticleParam extends PageParam {
     private String title;

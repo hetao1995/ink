@@ -29,7 +29,8 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .builder()
                 .id(id)
                 .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(userDomain).get(0);
+        List<UserDomain> userDomains = loadByNoNullPropertiesActiveAndNotDelect(userDomain);
+        return userDomains.isEmpty() ? null : userDomains.get(0);
     }
 
     @Override

@@ -1,7 +1,9 @@
 package xyz.itao.ink.domain.params;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author hetao
@@ -10,6 +12,8 @@ import lombok.Data;
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AdvanceParam {
     private String cacheKey;
     private String blockIps;

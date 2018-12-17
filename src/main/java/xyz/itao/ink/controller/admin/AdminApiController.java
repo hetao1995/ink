@@ -115,7 +115,7 @@ public class AdminApiController {
         return RestResponse.ok(contentVo.getId());
     }
 
-    @GetMapping("/article")
+    @GetMapping("/articles")
     public RestResponse articleList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setOrderBy("create_time desc");
