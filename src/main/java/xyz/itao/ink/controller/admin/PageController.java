@@ -42,15 +42,13 @@ public class PageController extends BaseController {
     private ContentService contentService;
     @Autowired
     private OptionService optionService;
-
-
-    
-
     @Autowired
     private SiteService siteService;
 
-
-
+    @GetMapping(value = "")
+    public String index(){
+        return "admin/pages";
+    }
 
     @GetMapping("/{page}")
     public String commonPage(@PathVariable String page) {
@@ -62,77 +60,9 @@ public class PageController extends BaseController {
         return "admin/" + module + "/" + page + ".html";
     }
 
-    /**
-     * 主题设置页面
-     */
-    @GetMapping("theme/setting")
-    public String setting(HttpServletRequest request) {
-        String currentTheme = Commons.site_theme();
-        String key          = "theme_" + currentTheme + "_options";
-
-        String              option = optionService.getOption(key);
-        Map<String, Object> map    = new HashMap<>();
-        try {
-            if (StringUtils.isNotBlank(option)) {
-                map = JSON.parseObject(option);
-            }
-            request.setAttribute("options", map);
-        } catch (Exception e) {
-            log.error("解析主题设置出现异常", e);
-        }
-        request.setAttribute("theme_options", map);
-        return this.render("setting");
-    }
-
-    @GetMapping("template")
-    public String templateIndex(HttpServletRequest request) {
-        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
-        try {
-            List<String> files = Files.list(Paths.get(themePath))
-                    .map(path -> path.getFileName().toString())
-                    .filter(path -> path.endsWith(".html"))
-                    .collect(Collectors.toList());
-
-            List<String> partial = Files.list(Paths.get(themePath + File.separatorChar + "partial"))
-                    .map(path -> path.getFileName().toString())
-                    .filter(path -> path.endsWith(".html"))
-                    .map(fileName -> "partial/" + fileName)
-                    .collect(Collectors.toList());
-
-            List<String> statics = Files.list(Paths.get(themePath + File.separatorChar + "static"))
-                    .map(path -> path.getFileName().toString())
-                    .filter(path -> path.endsWith(".js") || path.endsWith(".css"))
-                    .map(fileName -> "static/" + fileName)
-                    .collect(Collectors.toList());
-
-            files.addAll(partial);
-            files.addAll(statics);
-
-            request.setAttribute("tpls", files);
-        } catch (IOException e) {
-            log.error("找不到模板路径");
-        }
-        return "admin/tpl_list";
-    }
-
-    @GetMapping("template/content")
-    public String getContent(@RequestParam String fileName) {
-        String content = null;
-        try {
-            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
-            String filePath  = themePath + File.separatorChar + fileName;
-            content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
-        } catch (IOException e) {
-            log.error("获取模板文件失败", e);
-        }
-        return content;
-    }
-
-    @GetMapping("/page/edit/{cid}")
+    @GetMapping("/edit/{cid}")
     public String editPage(@PathVariable String cid) {
         return "admin/page/edit.html";
     }
-    
-
 
 }

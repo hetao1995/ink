@@ -45,8 +45,6 @@ public class IndexController extends BaseController {
     private SiteService siteService;
     @Autowired
     LogService logService;
-    @Autowired
-    private OptionService optionService;
 
     /**
      * 仪表盘
@@ -71,6 +69,20 @@ public class IndexController extends BaseController {
         return "/admin/profile";
     }
 
+    @GetMapping("/comments")
+    public String commentIndex(){
+        return "admin/comments";
+    }
+
+    @GetMapping("/category")
+    public String categoryIndex(){
+        return "admin/categories";
+    }
+
+    @GetMapping("/setting")
+    public String settingIndex(){
+        return "admin/setting";
+    }
 
 
 }

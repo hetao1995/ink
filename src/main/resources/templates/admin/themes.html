@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='主题管理',active='themes'">
-<header th:replace="admin/header::headerFragment(${title},${active})"/>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='主题管理',active='themes', has_sub=''">
+<header th:replace="admin/header::headerFragment(${title},${active},${has_sub})"></header>
 <div id="app" class="row" v-cloak>
     <loading :active.sync="isLoading" :can-cancel="true"></loading>
     <div class="col-lg-12">
@@ -28,7 +28,7 @@
     </div>
 </div>
 
-#include('./footer.html')
+<footer th:replace="admin/footer"/>
 <script >
     var tale = new $.tale();
     var vm = new Vue({

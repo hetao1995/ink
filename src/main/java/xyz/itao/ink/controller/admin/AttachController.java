@@ -58,10 +58,10 @@ public class AttachController extends BaseController {
     @GetMapping(value = "")
     public String index(HttpServletRequest request, PageParam pageParam) {
         PageInfo<LinkVo> attachPaginator = linkService.loadAllActiveLinkVo(pageParam);
-        request.setAttribute("attachs", attachPaginator);
+        request.setAttribute("attaches", attachPaginator);
         request.setAttribute(TypeConst.ATTACH_URL, Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url()));
         request.setAttribute("max_file_size", WebConstant.MAX_FILE_SIZE / 1024);
-        return "admin/attach";
+        return "admin/attaches";
     }
 
     /**

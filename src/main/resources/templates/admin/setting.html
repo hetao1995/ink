@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='系统设置',active='setting'">
-<header th:replace="admin/header::headerFragment(${title},${active})"/>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='系统设置',active='setting', has_sub=''">
+<header th:replace="admin/header::headerFragment(${title},${active},${has_sub})"></header>
 <link href="${cdnURL()}/plugins/toggles/toggles.css" rel="stylesheet">
 
 <div id="app" class="row" v-cloak>

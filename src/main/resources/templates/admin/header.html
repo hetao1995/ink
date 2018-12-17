@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"  >
-<head th:fragment="headerFragment(title,active)">
+<head th:fragment="headerFragment(title,active,has_sub)">
     <meta charset="utf-8"/>
     <title><th:block th:text="${title!=null?title:'博客后台'}+'- Ink'"></th:block></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
@@ -84,30 +84,55 @@
                         <a th:href="@{/admin/page}" th:class="${active}=='page'?'waves-effect active':'waves-effect'"><i
                                 class="fa fa-file-text" aria-hidden="true"></i><span> 页面管理 </span></a>
                     </li>
-                    <li th:class="${active}=='comments'?'active':''">
-                        <a th:href="@{/admin/comments}"
-                           th:class="${active}=='comments'?'waves-effect active':'waves-effect'"><i
-                                class="fa fa-comments" aria-hidden="true"></i><span> 评论管理 </span></a>
-                    </li>
-                    <li th:class="${active}=='category'?'active':''">
-                        <a th:href="@{/admin/category}"
-                           th:class="${active}=='category'?'waves-effect active':'waves-effect'"><i
-                                class="fa fa-tags" aria-hidden="true"></i><span> 分类/标签 </span></a>
-                    </li>
                     <li th:class="${active}=='attach'?'active':''">
                         <a th:href="@{/admin/attach}"
                            th:class="${active}=='attach'?'waves-effect active':'waves-effect'"><i
                                 class="fa fa-cloud-upload" aria-hidden="true"></i><span> 文件管理 </span></a>
                     </li>
-                    <li th:class="${active}=='links'?'active':''">
-                        <a th:href="@{/admin/links}" th:class="${active}=='links'?'waves-effect active':'waves-effect'"><i
-                                class="fa fa-link" aria-hidden="true"></i><span> 友链管理 </span></a>
+                    <li class="has_sub">
+                        <a href="javascript:void(0)" th:class="${has_sub}=='other'? 'waves-effect active subdrop': 'waves-effect'"><i class="fa fa-cubes"></i><span> 其他管理 </span><span class="pull-right"><i class="fa fa-plus"></i></span></a>
+                        <ul class="list-unstyled">
+                            <li th:class="${active}=='comments'?'active':''">
+                                <a th:href="@{/admin/comments}"
+                                   th:class="${active}=='comments'?'waves-effect active':'waves-effect'"><i
+                                        class="fa fa-comments" aria-hidden="true"></i><span> 评论管理 </span></a>
+                            </li>
+                            <li th:class="${active}=='links'?'active':''">
+                                <a th:href="@{/admin/links}" th:class="${active}=='links'?'waves-effect active':'waves-effect'"><i
+                                        class="fa fa-link" aria-hidden="true"></i><span> 友链管理 </span></a>
+                            </li>
+                            <li th:class="${active}=='category'?'active':''">
+                                <a th:href="@{/admin/category}"
+                                   th:class="${active}=='category'?'waves-effect active':'waves-effect'"><i
+                                        class="fa fa-tags" aria-hidden="true"></i><span> 分类/标签 </span></a>
+                            </li>
+                            <li th:class="${active}=='template'?'active':''">
+                                <a th:href="@{/admin/template}"
+                                   th:class="${active}=='template'?'waves-effect active':'waves-effect'"><i
+                                        class="fa fa-hashtag" aria-hidden="true"></i><span> 编辑模板 </span></a>
+                            </li>
+                        </ul>
                     </li>
+
+                    <li th:class="${active}=='themes'?'active':''">
+                        <a th:href="@{/admin/themes}"
+                           th:class="${active}=='themes'?'waves-effect active':'waves-effect'"><i
+                                class="fa fa-diamond" aria-hidden="true"></i><span> 主题设置 </span></a>
+                    </li>
+
                     <li th:class="${active}=='setting'?'active':''">
                         <a th:href="@{/admin/setting}"
                            th:class="${active}=='setting'?'waves-effect active':'waves-effect'"><i
                                 class="fa fa-gear" aria-hidden="true"></i><span> 系统设置 </span></a>
                     </li>
+
+                    <th:block th:each="item : ${plugin_menus}">
+                        <li th:class="${active}=='item.slug'?'active':''">
+                            <a th:href="@{/admin/plugins/${item.slug}}"
+                               th:class="${active}=='item.slug'?'waves-effect active':'waves-effect'"><i
+                                    th:class="${item.icon} ?  'fa fa-gear':''" aria-hidden="true"></i><span th:text="#{item.name}">  </span></a>
+                        </li>
+                    </th:block>
                 </ul>
                 <div class="clearfix"></div>
             </div>
