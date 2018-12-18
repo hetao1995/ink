@@ -25,8 +25,8 @@ import java.util.Date;
  */
 public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    //少于5分钟刷新
-    private static final int TOKEN_REFRESH_INTERVAL = 5*60;
+    //少于30分钟刷新
+    private static final int TOKEN_REFRESH_INTERVAL = 30*60;
     @Autowired
     private UserService userService;
 
@@ -54,7 +54,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
      */
     protected boolean shouldTokenRefresh(Date expiresAt) {
         LocalDateTime expiresTime = LocalDateTime.ofInstant(expiresAt.toInstant(), ZoneId.systemDefault());
-        return LocalDateTime.now().minusSeconds(TOKEN_REFRESH_INTERVAL).isAfter(expiresTime);
+        return LocalDateTime.now().plusSeconds(TOKEN_REFRESH_INTERVAL).isAfter(expiresTime);
     }
 
 }
