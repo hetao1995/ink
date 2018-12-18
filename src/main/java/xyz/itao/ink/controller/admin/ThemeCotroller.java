@@ -36,9 +36,9 @@ public class ThemeCotroller extends BaseController {
     /**
      * 主题设置页面
      */
-    @GetMapping("theme/setting")
+    @GetMapping("/setting")
     public String setting(HttpServletRequest request) {
-        String currentTheme = Commons.site_theme();
+        String currentTheme = Commons.siteTheme();
         String key          = "theme_" + currentTheme + "_options";
 
         String              option = optionService.getOption(key);

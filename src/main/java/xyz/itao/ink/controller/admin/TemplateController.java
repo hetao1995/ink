@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class TemplateController {
     @GetMapping("")
     public String templateIndex(HttpServletRequest request) {
-        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
+        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.siteTheme();
         try {
             List<String> files = Files.list(Paths.get(themePath))
                     .map(path -> path.getFileName().toString())
@@ -60,7 +60,7 @@ public class TemplateController {
     public String getContent(@RequestParam String fileName) {
         String content = null;
         try {
-            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
+            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.siteTheme();
             String filePath  = themePath + File.separatorChar + fileName;
             content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
         } catch (IOException e) {

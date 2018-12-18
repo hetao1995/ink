@@ -12,22 +12,35 @@
             <div class="meta-item meta-copyright">
                 <div class="meta-copyright-info">
                     <div class="info-text">
-                        <a href="http://blog.hanshuai.xin" style="display: block;margin: 0 auto;" class="info-logo">
-                            <img style="display: block;margin: 0 auto;" th:src="@{/user/img/logo.png}"
-                                 th:alt="${commons.site_title()}"/>
+                        <a th:href="${commons.site_url()}"  class="info-logo">
+                            <img th:src="@{/user/img/logo.png}" th:alt="${commons.site_title()}"/>
                         </a>
-                        <br/>
-                        <p>&copy; 版权所有 <a href="https://github.com/ZHENFENG13/My-Blog" target="_blank"
-                                          rel="nofollow">My Blog</a> 保留一切权利
-                        </p>
-                        <br/>
-                        <th:block th:if="${option}!=null and ${option.getValue()}!=''">
-                            <p th:text="${option.getValue()}"></p>
-                        </th:block>
+                        <div class="info-text">
+                            <p>一生有所追求.</p>
+                            <p>Powered by <a href="https://github.com/hetao1995/ink" target="_blank" rel="nofollow">Ink</a>
+                            </p>
+                            <p>&copy; [[${T(java.time.LocalDate).now().getYear()}]] <a href="https://github.com/hetao1995">核桃</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="meta-item meta-posts">
+                <h3 class="meta-title">最新文章</h3>
+                <th:block th:each="article : ${commons.recent_articles(8)}">
+                    <li>
+                        <a th:href="${commons.permalink()}">${title()}</a>
+                    </li>
+                </th:block>
+            </div>
+            <div class="meta-item meta-comments">
+                <h3 class="meta-title">最新评论</h3>
+                <th:block th:each="comm: ${commons.recent_comments(8)}">
+                    <li>
+                        <a th:href="|${commons.site_url('/article/')}${comm.contentId}#comment-${comm.id}|">${comm.author}：${comm.content}</a>
+                    </li>
+                </th:block>
 
+            </div>
         </div>
     </div>
 </footer>

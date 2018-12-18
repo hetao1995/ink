@@ -344,7 +344,7 @@ public class AdminApiController {
 //        Map<String, List<String>> query = request.parameters();
 
         // theme_milk_options => {  }
-        String currentTheme = Commons.site_theme();
+        String currentTheme = Commons.siteTheme();
         String key          = "theme_" + currentTheme + "_options";
 
         Map<String, String> options = new HashMap<>();
@@ -380,7 +380,7 @@ public class AdminApiController {
             return RestResponse.fail("缺少参数，请重试");
         }
         String content   = templateParam.getContent();
-        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.site_theme();
+        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.siteTheme();
         String filePath  = themePath + File.separatorChar + templateParam.getFileName();
         if (Files.exists(Paths.get(filePath))) {
             byte[] rf_wiki_byte = content.getBytes("UTF-8");

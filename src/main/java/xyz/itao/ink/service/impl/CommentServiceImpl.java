@@ -35,7 +35,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .builder()
                 .id(vo.getId())
                 .active(vo.getActive())
-                .authorId(vo.getId())
+                .authorId(vo.getAuthorId())
                 .contentId(vo.getContentId())
                 .parentId(vo.getParentId())
                 .status(vo.getStatus())
@@ -49,7 +49,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .builder()
                 .id(domain.getId())
                 .active(domain.getActive())
-                .authorId(domain.getId())
+                .authorId(domain.getAuthorId())
                 .contentId(domain.getContentId())
                 .parentId(domain.getParentId())
                 .status(domain.getStatus())
@@ -98,6 +98,9 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                     .build();
             userVo = userService.registerTemporaryUser(userVo);
         }
+
+        commentVo.setAuthorId(userVo.getId());
+        commentVo.setParentId(0L);
         save(commentVo, userVo.getId());
     }
 }

@@ -3,10 +3,7 @@ package xyz.itao.ink.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.StopRepeatSubmit;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.CommonValidator;
@@ -96,7 +93,7 @@ public class ArticleController extends BaseController {
     @StopRepeatSubmit(key = "comment")
     @PostMapping(value = "comment")
     @ResponseBody
-    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response, CommentVo commentVo, UserVo userVo, UserParam userParam) {
+    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,  CommentVo commentVo,  UserParam userParam, @RequestAttribute(required = false,value = "login_user") UserVo userVo) {
 
 //        if (StringUtils.isBlank(Referer)) {
 //            return RestResponse.fail(ErrorCode.BAD_REQUEST);
@@ -120,6 +117,7 @@ public class ArticleController extends BaseController {
         } else {
             commentVo.setStatus(WebConstant.COMMENT_APPROVED);
         }
+        commentVo.setActive(true);
         commentService.postNewComment(commentVo, userParam, userVo);
         if(userVo==null || userVo.getId()==null){
             //todo 将临时用户放入jwt

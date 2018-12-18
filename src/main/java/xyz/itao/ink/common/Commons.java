@@ -4,17 +4,22 @@ import com.github.pagehelper.PageInfo;
 import com.vdurmont.emoji.EmojiParser;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
+import xyz.itao.ink.service.SiteService;
 import xyz.itao.ink.utils.CryptoUtils;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.InkUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +31,8 @@ import java.util.regex.Pattern;
  */
 @Component
 public final class Commons {
+    @Autowired
+    static SiteService siteService;
 
     public static String THEME = "themes/default";
 
@@ -348,7 +355,7 @@ public final class Commons {
         return map;
     }
 
-    public static String site_theme() {
+    public static String siteTheme() {
         return site_option("site_theme", "default");
     }
 
@@ -358,5 +365,30 @@ public final class Commons {
 
     public static String attachURL(){
         return Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url());
+    }
+
+    /**
+     * 最新文章
+     * @param limit
+     * @return
+     */
+    public static List<ContentVo> recent_articles(int limit) {
+        if (null == siteService) {
+            return new ArrayList<>(0);
+        }
+        return siteService.getContens(TypeConst.RECENT_ARTICLE, limit);
+    }
+
+    /**
+     * 最新评论
+     *
+     * @param limit 查找多少个
+     * @return
+     */
+    public static List<CommentVo> recent_comments(int limit) {
+        if (null == siteService) {
+            return new ArrayList<>(0);
+        }
+        return siteService.recentComments(limit);
     }
 }

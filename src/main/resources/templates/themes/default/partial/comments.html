@@ -14,19 +14,21 @@
             </span>
                 <form method="post" id="comment-form" class="comment-form" role="form"
                       onsubmit="return TaleComment.subComment();">
-                    <input type="hidden" name="coid" id="coid"/>
-                    <input type="hidden" name="id" id="id" th:value="${article.id}"/>
+                    <input type="hidden" name="id" id="id"/>
+                    <input type="hidden" name="contentId" id="contentId" th:value="${article.id}"/>
                     <!--<input type="hidden" name="_csrf_token" th:value="${_csrf_token}"/>-->
-                    <input type="text" name="author" maxlength="12" id="author"
-                           class="form-control input-control clearfix"
-                           placeholder="姓名 (*)"
-                    />
-                    <input type="email" name="mail" id="mail" class="form-control input-control clearfix"
-                           placeholder="邮箱 (*)"
-                    />
-                    <input type="url" name="url" id="url" class="form-control input-control clearfix"
-                           placeholder="网址 (http://)"
-                    />
+                    <th:block th:unless="${login_user}">
+                        <input type="text" name="author" maxlength="12" id="author"
+                               class="form-control input-control clearfix"
+                               placeholder="姓名 (*)"
+                        />
+                        <input type="email" name="mail" id="mail" class="form-control input-control clearfix"
+                               placeholder="邮箱 (*)"
+                        />
+                        <input type="url" name="url" id="url" class="form-control input-control clearfix"
+                               placeholder="网址 (http://)"
+                        />
+                    </th:block>
                     <textarea name="text" id="textarea" class="form-control" placeholder="以上信息可以为空,评论不能为空哦!"
                               required="required" minlength="5"
                               maxlength="2000"></textarea>
