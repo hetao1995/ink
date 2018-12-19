@@ -105,11 +105,12 @@ public class AdminApiController {
         return RestResponse.ok();
     }
 
-    @PutMapping(value = "/article")
-    public RestResponse updateArticle(ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        if (null == contentVo || contentVo.getId() == null) {
+    @PutMapping(value = "/article/{id}")
+    public RestResponse updateArticle(ContentVo contentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+        if (null == contentVo || id == null) {
             return RestResponse.fail("缺少参数，请重试");
         }
+        contentVo.setId(id);
         CommonValidator.valid(contentVo);
         contentService.updateArticle(contentVo, userVo);
         return RestResponse.ok(contentVo.getId());

@@ -64,12 +64,14 @@ var vm = new Vue({
                 params.selected = null;
                 params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
                 params.tags = $('#tags').val();
+                params.createTime = null;
+                params.id = null;
                 var options = {
                     url: '/admin/api/article/',
                     data: params,
                     success: function (result) {
                         if (result && result.success) {
-                            $vm.article.cid = result.payload;
+                            $vm.article.id = result.payload;
                             callback && callback();
                         } else {
                             tale.alertError(result.msg || '保存文章失败');
@@ -80,7 +82,13 @@ var vm = new Vue({
                         clearInterval(refreshIntervalId);
                     }
                 };
-                $vm.article.id !== '' ? tale.put(options) : tale.post(options);
+                if($vm.article.id !== '' ){
+                    options.url += $vm.article.id !== '' ;
+                    tale.put(options);
+                }else{
+                    tale.post(options);
+                }
+
             }
         },
         switchEditor: function (event) {

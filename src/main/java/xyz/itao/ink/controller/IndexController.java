@@ -64,7 +64,7 @@ public class IndexController extends BaseController{
         articleParam.setPageSize(limit);
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setStatus(TypeConst.PUBLISH);
-        request.setAttribute("articles", contentService.loadAllActiveContentVo(articleParam));
+        request.setAttribute("articles", contentService.loadAllContentVo(articleParam));
 //        request.setAttribute("page_num", page);
 //        request.setAttribute("limit", limit);
 //        request.setAttribute("is_home", true);
