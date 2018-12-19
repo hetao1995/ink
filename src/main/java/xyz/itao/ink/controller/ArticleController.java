@@ -152,7 +152,8 @@ public class ArticleController extends BaseController {
         CommentParam commentParam = CommentParam.builder().build();
         commentParam.setPageNum(pageNum);
         commentParam.setPageSize(pageSize);
-        PageInfo<CommentVo> commentVoPageInfo = commentService.loadAllCommentVo(commentParam);
+        commentParam.setContentId(contentVo.getId());
+        PageInfo<CommentVo> commentVoPageInfo = commentService.loadAllActiveCommentVo(commentParam);
         request.setAttribute("cp", pageNum);
         request.setAttribute("comments", commentVoPageInfo);
     }

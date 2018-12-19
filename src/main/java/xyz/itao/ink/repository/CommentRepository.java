@@ -13,7 +13,7 @@ import java.util.List;
 public interface CommentRepository {
     CommentDomain updateCommentDomain(CommentDomain domain);
 
-    List<CommentDomain> loadAllActiveRootCommentDomain();
+    List<CommentDomain> loadAllActiveRootCommentDomain(CommentDomain domain);
 
     boolean deleteCommentDomainById(Long id, Long userId);
 

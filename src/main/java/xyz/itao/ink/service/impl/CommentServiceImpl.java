@@ -86,6 +86,14 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     }
 
     @Override
+    public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
+        PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize());
+        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain(CommentDomain.builder().contentId(commentParam.getContentId()).build());
+        List<CommentVo> commentVos = commentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
+        return new PageInfo<>(commentVos);
+    }
+
+    @Override
     public boolean deleteCommentById(Long id, UserVo userVo) {
         return commentRepository.deleteCommentDomainById(id, userVo.getId());
     }

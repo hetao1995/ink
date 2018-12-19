@@ -20,6 +20,13 @@ public interface CommentService {
     PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam);
 
     /**
+     * 加载文章中所有审核通过的comment
+     * @param commentParam
+     * @return
+     */
+    PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam);
+
+    /**
      * 通过id删除commentg
      * @param id 删除的commnet id
      * @param userVo 操作的用户
@@ -41,4 +48,6 @@ public interface CommentService {
      * @param userVo 如果是登录用户，此uservo有效
      */
     UserVo postNewComment(CommentVo commentVo,  UserVo userVo);
+
+
 }

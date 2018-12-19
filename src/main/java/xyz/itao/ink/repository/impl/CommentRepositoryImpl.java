@@ -92,8 +92,9 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
 
 
     @Override
-    public List<CommentDomain> loadAllActiveRootCommentDomain() {
-        return loadByNoNullPropertiesActiveAndNotDelect(CommentDomain.builder().parentId(0L).build());
+    public List<CommentDomain> loadAllActiveRootCommentDomain(CommentDomain domain) {
+        domain.setParentId(0L);
+        return loadByNoNullPropertiesActiveAndNotDelect(domain);
     }
 
     @Override

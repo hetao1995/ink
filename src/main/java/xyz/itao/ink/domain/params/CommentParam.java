@@ -13,5 +13,5 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentParam extends PageParam{
-    private Long excludeUID;
+    private Long contentId;
 }
