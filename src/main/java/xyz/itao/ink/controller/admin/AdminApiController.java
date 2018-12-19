@@ -133,7 +133,7 @@ public class AdminApiController {
     }
 
     @SysLog("发布页面")
-    @PostMapping("/pages")
+    @PostMapping("/page")
     public RestResponse<?> newPage( @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
 
         CommonValidator.valid(contentVo);
@@ -146,7 +146,7 @@ public class AdminApiController {
     }
 
     @SysLog("修改页面")
-    @PutMapping("/pages/{id}")
+    @PutMapping("/page/{id}")
     public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
 

@@ -37,13 +37,16 @@ var vm = new Vue({
                 $vm.article.content = content;
                 var params = tale.copy($vm.article);
                 params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
+                delete params.createdTime;
+//                params.id = null;
+
 
                 var options = {
-                    url: '/admin/api/pages',
+                    url: '/admin/api/page',
                     data: params,
                     success: function (result) {
                         if (result && result.success) {
-                            $vm.article.cid = result.payload;
+                            $vm.article.id = result.payload;
                             callback && callback();
                         } else {
                             tale.alertError(result.msg || '保存页面失败');
@@ -54,7 +57,12 @@ var vm = new Vue({
                         clearInterval(refreshIntervalId);
                     }
                 };
-                $vm.article.id !== '' ? tale.put(options) : tale.post(options);
+                if($vm.article.id !== '' ){
+                    options.url += $vm.article.id  ;
+                    tale.put(options);
+                }else{
+                     tale.post(options);
+                }
             }
         },
         switchEditor: function (event) {

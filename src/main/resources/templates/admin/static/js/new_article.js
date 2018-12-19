@@ -83,7 +83,7 @@ var vm = new Vue({
                     }
                 };
                 if($vm.article.id !== '' ){
-                    options.url += $vm.article.id !== '' ;
+                    options.url += $vm.article.id;
                     tale.put(options);
                 }else{
                     tale.post(options);
