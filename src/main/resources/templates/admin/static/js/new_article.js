@@ -61,10 +61,10 @@ var vm = new Vue({
                 $vm.article.categories = $vm.article.selected.join(',');
 
                 var params = tale.copy($vm.article);
-                params.selected = null;
+                delete params.selected;
                 params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
                 params.tags = $('#tags').val();
-                params.createTime = null;
+                delete params.createTime;
                 params.id = null;
                 var options = {
                     url: '/admin/api/article/',
