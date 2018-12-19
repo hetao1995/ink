@@ -66,7 +66,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 attach">
-                        <th:block th:if="${commons.is_empty(attachs)}">
+                        <th:block th:if="${commons.is_empty(attaches)}">
                             <div class="row">
                                 <div class="col-md-4 text-center">
                                     <div class="alert alert-warning">
@@ -75,8 +75,8 @@
                                 </div>
                             </div>
                         </th:block>
-                        <th:block th:unless="${commons.is_empty(attachs)}">
-                            <th:block th:each="attach : ${attachs.list}">
+                        <th:block th:unless="${commons.is_empty(attaches)}">
+                            <th:block th:each="attach : ${attaches.list}">
                                 <div class="col-md-2 text-center m-t-10">
                                     <a th:href="${commons.site_url(attach.fkey)}" target="_blank">
                                         <img class="attach-img"
@@ -101,7 +101,7 @@
                                     </div>
                                 </div>
                             </th:block>
-                            <div th:replace="comm/macros :: pageAdminNav(${attachs})"></div>
+                            <div th:replace="comm/macros :: pageAdminNav(${attaches})"></div>
                         </th:block>
                     </div>
                 </div>
