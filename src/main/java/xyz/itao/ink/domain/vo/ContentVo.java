@@ -112,5 +112,19 @@ public class ContentVo {
      */
     private Integer modified;
 
+    /**
+     * 作者姓名
+     */
+    private String author;
+
+    /**
+     * 作者邮箱
+     */
+    private String mail;
+
+    /**
+     * 作者主页
+     */
+    private String url;
 
 }

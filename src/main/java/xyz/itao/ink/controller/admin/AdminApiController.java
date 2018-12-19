@@ -21,6 +21,7 @@ import xyz.itao.ink.domain.dto.ThemeDto;
 import xyz.itao.ink.domain.params.*;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.service.*;
+import xyz.itao.ink.utils.DateUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -86,6 +87,7 @@ public class AdminApiController {
 
         contentVo.setType(TypeConst.ARTICLE);
         contentVo.setAuthorId(userVo.getId());
+        contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         //将点击数设初始化为0
         contentVo.setHits(0L);
         //将评论数设初始化为0
@@ -111,6 +113,7 @@ public class AdminApiController {
             return RestResponse.fail("缺少参数，请重试");
         }
         contentVo.setId(id);
+        contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         CommonValidator.valid(contentVo);
         contentService.updateArticle(contentVo, userVo);
         return RestResponse.ok(contentVo.getId());
@@ -140,6 +143,7 @@ public class AdminApiController {
         contentVo.setType(TypeConst.PAGE);
         contentVo.setAllowPing(true);
         contentVo.setAuthorId(userVo.getId());
+        contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         contentService.publishNewContent(contentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -155,6 +159,7 @@ public class AdminApiController {
         }
         contentVo.setId(id);
         contentVo.setType(TypeConst.PAGE);
+        contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         contentService.updateArticle(contentVo, userVo);
         return RestResponse.ok(id);
     }

@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import xyz.itao.ink.repository.UserRepository;
 
 import java.util.Date;
 
@@ -132,5 +133,56 @@ public class ContentDomain extends BaseDomain{
      * 被谁修改
      */
     private Long updateBy;
+
+    /**
+     * UserRepository 对象
+     */
+    private UserRepository userRepository;
+
+    /**
+     * 作者姓名
+     */
+    private String author;
+
+    /**
+     * 作者邮箱
+     */
+    private String mail;
+
+    /**
+     * 作者主页
+     */
+    private String url;
+
+    public String getAuthor() {
+        if(author==null){
+            refreshAuthor();
+        }
+        return author;
+    }
+
+    public String getMail() {
+        if(mail==null){
+            refreshAuthor();
+        }
+        return mail;
+    }
+
+    public String getUrl() {
+        if(url==null){
+            refreshAuthor();
+        }
+        return url;
+    }
+
+    private void refreshAuthor(){
+        if(authorId==null || author!=null || mail!=null || url!=null){
+            return ;
+        }
+        UserDomain userDomain = userRepository.loadActiveUserDomainById(authorId);
+        author = userDomain.getDisplayName();
+        url = userDomain.getHomeUrl();
+        mail = userDomain.getEmail();
+    }
 
 }

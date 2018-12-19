@@ -63,6 +63,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .mail(domain.getMail())
                 .url(domain.getUrl())
                 .content(domain.getContent())
+                .createTime(domain.getCreateTime())
                 .build();
     }
 

@@ -32,7 +32,7 @@
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            <tr v-for="item in articlePage.rows">
+                                            <tr v-for="item in articlePage.list">
                                                 <td>{{ item.title }}</td>
                                                 <td>{{ item.slug }}</td>
                                                 <td>{{ item.created | formatUnix }}</td>
@@ -74,7 +74,7 @@
                                                 下一页&nbsp;<i class="fa fa-angle-right"></i>
                                             </a>
                                         </li>
-                                        <li><span>共 {{articlePage.totalPages}} 页</span></li>
+                                        <li><span>共 {{articlePage.pages}} 页</span></li>
                                     </ul>
                                 </div>
                             </div>
@@ -110,7 +110,7 @@
                         limit: 12
                     },
                     success: function (data) {
-                        $vm.articlePage = data.payload.list
+                        $vm.articlePage = data.payload;
                     },
                     error: function (error) {
                         console.log(error);

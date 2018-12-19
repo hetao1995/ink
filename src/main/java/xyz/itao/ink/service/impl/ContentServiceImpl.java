@@ -12,6 +12,7 @@ import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.ContentRepository;
+import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.utils.PatternUtils;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 public class ContentServiceImpl extends AbstractBaseService<ContentDomain, ContentVo> implements ContentService {
     @Autowired
     private ContentRepository contentRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     protected ContentDomain doAssemble(ContentVo vo) {
@@ -52,6 +55,10 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
                 .modified(vo.getModified())
                 .thumbImg(vo.getThumbImg())
                 .fmtType(vo.getFmtType())
+                .author(vo.getAuthor())
+                .mail(vo.getMail())
+                .url(vo.getUrl())
+                .userRepository(userRepository)
                 .build();
     }
 
@@ -78,6 +85,9 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
                 .modified(domain.getModified())
                 .thumbImg(domain.getThumbImg())
                 .fmtType(domain.getFmtType())
+                .author(domain.getAuthor())
+                .mail(domain.getMail())
+                .url(domain.getUrl())
                 .build();
 
     }

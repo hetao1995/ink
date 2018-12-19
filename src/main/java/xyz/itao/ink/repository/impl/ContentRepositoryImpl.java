@@ -7,6 +7,7 @@ import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.ContentRepository;
+import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 
 import java.util.List;
@@ -20,6 +21,8 @@ import java.util.List;
 public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain, Content> implements ContentRepository {
     @Autowired
     ContentMapper contentMapper;
+    @Autowired
+    UserRepository userRepository;
     @Override
     protected boolean doSave(Content entity) {
         return contentMapper.insertSelective(entity);
@@ -63,6 +66,7 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
                 .modified(entity.getModified())
                 .thumbImg(entity.getThumbImg())
                 .fmtType(entity.getFmtType())
+                .userRepository(userRepository)
                 .build();
     }
 

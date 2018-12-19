@@ -42,7 +42,7 @@
             <div th:if="${comments}">
                 <ol class="comment-list">
                     <th:block th:each="comment :${comments.list}">
-                        <li th:id="'li-comment-'+${comment.id}" class="comment-body comment-parent comment-odd">
+                        <li th:if="${comment.status}=='approved'" th:id="'li-comment-'+${comment.id}" class="comment-body comment-parent comment-odd">
                             <div th:id="'comment-'+${comment.id}">
                                 <div class="comment-view" onclick="">
                                     <div class="comment-header">
