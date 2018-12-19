@@ -17,10 +17,7 @@ import xyz.itao.ink.utils.InkUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -194,6 +191,9 @@ public final class Commons {
         return fmtdate(unixTime, "yyyy-MM-dd");
     }
 
+    public static String fmtdate(Date date){
+        return DateUtils.dateFormat(date,"yyyy-MM-dd" );
+    }
     /**
      * 格式化unix时间戳为日期
      *

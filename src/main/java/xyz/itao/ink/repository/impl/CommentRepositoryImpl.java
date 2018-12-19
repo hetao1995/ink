@@ -60,6 +60,7 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
                 .contentId(entity.getContentId())
                 .authorId(entity.getAuthorId())
                 .userRepository(userRepository)
+                .content(entity.getContent())
                 .build();
     }
 
@@ -79,6 +80,7 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
                 .parentId(domain.getParentId())
                 .contentId(domain.getContentId())
                 .authorId(domain.getAuthorId())
+                .content(domain.getContent())
                 .build();
     }
 

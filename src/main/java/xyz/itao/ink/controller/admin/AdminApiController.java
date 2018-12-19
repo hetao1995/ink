@@ -204,7 +204,7 @@ public class AdminApiController {
     @PostMapping("/comment")
     public RestResponse<?> postComment(CommentVo commentVo, UserParam userParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(commentVo);
-        commentService.postNewComment(commentVo, userParam, userVo);
+        commentService.postNewComment(commentVo,userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }

@@ -44,6 +44,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .status(vo.getStatus())
                 .type(vo.getType())
                 .userRepository(userRepository)
+                .content(vo.getContent())
                 .build();
     }
 
@@ -61,6 +62,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .author(domain.getAuthor())
                 .mail(domain.getMail())
                 .url(domain.getUrl())
+                .content(domain.getContent())
                 .build();
     }
 
@@ -93,14 +95,14 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     }
 
     @Override
-    public UserVo postNewComment(CommentVo commentVo, UserParam userParam, UserVo userVo) {
+    public UserVo postNewComment(CommentVo commentVo,  UserVo userVo) {
         if(userVo == null){
             userVo = UserVo
                     .builder()
-                    .username(userParam.getUsername())
-                    .email(userParam.getEmail())
-                    .homeUrl(userParam.getHomeUrl())
-                    .displayName(userParam.getDisplayName())
+                    .username(commentVo.getAuthor())
+                    .email(commentVo.getMail())
+                    .homeUrl(commentVo.getUrl())
+                    .displayName(commentVo.getAuthor())
                     .lastLogin(DateUtils.getNow())
                     .build();
             userVo = userService.registerTemporaryUser(userVo);

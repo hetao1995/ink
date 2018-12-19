@@ -102,7 +102,7 @@ public class ArticleController extends BaseController {
     @StopRepeatSubmit(key = "comment")
     @PostMapping(value = "comment")
     @ResponseBody
-    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,  CommentVo commentVo,  UserParam userParam, @RequestAttribute(required = false,value = "login_user") UserVo userVo) {
+    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserVo userVo) {
 
         CommonValidator.valid(commentVo);
 
@@ -114,7 +114,7 @@ public class ArticleController extends BaseController {
             commentVo.setActive(true);
         }
 
-        UserVo newUserVo = commentService.postNewComment(commentVo, userParam, userVo);
+        UserVo newUserVo = commentService.postNewComment(commentVo,userVo);
         if(userVo==null || userVo.getId()==null){
             // 将临时用户jwt放入cookie
             String jwt = userService.getJwtLoginToken(newUserVo, true);

@@ -28,7 +28,7 @@ public class CommonValidator {
     }
 
     public static void valid(CommentVo commentVo) {
-        if(stringLengthBetween(commentVo.getContent(), WebConstant.MIN_COMMENT_TEXT_LENGTH, WebConstant.MAX_COMMENT_TEXT_LENGTH)){
+        if(!stringLengthBetween(commentVo.getContent(), WebConstant.MIN_COMMENT_TEXT_LENGTH, WebConstant.MAX_COMMENT_TEXT_LENGTH)){
             throw new TipException(ExceptionEnum.COMMENT_TEXT_ILLEGAL);
         }
         if(commentVo.getContentId()==null){
