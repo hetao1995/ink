@@ -117,8 +117,8 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     }
 
     @Override
-    public List<ContentDomain> loadAllActiveContentDomain() {
-        return loadByNoNullPropertiesActiveAndNotDelect(ContentDomain.builder().build());
+    public List<ContentDomain> loadAllActiveContentDomain(ContentDomain contentDomain) {
+        return loadByNoNullPropertiesActiveAndNotDelect(contentDomain);
     }
 
     @Override
@@ -145,5 +145,10 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     public List<ContentDomain> loadAllActiveContentDomainByMetaId(Long metaId) {
         // todo 通过metaId查找contentdomain
         return null;
+    }
+
+    @Override
+    public List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain) {
+        return loadByNoNullPropertiesNotActiveAndNotDelect(contentDomain);
     }
 }

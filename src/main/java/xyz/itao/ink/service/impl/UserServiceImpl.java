@@ -67,6 +67,11 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     }
 
     @Override
+    public String getJwtLoginToken(UserVo userVo, Boolean rememberMe) {
+        return getJwtLoginToken(assemble(userVo), rememberMe);
+    }
+
+    @Override
     public boolean clearJwtLoginToken(UserDomain userDomain) {
         return false;
     }

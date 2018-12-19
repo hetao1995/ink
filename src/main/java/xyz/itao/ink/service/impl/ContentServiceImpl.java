@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.dao.ContentMapper;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
@@ -12,6 +14,7 @@ import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.ContentService;
+import xyz.itao.ink.utils.PatternUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,9 +111,16 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public PageInfo<ContentVo> loadAllActiveContentVo(ArticleParam articleParam) {
+        ContentDomain contentDomain = ContentDomain
+                .builder()
+                .status(articleParam.getStatus())
+                .type(articleParam.getType())
+                .categories(articleParam.getCategories())
+                .title(articleParam.getTitle())
+                .build();
         PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
-        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain();
-        List<ContentVo> contentVos = contentDomains.stream().map(contentDomain -> extract(contentDomain)).collect(Collectors.toList());
+        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain(contentDomain);
+        List<ContentVo> contentVos = contentDomains.stream().map(content-> extract(content)).collect(Collectors.toList());
         return new PageInfo<>(contentVos);
     }
 
@@ -142,5 +152,39 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     public PageInfo<ContentVo> searchArticles(String keyword, int page, int limit) {
         //todo 通过elasticsearch搜索文章
         return null;
+    }
+
+    @Override
+    public ContentVo loadActiveContentVoByIdOrSlug(String idOrSlug) {
+        ContentDomain contentDomain = ContentDomain.builder().build();
+        if(PatternUtils.isNumber(idOrSlug)){
+            contentDomain.setId(Long.parseLong(idOrSlug));
+        }else{
+            contentDomain.setSlug(idOrSlug);
+        }
+        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain(contentDomain);
+        if(contentDomains.isEmpty()){
+            return null;
+        }
+        return extract(contentDomains.get(0));
+    }
+
+    @Override
+    public ContentVo loadDraftByIdOrSlug(String idOrSlug, UserVo userVo) {
+        ContentDomain contentDomain = ContentDomain.builder().type(TypeConst.DRAFT).build();
+        if(PatternUtils.isNumber(idOrSlug)){
+            contentDomain.setId(Long.parseLong(idOrSlug));
+        }else{
+            contentDomain.setSlug(idOrSlug);
+        }
+        List<ContentDomain> contentDomains = contentRepository.loadAllNotActiveContentDomain(contentDomain);
+        if(contentDomains == null){
+            return null;
+        }
+        contentDomain = contentDomains.get(0);
+        if(contentDomain.getAuthorId() != userVo.getId()){
+            return null;
+        }
+        return extract(contentDomain);
     }
 }

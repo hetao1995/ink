@@ -36,7 +36,7 @@ public interface ContentRepository {
      * 获取所有的激活状态的content
      * @return
      */
-    List<ContentDomain> loadAllActiveContentDomain();
+    List<ContentDomain> loadAllActiveContentDomain(ContentDomain contentDomain);
 
     /**
      * 获取所有allowfeed的文章
@@ -64,4 +64,7 @@ public interface ContentRepository {
      * @return 查找的结果
      */
     List<ContentDomain> loadAllActiveContentDomainByMetaId(Long metaId);
+
+
+    List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain);
 }

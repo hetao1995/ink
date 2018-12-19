@@ -10,6 +10,7 @@ import xyz.itao.ink.domain.params.UserParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.CommentRepository;
+import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.UserService;
@@ -29,6 +30,8 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     UserService userService;
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    UserRepository userRepository;
     @Override
     protected CommentDomain doAssemble(CommentVo vo) {
         return CommentDomain
@@ -40,6 +43,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .parentId(vo.getParentId())
                 .status(vo.getStatus())
                 .type(vo.getType())
+                .userRepository(userRepository)
                 .build();
     }
 
@@ -54,6 +58,9 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                 .parentId(domain.getParentId())
                 .status(domain.getStatus())
                 .type(domain.getType())
+                .author(domain.getAuthor())
+                .mail(domain.getMail())
+                .url(domain.getUrl())
                 .build();
     }
 
@@ -70,7 +77,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     @Override
     public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
         PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize());
-        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain();
+        List<CommentDomain> commentDomains = commentRepository.loadAllRootCommentDomain();
         List<CommentVo> commentVos = commentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
         return new PageInfo<>(commentVos);
     }
@@ -86,7 +93,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     }
 
     @Override
-    public void postNewComment(CommentVo commentVo, UserParam userParam, UserVo userVo) {
+    public UserVo postNewComment(CommentVo commentVo, UserParam userParam, UserVo userVo) {
         if(userVo == null){
             userVo = UserVo
                     .builder()
@@ -102,5 +109,6 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
         commentVo.setAuthorId(userVo.getId());
         commentVo.setParentId(0L);
         save(commentVo, userVo.getId());
+        return userVo;
     }
 }

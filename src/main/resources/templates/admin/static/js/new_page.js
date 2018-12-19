@@ -107,7 +107,7 @@ var vm = new Vue({
                     text: '页面发布成功',
                     then: function () {
                         setTimeout(function () {
-                            window.location.href = '/admin/pages';
+                            window.location.href = '/admin/page';
                         }, 500);
                     }
                 });

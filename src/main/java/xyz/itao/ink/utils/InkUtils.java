@@ -278,4 +278,15 @@ public class InkUtils {
             response.addCookie(cookie);
         }
     }
+
+    /**
+     * 添加cookie
+     * @param response
+     * @param name
+     * @param value
+     */
+    public static void setCookie(HttpServletResponse response, String name, String value){
+        Cookie cookie = new Cookie(name, value);
+        response.addCookie(cookie);
+    }
 }

@@ -59,4 +59,14 @@ public interface ContentService {
     PageInfo<ContentVo> getArticles(Long id, int page, int limit);
 
     PageInfo<ContentVo> searchArticles(String keyword, int page, int limit);
+
+    ContentVo loadActiveContentVoByIdOrSlug(String idOrSlug);
+
+    /**
+     * 通过id或者slug查找草稿
+     * @param idOrSlug
+     * @param userVo
+     * @return
+     */
+    ContentVo loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
 }

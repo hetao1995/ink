@@ -134,4 +134,5 @@ public class WebConstant {
 
     public static final int REMEMBER_ME_INTERVAL = 60*60*24*30;
 
+    public static final String AUTHORIZATION = "Authorization";
 }

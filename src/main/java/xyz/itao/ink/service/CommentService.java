@@ -40,5 +40,5 @@ public interface CommentService {
      * @param userParam 如果是匿名发布，此param有效
      * @param userVo 如果是登录用户，此uservo有效
      */
-    void postNewComment(CommentVo commentVo, UserParam userParam, UserVo userVo);
+    UserVo postNewComment(CommentVo commentVo, UserParam userParam, UserVo userVo);
 }

@@ -1,7 +1,6 @@
 package xyz.itao.ink.domain.params;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author hetao
@@ -10,6 +9,9 @@ import lombok.ToString;
  */
 @Data
 @ToString(callSuper = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentParam extends PageParam{
     private Long excludeUID;
 }

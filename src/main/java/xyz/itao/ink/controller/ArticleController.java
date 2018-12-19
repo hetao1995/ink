@@ -1,5 +1,6 @@
 package xyz.itao.ink.controller;
 
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +11,7 @@ import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.UserParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
@@ -17,6 +19,9 @@ import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.SiteService;
+import xyz.itao.ink.service.UserService;
+import xyz.itao.ink.utils.InkUtils;
+import xyz.itao.ink.utils.PatternUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,50 +45,54 @@ public class ArticleController extends BaseController {
     @Autowired
     private SiteService siteService;
 
+    @Autowired
+    private UserService userService;
+
     /**
      * 自定义页面,如关于页
      */
-    @GetMapping(value = {"/{id}", "/{id}.html"})
-    public String page(@PathVariable Long id, HttpServletRequest request) {
-        ContentVo contentVo = contentService.loadContentVoById(id);
-        if (null == contentVo) {
+    @GetMapping(value = {"/{idOrSlug}", "/{idOrSlug}.html"})
+    public String page(@PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize, HttpServletRequest request) {
+        ContentVo contentVo = contentService.loadActiveContentVoByIdOrSlug(idOrSlug);
+        if (null == contentVo || TypeConst.DRAFT.equals(contentVo.getSlug())) {
             return this.render_404();
         }
-//        if (contentVo.getAllowComment()) {
-//            int cp = request.queryInt("cp", 1);
-//            request.attribute("cp", cp);
-//        }
-        request.setAttribute("article", contentVo);
+        setArticleAttribute(request, pageNum, pageSize, contentVo);
         contentService.hit(contentVo);
-        if (TypeConst.ARTICLE.equals(contentVo.getType())) {
-            return this.render("post");
-        }
-        if (TypeConst.PAGE.equals(contentVo.getType())) {
-            return this.render("page");
-        }
-        return this.render_404();
+        return renderContent(request, contentVo);
     }
 
     /**
      * 文章页
      */
-    @GetMapping(value = {"/article/{id}", "/article/{id}.html"})
-    public String post(HttpServletRequest request, @PathVariable Long id) {
-        ContentVo contentVo = contentService.loadContentVoById(id);
-        if (null == contentVo) {
+    @GetMapping(value = {"/article/{idOrSlug}", "/article/{idOrSlug}.html"})
+    public String post(HttpServletRequest request, @PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize) {
+
+        ContentVo contentVo = contentService.loadActiveContentVoByIdOrSlug(idOrSlug);
+        if (null == contentVo || TypeConst.DRAFT.equals(contentVo.getStatus()) || !TypeConst.ARTICLE.equals(contentVo.getType())) {
             return this.render_404();
         }
-        if (TypeConst.DRAFT.equals(contentVo.getStatus())) {
+
+        setArticleAttribute(request, pageNum, pageSize, contentVo);
+        request.setAttribute("is_post", true);
+        contentService.hit(contentVo);
+        return this.render("post");
+    }
+
+
+    /**
+     * 预览页
+     * @param request
+     * @return
+     */
+    @GetMapping(value = {"/preview/{idOrSlug}", "/preview/{idOrSlug}.html"})
+    public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserVo userVo){
+        ContentVo contentVo = contentService.loadDraftByIdOrSlug(idOrSlug, userVo);
+        if(null == contentVo){
             return this.render_404();
         }
         request.setAttribute("article", contentVo);
-        request.setAttribute("is_post", true);
-//        if (contentVo.getAllowComment()) {
-//            int cp = request.queryInt("cp", 1);
-//            request.attribute("cp", cp);
-//        }
-        contentService.hit(contentVo);
-        return this.render("post");
+        return renderContent(request, contentVo);
     }
 
     /**
@@ -95,34 +104,57 @@ public class ArticleController extends BaseController {
     @ResponseBody
     public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,  CommentVo commentVo,  UserParam userParam, @RequestAttribute(required = false,value = "login_user") UserVo userVo) {
 
-//        if (StringUtils.isBlank(Referer)) {
-//            return RestResponse.fail(ErrorCode.BAD_REQUEST);
-//        }
-//
-//        if (!Referer.startsWith(Commons.site_url())) {
-//            return RestResponse.fail("非法评论来源");
-//        }
-
         CommonValidator.valid(commentVo);
-//        String  val   = request.address() + ":" + comments.getCid();
-//        Integer count = cache.hget(TypeConst.COMMENTS_FREQUENCY, val);
-//        if (null != count && count > 0) {
-//            return RestResponse.fail("您发表评论太快了，请过会再试");
-//        }
-//        commentVo.setIp(request.address());
-//        comments.setAgent(request.userAgent());
 
         if ((Boolean)WebConstant.OPTIONS.getOrDefault(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, true)) {
             commentVo.setStatus(WebConstant.COMMENT_NO_AUDIT);
+            commentVo.setActive(false);
         } else {
             commentVo.setStatus(WebConstant.COMMENT_APPROVED);
+            commentVo.setActive(true);
         }
-        commentVo.setActive(true);
-        commentService.postNewComment(commentVo, userParam, userVo);
+
+        UserVo newUserVo = commentService.postNewComment(commentVo, userParam, userVo);
         if(userVo==null || userVo.getId()==null){
-            //todo 将临时用户放入jwt
+            // 将临时用户jwt放入cookie
+            String jwt = userService.getJwtLoginToken(newUserVo, true);
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt);
         }
         return RestResponse.ok();
+    }
+
+    /**
+     * 根据type返回视图
+     * @param request
+     * @param contentVo
+     * @return
+     */
+    private String renderContent(HttpServletRequest request, ContentVo contentVo) {
+        if (TypeConst.ARTICLE.equals(contentVo.getType())) {
+            request.setAttribute("is_post", true);
+            return this.render("post");
+        }
+        if (TypeConst.PAGE.equals(contentVo.getType())) {
+            return this.render("page");
+        }
+        return this.render_404();
+    }
+
+    /**
+     * 设置article和comments到attribute
+     * @param request
+     * @param pageNum
+     * @param pageSize
+     * @param contentVo
+     */
+    private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentVo contentVo) {
+        request.setAttribute("article", contentVo);
+        CommentParam commentParam = CommentParam.builder().build();
+        commentParam.setPageNum(pageNum);
+        commentParam.setPageSize(pageSize);
+        PageInfo<CommentVo> commentVoPageInfo = commentService.loadAllCommentVo(commentParam);
+        request.setAttribute("cp", pageNum);
+        request.setAttribute("comments", commentVoPageInfo);
     }
 
 }

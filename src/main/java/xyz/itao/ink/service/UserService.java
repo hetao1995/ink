@@ -22,6 +22,8 @@ public interface UserService {
      */
     String getJwtLoginToken(UserDomain userDomain, Boolean rememberMe);
 
+    String getJwtLoginToken(UserVo userVo, Boolean rememberMe);
+
     /**
      * 清除JwtToken
      * @param userDomain 用户domain

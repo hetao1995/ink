@@ -11,6 +11,7 @@ import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.CommentRepository;
+import xyz.itao.ink.repository.UserRepository;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
 
     @Autowired
     CommentMapper commentMapper;
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     protected boolean doSave(Comment entity) {
@@ -56,6 +59,7 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
                 .parentId(entity.getParentId())
                 .contentId(entity.getContentId())
                 .authorId(entity.getAuthorId())
+                .userRepository(userRepository)
                 .build();
     }
 
@@ -107,11 +111,16 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
 
     @Override
     public CommentDomain loadCommentDomainById(Long id) {
-         List<CommentDomain> commentDomains = loadByNoNullPropertiesActiveAndNotDelect(CommentDomain.builder().id(id).build());
+         List<CommentDomain> commentDomains = loadByNoNullPropertiesNotDelect(CommentDomain.builder().id(id).build());
          if(commentDomains.isEmpty()){
              return null;
          }
          return commentDomains.get(0);
+    }
+
+    @Override
+    public List<CommentDomain> loadAllRootCommentDomain() {
+        return loadByNoNullPropertiesNotDelect(CommentDomain.builder().parentId(0L).build());
     }
 
 }

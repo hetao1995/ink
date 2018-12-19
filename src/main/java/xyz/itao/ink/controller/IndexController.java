@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.domain.params.ArticleParam;
@@ -61,6 +62,8 @@ public class IndexController extends BaseController{
         ArticleParam articleParam = ArticleParam.builder().build();
         articleParam.setPageNum(page);
         articleParam.setPageSize(limit);
+        articleParam.setType(TypeConst.ARTICLE);
+        articleParam.setStatus(TypeConst.PUBLISH);
         request.setAttribute("articles", contentService.loadAllActiveContentVo(articleParam));
 //        request.setAttribute("page_num", page);
 //        request.setAttribute("limit", limit);

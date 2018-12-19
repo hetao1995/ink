@@ -184,7 +184,7 @@ public class AdminApiController {
     }
 
     @SysLog("删除评论")
-    @DeleteMapping("/comments/{id}")
+    @DeleteMapping("/comment/{id}")
     public RestResponse<?> deleteComment(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
 
         boolean commentVo = commentService.deleteCommentById(id, userVo);
@@ -193,7 +193,7 @@ public class AdminApiController {
     }
 
     @SysLog("修改评论状态")
-    @PutMapping("/comments")
+    @PutMapping("/comment")
     public RestResponse<?> updateStatus( CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         commentService.updateCommentVo(commentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);

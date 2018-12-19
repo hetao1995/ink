@@ -55,11 +55,11 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <button th:v-if="|item.authorId != ${login_user.id}|" class="btn btn-primary btn-sm waves-effect waves-light m-b-5" @click="reply(item.coid)"><i class="fa fa-reply"></i> 回复</button>
-                                                <button th:v-if="|item.status == 'no_audit' && item.authorId != ${login_user.id}|" class="btn btn-success btn-sm waves-effect waves-light m-b-5" @click="audit(item.coid, 'approved')">
+                                                <button th:v-if="|item.authorId != ${login_user.id}|" class="btn btn-primary btn-sm waves-effect waves-light m-b-5" @click="reply(item.id)"><i class="fa fa-reply"></i> 回复</button>
+                                                <button v-if="item.status == 'no_audit' " class="btn btn-success btn-sm waves-effect waves-light m-b-5" @click="audit(item.id, 'approved')">
                                                     <i class="fa fa-check-circle"></i> 通过</span>
                                                 </button>
-                                                <button class="btn btn-danger btn-sm waves-effect waves-light m-b-5" @click="deleteComment(item.coid)"><i class="fa fa-trash-o"></i> 删除</button>
+                                                <button class="btn btn-danger btn-sm waves-effect waves-light m-b-5" @click="deleteComment(item.id)"><i class="fa fa-trash-o"></i> 删除</button>
                                             </td>
                                         </tr>
                                         </tbody>
@@ -120,8 +120,8 @@
                         limit: 12
                     },
                     success: function (data) {
-                        $vm.commentPage = data.payload
-                        if(!data.payload.rows){
+                        $vm.commentPage.rows = data.payload.list;
+                        if(!data.payload.list){
                             $vm.commentPage.rows = []
                         }
                     },
@@ -131,7 +131,7 @@
                     }
                 });
             },
-            reply: function(coid){
+            reply: function(id){
                 var $vm = this;
                 swal({
                     title: "回复评论",
@@ -145,7 +145,7 @@
                         return new Promise(function (resolve, reject) {
                             tale.post({
                                 url : '/admin/api/comment/reply',
-                                data: {coid: coid, content: comment},
+                                data: {id: id, content: comment},
                                 success: function (result) {
                                     if(result && result.success){
                                         tale.alertOk('已回复');
@@ -160,11 +160,11 @@
                     allowOutsideClick: false
                 });
             },
-            audit: function(coid, status){
+            audit: function(id, status){
                 var $vm = this;
-                tale.post({
-                    url : '/admin/api/comment/status',
-                    data: {coid: coid, status: status},
+                tale.put({
+                    url : '/admin/api/comment/',
+                    data: {id: id, status: status},
                     success: function (result) {
                         if(result && result.success){
                             tale.alertOk('评论状态设置成功');
@@ -175,13 +175,13 @@
                     }
                 });
             },
-            deleteComment: function (coid) {
+            deleteComment: function (id) {
                 var $vm = this;
                 tale.alertConfirm({
                     title: '确定删除该评论吗?',
                     then: function () {
-                        tale.post({
-                            url: '/admin/api/comment/delete/' + coid,
+                        tale.delete({
+                            url: '/admin/api/comment/' + id,
                             success: function (result) {
                                 if (result && result.success) {
                                     tale.alertOk('评论删除成功');

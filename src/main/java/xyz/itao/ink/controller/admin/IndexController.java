@@ -15,6 +15,7 @@ import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.vo.*;
+import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.LogService;
 import xyz.itao.ink.service.OptionService;
 import xyz.itao.ink.service.SiteService;
@@ -45,6 +46,8 @@ public class IndexController extends BaseController {
     private SiteService siteService;
     @Autowired
     LogService logService;
+    @Autowired
+    CommentService commentService;
 
     /**
      * 仪表盘
@@ -70,7 +73,7 @@ public class IndexController extends BaseController {
     }
 
     @GetMapping("/comments")
-    public String commentIndex(){
+    public String commentIndex(HttpServletRequest request){
         return "admin/comments";
     }
 

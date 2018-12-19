@@ -20,4 +20,6 @@ public interface CommentRepository {
     CommentDomain saveNewCommentDomain(CommentDomain domain);
 
     CommentDomain loadCommentDomainById(Long id);
+
+    List<CommentDomain> loadAllRootCommentDomain();
 }

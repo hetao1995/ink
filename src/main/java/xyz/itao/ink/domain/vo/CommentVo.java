@@ -62,4 +62,19 @@ public class CommentVo {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 作者姓名
+     */
+    private String author;
+
+    /**
+     * 作者邮箱
+     */
+    private String mail;
+
+    /**
+     * 作者主页
+     */
+    private String url;
 }
