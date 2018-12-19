@@ -136,8 +136,6 @@ public class AdminApiController {
     public RestResponse<?> newPage( @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
 
         CommonValidator.valid(contentVo);
-        System.out.println("contentVo:"+contentVo);
-
         contentVo.setType(TypeConst.PAGE);
         contentVo.setAllowPing(true);
         contentVo.setAuthorId(userVo.getId());
