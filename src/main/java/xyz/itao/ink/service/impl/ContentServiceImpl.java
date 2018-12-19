@@ -110,7 +110,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public PageInfo<ContentVo> loadAllActiveContentVo(ArticleParam articleParam) {
+    public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
         ContentDomain contentDomain = ContentDomain
                 .builder()
                 .status(articleParam.getStatus())
@@ -119,7 +119,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
                 .title(articleParam.getTitle())
                 .build();
         PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
-        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain(contentDomain);
+        List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         List<ContentVo> contentVos = contentDomains.stream().map(content-> extract(content)).collect(Collectors.toList());
         return new PageInfo<>(contentVos);
     }

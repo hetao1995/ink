@@ -151,4 +151,9 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     public List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain) {
         return loadByNoNullPropertiesNotActiveAndNotDelect(contentDomain);
     }
+
+    @Override
+    public List<ContentDomain> loadAllContentDomain(ContentDomain contentDomain) {
+        return loadByNoNullPropertiesNotDelect(contentDomain);
+    }
 }

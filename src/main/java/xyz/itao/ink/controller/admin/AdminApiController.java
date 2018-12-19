@@ -119,7 +119,7 @@ public class AdminApiController {
     public RestResponse articleList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setOrderBy("create_time desc");
-        PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllActiveContentVo(articleParam);
+        PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllContentVo(articleParam);
         return RestResponse.ok(contentVoPageInfo);
     }
 
@@ -127,7 +127,7 @@ public class AdminApiController {
     public RestResponse pageList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.PAGE);
         articleParam.setOrderBy("create_time desc");
-        PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllActiveContentVo(articleParam);
+        PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllContentVo(articleParam);
         return RestResponse.ok(contentVoPageInfo);
     }
 

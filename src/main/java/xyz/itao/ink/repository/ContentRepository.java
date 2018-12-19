@@ -67,4 +67,6 @@ public interface ContentRepository {
 
 
     List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain);
+
+    List<ContentDomain> loadAllContentDomain(ContentDomain contentDomain);
 }

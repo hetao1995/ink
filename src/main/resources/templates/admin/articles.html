@@ -56,7 +56,7 @@
                                                 <tbody>
                                                 <tr v-for="item in articlePage.rows">
                                                     <td>
-                                                        <a :href="'/admin/article/edit/' + item.cid">{{ item.title }}</a>
+                                                        <a :href="'/admin/article/edit/' + item.id">{{ item.title }}</a>
                                                     </td>
                                                     <td>{{ item.created | formatUnix }}</td>
                                                     <td>{{ item.hits }}</td>
@@ -66,11 +66,11 @@
                                                         <span v-show="item.status == 'draft'" class="label label-default">草稿</span>
                                                     </td>
                                                     <td>
-                                                        <a :href="'/admin/article/edit/' + item.cid"
+                                                        <a :href="'/admin/article/edit/' + item.id"
                                                            class="btn btn-primary btn-sm waves-effect waves-light m-b-5">
                                                             <i class="fa fa-edit"></i> <span>编辑</span>
                                                         </a>
-                                                        <a @click="deleteArticle(item.cid)" href="javascript:void(0)"
+                                                        <a @click="deleteArticle(item.id)" href="javascript:void(0)"
                                                            class="btn btn-danger btn-sm waves-effect waves-light m-b-5">
                                                             <i class="fa fa-trash-o"></i> <span>删除</span>
                                                         </a>
@@ -162,7 +162,7 @@
                     url: '/admin/api/articles',
                     data: $vm.search,
                     success: function (data) {
-                        $vm.articlePage = data.payload
+                        $vm.articlePage = data.payload.list
                     },
                     error: function (error) {
                         console.log(error);
@@ -170,13 +170,13 @@
                     }
                 });
             },
-            deleteArticle: function (cid) {
+            deleteArticle: function (id) {
                 var $vm = this;
                 tale.alertConfirm({
                     title: '确定删除该文章吗?',
                     then: function () {
                         tale.post({
-                            url: '/admin/api/article/delete/' + cid,
+                            url: '/admin/api/article/delete/' + id,
                             success: function (result) {
                                 if (result && result.success) {
                                     tale.alertOk('文章删除成功');

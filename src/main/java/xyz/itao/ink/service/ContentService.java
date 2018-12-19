@@ -39,7 +39,7 @@ public interface ContentService {
      * 分页加载所有的contentvo
      * @return
      */
-    PageInfo<ContentVo> loadAllActiveContentVo(ArticleParam articleParam);
+    PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam);
 
     /**
      * 修改文章
