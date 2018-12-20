@@ -38,4 +38,5 @@ public interface MetaMapper {
      * @return 满足条件的Content实例
      */
     List<Meta> selectByNoNulProperties(Meta record);
+
 }

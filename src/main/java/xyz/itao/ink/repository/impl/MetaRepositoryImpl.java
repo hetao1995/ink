@@ -2,6 +2,7 @@ package xyz.itao.ink.repository.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import xyz.itao.ink.dao.ContentMetaMapper;
 import xyz.itao.ink.dao.MetaMapper;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.entity.Meta;
@@ -20,6 +21,9 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Autowired
     MetaMapper metaMapper;
+
+    @Autowired
+    ContentMetaMapper contentMetaMapper;
     @Override
     public MetaDomain updateMetaDomain(MetaDomain domain) {
         return update(domain);
@@ -48,6 +52,18 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
                 .type(type)
                 .build();
         return loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
+    }
+
+    @Override
+    public Integer countArticlesByMetaId(Long id) {
+        // todo 先从缓存中查找
+        return contentMetaMapper.countContentsByMetaId(id);
+    }
+
+    @Override
+    public List<Long> loadAllContentIdByMetaId(Long id) {
+        // todo 先从缓存中查找
+        return contentMetaMapper.selectAllContentIdByMetaId(id);
     }
 
     @Override

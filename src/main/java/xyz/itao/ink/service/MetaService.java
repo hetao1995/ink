@@ -37,12 +37,12 @@ public interface MetaService {
     Map<String, List<ContentVo>> getMetaMapping(String type);
 
     /**
-     * 通过type和keyword获取meta数据
+     * 通过type和name获取meta数据
      * @param type
-     * @param keyword
+     * @param name
      * @return
      */
-    MetaVo getMeta(String type, String keyword);
+    MetaVo getMetaVoByTypeAndName(String type, String name);
 
     /**
      * 根据type获取meta

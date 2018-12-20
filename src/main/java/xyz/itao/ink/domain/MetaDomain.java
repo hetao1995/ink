@@ -1,9 +1,13 @@
 package xyz.itao.ink.domain;
 
+import com.google.common.collect.Lists;
 import lombok.Builder;
 import lombok.Data;
+import xyz.itao.ink.repository.ContentRepository;
+import xyz.itao.ink.repository.MetaRepository;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author hetao
@@ -77,4 +81,32 @@ public class MetaDomain extends BaseDomain{
      * 修改者
      */
     private Long updateBy;
+
+    private MetaRepository metaRepository;
+
+    private ContentRepository contentRepository;
+
+    /**
+     * 此meta下的文章数
+     */
+    private Integer count;
+
+    public List<Long> getContentIds() {
+        if(contentIds == null){
+            contentIds = metaRepository.loadAllContentIdByMetaId(id);
+            count = contentIds.size();
+        }
+
+        return contentIds;
+    }
+
+    private List<Long> contentIds;
+
+    public Integer getCount() {
+        if(count!=null || id==null){
+            return count;
+        }
+        return metaRepository.countArticlesByMetaId(id);
+    }
+
 }

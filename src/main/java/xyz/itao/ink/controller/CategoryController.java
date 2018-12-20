@@ -60,12 +60,13 @@ public class CategoryController extends BaseController {
                              @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
 
         page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
-        MetaVo metaVo = metaService.getMeta(TypeConst.CATEGORY, keyword);
+        MetaVo metaVo = metaService.getMetaVoByTypeAndName(TypeConst.CATEGORY, keyword);
         if (null == metaVo) {
             return this.render_404();
         }
 
         PageInfo<ContentVo> contentsPage = contentService.getArticles(metaVo.getId(), page, limit);
+
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaVo);
         request.setAttribute("type", "分类");
@@ -106,7 +107,7 @@ public class CategoryController extends BaseController {
     @GetMapping(value = {"tag/{name}/{page}", "tag/{name}/{page}.html"})
     public String tags(HttpServletRequest request, @PathVariable String name, @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
         page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
-        MetaVo metaVo = metaService.getMeta(TypeConst.TAG, name);
+        MetaVo metaVo = metaService.getMetaVoByTypeAndName(TypeConst.TAG, name);
         if (null == metaVo) {
             return this.render_404();
         }

@@ -17,4 +17,17 @@ public interface MetaRepository {
     MetaDomain loadMetaDomainByTypeAndName(String type, String name);
 
     List<MetaDomain> loadMetaDomainsByType(String type);
+
+    /**
+     * 通过metaId在contentMeta中找到所有涉及该meta的文章数目
+     * @param id meta的主键
+     */
+    Integer countArticlesByMetaId(Long id);
+
+    /**
+     * 通过metaId在contentMeta中找到所有涉及的文章id
+     * @param id
+     * @return
+     */
+    List<Long> loadAllContentIdByMetaId(Long id);
 }

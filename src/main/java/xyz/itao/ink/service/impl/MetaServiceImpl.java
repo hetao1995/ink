@@ -104,7 +104,7 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     }
 
     @Override
-    public MetaVo getMeta(String type, String keyword) {
+    public MetaVo getMetaVoByTypeAndName(String type, String keyword) {
         return null;
     }
 
