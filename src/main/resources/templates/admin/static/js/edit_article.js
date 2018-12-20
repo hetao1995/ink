@@ -10,7 +10,7 @@ var vm = new Vue({
     el: '#app',
     data: {
         article: {
-            cid: '',
+            id: '',
             title: '',
             slug: '',
             tags: '',
@@ -59,9 +59,6 @@ var vm = new Vue({
                         data: data,
                         processData: false,
                         dataType: 'json',
-                        headers: {
-                            'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content
-                        },
                         contentType: false,
                         success: function (result) {
                             tale.hideLoading();
@@ -85,7 +82,7 @@ var vm = new Vue({
         load: function () {
             var $vm = this;
             var pos = window.location.toString().lastIndexOf("/");
-            var cid = window.location.toString().substring(pos + 1)
+            var id = window.location.toString().substring(pos + 1)
             tale.get({
                 url: '/admin/api/categories',
                 success: function (data) {
@@ -100,7 +97,7 @@ var vm = new Vue({
             });
 
             tale.get({
-                url: '/admin/api/articles/' + cid,
+                url: '/admin/api/article/' + id,
                 success: function (data) {
                     $vm.article = data.payload;
                     $vm.article.tags = data.payload.tags || "";
@@ -168,7 +165,7 @@ var vm = new Vue({
                     }
 
                     tale.get({
-                        url: '/admin/api/articles/content/' + cid,
+                        url: '/admin/api/article/content/' + id,
                         success: function (data) {
                             if ($vm.article.fmtType === 'markdown') {
                                 mditor.value = data;
@@ -194,10 +191,11 @@ var vm = new Vue({
                 var params = tale.copy($vm.article);
                 params.selected = null;
                 params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
+                params.createdTime = null;
                 params.tags = $('#tags').val();
 
-                tale.post({
-                    url: '/admin/api/article/update',
+                tale.put({
+                    url: '/admin/api/article/'+$vm.article.id,
                     data: params,
                     success: function (result) {
                         if (result && result.success) {
@@ -263,7 +261,7 @@ var vm = new Vue({
                     text: '文章保存成功',
                     then: function () {
                         setTimeout(function () {
-                            window.location.href = '/admin/articles';
+                            window.location.href = '/admin/article';
                         }, 500);
                     }
                 });
@@ -356,9 +354,6 @@ $(document).ready(function () {
         acceptedFiles: 'image/*',
         dictFileTooBig: '您的文件超过10MB!',
         dictInvalidInputType: '不支持您上传的类型',
-        headers: {
-            'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content
-        },
         init: function () {
             this.on('success', function (files, result) {
                 console.log("upload success..");

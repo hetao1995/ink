@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="footer">
-<body>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body  th:fragment="footer">
 <footer class="footer bg-white">
     <div class="footer-social">
         <div class="footer-container clearfix">
-            <div th:replace="themes/default/partial/social"></div>
+            <div th:replace="themes/default/partial/social::social-list"></div>
         </div>
     </div>
     <div class="footer-meta">

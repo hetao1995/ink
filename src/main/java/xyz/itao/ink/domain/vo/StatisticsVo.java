@@ -1,5 +1,6 @@
 package xyz.itao.ink.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StatisticsVo implements Serializable {
 
     private static final long serialVersionUID = 2329863829741481287L;

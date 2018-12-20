@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:fragment="social">
-<div class="social-list">
+<div class="social-list" th:fragment="social-list">
     <th:block th:each="index:${commons.social()}">
         <th:block th:if="${index.value}!=null and ${index.value}!=''">
             <th:block th:switch="${index.key}">
@@ -13,6 +13,7 @@
                     <a class="social zhihu" target="blank"
                        th:href="@{${index.value}}">知乎</a>
                 </th:block>
+                <a class="social rss" target="blank" href="/feed">RSS</a>
                 <th:block th:case="'github'">
                     <a class="social github" target="blank"
                        th:href="@{${index.value}}">Github</a>

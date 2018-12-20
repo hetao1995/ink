@@ -108,7 +108,7 @@ public class AdminApiController {
     }
 
     @PutMapping(value = "/article/{id}")
-    public RestResponse updateArticle(ContentVo contentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse updateArticle(@RequestBody ContentVo contentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         if (null == contentVo || id == null) {
             return RestResponse.fail("缺少参数，请重试");
         }
