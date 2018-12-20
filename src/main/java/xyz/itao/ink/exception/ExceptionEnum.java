@@ -9,6 +9,7 @@ public enum ExceptionEnum {
     ILLEGAL_OPERATION("非法操作，不支持此方法！", -1),
     PERSISTENCE_FAIL("持久化失败!",-2),
     DELETE_NON_EXIST_ELEMENT("删除不存在的元素！",-3),
+    ILLEGAL_ARGUMENT("非法的参数！", -4),
 
     USERNAME_ILLEGAL("用户名无效，用户名必须是2-20位，字母开头，数字、字母、下划线组成！", 1),
     EMAIL_ILLEGAL("不是有效的邮箱地址，请再次确认！", 2),

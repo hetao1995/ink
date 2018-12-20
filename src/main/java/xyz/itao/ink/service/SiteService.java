@@ -13,7 +13,7 @@ import java.util.List;
 public interface SiteService {
     void cleanCache(String key);
 
-    List<MetaVo> getMetaVo(String recentMeta, String category, int maxPosts);
+    List<MetaVo> getMetaVo(String searchType, String type, int limit);
 
     List<ArchiveVo> getArchives();
 

@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.BaseDomain;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.exception.ExceptionEnum;
+import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.exception.TipException;
 import xyz.itao.ink.service.*;
 import xyz.itao.ink.utils.InkUtils;
@@ -27,13 +30,15 @@ public class SiteServiceImpl implements SiteService {
     RoleService roleService;
     @Autowired
     ContentService contentService;
+    @Autowired
+    MetaService metaService;
     @Override
     public void cleanCache(String key) {
 
     }
 
     @Override
-    public List<MetaVo> getMetaVo(String recentMeta, String category, int maxPosts) {
+    public List<MetaVo> getMetaVo(String searchType, String type, int limit) {
         return null;
     }
 
