@@ -2,8 +2,6 @@ package xyz.itao.ink.controller.admin;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
-import com.sun.deploy.config.WinPlatform;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.service.*;
 import xyz.itao.ink.utils.DateUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,7 +81,6 @@ public class AdminApiController {
     @PostMapping(value = "/article")
     public RestResponse newArticle(@RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
-
         contentVo.setType(TypeConst.ARTICLE);
         contentVo.setAuthorId(userVo.getId());
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
@@ -112,10 +108,11 @@ public class AdminApiController {
         if (null == contentVo || id == null) {
             return RestResponse.fail("缺少参数，请重试");
         }
+
         contentVo.setId(id);
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         CommonValidator.valid(contentVo);
-        contentService.updateArticle(contentVo, userVo);
+        contentService.updateContentVo(contentVo, userVo);
         return RestResponse.ok(contentVo.getId());
     }
 
@@ -151,7 +148,7 @@ public class AdminApiController {
 
     @SysLog("修改页面")
     @PutMapping("/page/{id}")
-    public RestResponse<?> updatePage(@PathVariable Long id, ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> updatePage(@PathVariable Long id, @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(contentVo);
 
         if (null == id) {
@@ -160,7 +157,7 @@ public class AdminApiController {
         contentVo.setId(id);
         contentVo.setType(TypeConst.PAGE);
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
-        contentService.updateArticle(contentVo, userVo);
+        contentService.updateContentVo(contentVo, userVo);
         return RestResponse.ok(id);
     }
 

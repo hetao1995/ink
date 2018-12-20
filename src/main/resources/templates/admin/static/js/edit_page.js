@@ -8,7 +8,7 @@ var vm = new Vue({
     el: '#app',
     data: {
         article: {
-            cid: '',
+            id: '',
             title: '',
             slug: '',
             tags: '',
@@ -88,9 +88,9 @@ var vm = new Vue({
         load: function () {
             var $vm = this;
             var pos = window.location.toString().lastIndexOf("/");
-            var cid = window.location.toString().substring(pos + 1)
+            var id = window.location.toString().substring(pos + 1)
             tale.get({
-                url: '/admin/api/articles/' + cid,
+                url: '/admin/api/article/' + id,
                 success: function (data) {
                     $vm.article = data.payload;
                     $vm.article.createdTime = moment.unix($vm.article.created).format('YYYY-MM-DD HH:mm')
@@ -112,7 +112,7 @@ var vm = new Vue({
                     });
 
                     tale.get({
-                        url: '/admin/api/articles/content/' + cid,
+                        url: '/admin/api/article/content/' + id,
                         success: function (data) {
                             if ($vm.article.fmtType === 'markdown') {
                                 mditor.value = data;
@@ -139,8 +139,8 @@ var vm = new Vue({
                 params.selected = null;
                 params.created = moment($('#form_datetime').val(), "YYYY-MM-DD HH:mm").unix();
 
-                tale.post({
-                    url: '/admin/api/page/update',
+                tale.put({
+                    url: '/admin/api/page/'+$vm.article.id,
                     data: params,
                     success: function (result) {
                         if (result && result.success) {
@@ -206,7 +206,7 @@ var vm = new Vue({
                     text: '页面保存成功',
                     then: function () {
                         setTimeout(function () {
-                            window.location.href = '/admin/pages';
+                            window.location.href = '/admin/page';
                         }, 500);
                     }
                 });

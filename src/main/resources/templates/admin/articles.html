@@ -74,10 +74,9 @@
                                                            class="btn btn-danger btn-sm waves-effect waves-light m-b-5">
                                                             <i class="fa fa-trash-o"></i> <span>删除</span>
                                                         </a>
-                                                        <a v-show="item.status == 'publish'"
-                                                           class="btn btn-warning btn-sm waves-effect waves-light m-b-5"
+                                                        <a class="btn btn-warning btn-sm waves-effect waves-light m-b-5"
                                                            :href="/preview/ + item.id"
-                                                           target="_blank">
+                                                           target="_blank"  v-if="item.status=='draft'">
                                                             <i class="fa fa-rocket"></i> <span>预览</span>
                                                         </a>
                                                     </td>

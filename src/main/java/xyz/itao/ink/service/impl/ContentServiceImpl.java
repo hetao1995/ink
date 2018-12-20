@@ -115,7 +115,11 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public ContentVo publishNewContent(ContentVo contentVo, UserVo userVo) {
-        contentVo.setActive(true);
+        if(TypeConst.PUBLISH.equals(contentVo.getStatus())){
+            contentVo.setActive(true);
+        }else{
+            contentVo.setActive(false);
+        }
         return save(contentVo, userVo.getId());
     }
 
@@ -135,7 +139,12 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public void updateArticle(ContentVo contentVo, UserVo userVo) {
+    public void updateContentVo(ContentVo contentVo, UserVo userVo) {
+        if(TypeConst.PUBLISH.equals(contentVo.getStatus())){
+            contentVo.setActive(true);
+        }else{
+            contentVo.setActive(false);
+        }
         update(contentVo, userVo.getId());
     }
 
@@ -181,18 +190,18 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public ContentVo loadDraftByIdOrSlug(String idOrSlug, UserVo userVo) {
-        ContentDomain contentDomain = ContentDomain.builder().type(TypeConst.DRAFT).build();
+        ContentDomain contentDomain = ContentDomain.builder().status(TypeConst.DRAFT).build();
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));
         }else{
             contentDomain.setSlug(idOrSlug);
         }
         List<ContentDomain> contentDomains = contentRepository.loadAllNotActiveContentDomain(contentDomain);
-        if(contentDomains == null){
+        if(contentDomains.isEmpty()){
             return null;
         }
         contentDomain = contentDomains.get(0);
-        if(contentDomain.getAuthorId() != userVo.getId()){
+        if(!contentDomain.getAuthorId().equals( userVo.getId())){
             return null;
         }
         return extract(contentDomain);

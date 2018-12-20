@@ -18,7 +18,7 @@
                                 <input type="hidden" id="attach_url" value="${attachURL()}" />
 
                                 <form id="articleForm">
-                                    <input type="hidden" v-model="article.cid"/>
+                                    <input type="hidden" v-model="article.id"/>
                                     <input type="hidden" v-model="article.status"/>
                                     <input type="hidden" v-model="article.allowComment" />
                                     <input type="hidden" v-model="article.allowFeed" />
@@ -95,6 +95,6 @@
         </div>
     </div>
 </div>
-<script src="/static/admin/js/edit_page.js?v=${version}" ></script>
+<script src="/admin/js/edit_page.js" ></script>
 </body>
 </html>

@@ -46,7 +46,7 @@ public interface ContentService {
      * @param contentVo
      * @param userVo
      */
-    void updateArticle(ContentVo contentVo, UserVo userVo);
+    void updateContentVo(ContentVo contentVo, UserVo userVo);
 
     /**
      * 获取所有的feed页

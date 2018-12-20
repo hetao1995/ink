@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" >
 <body>
-<div th:fragment="comments">
+<div th:fragment="comments" th:if="${article} && ${article.status}=='publish'">
     <div th:if="${article}!=null">
             <div th:id="${article.id ?: 0}" class="comment-container">
                 <div id="comments" class="clearfix">
