@@ -54,7 +54,7 @@ var vm = new Vue({
                     data.append('image_up', files[0]);
                     tale.showLoading();
                     $.ajax({
-                        url: '/admin/api/attach/upload',
+                        url: '/admin/api/attach/',
                         method: 'POST',
                         data: data,
                         processData: false,
@@ -63,7 +63,7 @@ var vm = new Vue({
                         success: function (result) {
                             tale.hideLoading();
                             if (result && result.success) {
-                                var url = $('#attach_url').val() + result.payload[0].fkey;
+                                var url = $('#attach_url').val() + result.payload[0].fileKey;
                                 console.log('url =>' + url);
                                 htmlEditor.summernote('insertImage', url);
                             } else {
@@ -151,7 +151,7 @@ var vm = new Vue({
                         $('#dropzone-container').removeClass('hide');
                         $('#dropzone-container').show();
                         $('.dz-image').hide();
-                        $('#dropzone').css('background-image', 'url(' + $vm.article.thumbImg + ')');
+                        $('#dropzone').css('background-image', 'url(' +attach_url + $vm.article.thumbImg + ')');
                         $('#dropzone').css('background-size', 'cover');
                     } else {
                         $('#addThumb').toggles({
@@ -345,7 +345,7 @@ $(document).ready(function () {
 
     // 缩略图上传
     $("#dropzone").dropzone({
-        url: "/admin/api/attach/upload",
+        url: "/admin/api/attach/",
         filesizeBase: 1024,//定义字节算法 默认1000
         maxFilesize: '10', //MB
         fallback: function () {
@@ -359,10 +359,10 @@ $(document).ready(function () {
                 console.log("upload success..");
                 console.log(" result => " + result);
                 if (result && result.success) {
-                    var url = attach_url + result.payload[0].fkey;
+                    var url = attach_url + result.payload[0].fileKey;
                     console.log('url => ' + url);
 
-                    vm.article.thumbImg = url;
+                    vm.article.thumbImg = result.payload[0].fileKey;
                     thumbdropzone.css('background-image', 'url(' + url + ')');
                     thumbdropzone.css('background-size', 'cover');
                     $('.dz-image').hide();

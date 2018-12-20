@@ -29,9 +29,9 @@ public class WebConstant {
     public static       Boolean     ENABLED_CDN        = true;
     public static       Map<String, Object> OPTIONS = Maps.newConcurrentMap();
     /**
-     * 上传的目录
+     * 上传的目录 upload 目录
      */
-    public static final String UP_DIR = CLASSPATH.substring(0, CLASSPATH.length() - 1);
+    public static final String UP_DIR = CLASSPATH.substring(0, CLASSPATH.length() - 1)+File.separator+"upload"+File.separator;
 
     /**
      * 最大页码

@@ -67,7 +67,7 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
             String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
             System.out.println("fname:"+fname);
             String fid = String.valueOf(IdUtils.nextId());
-            String fkey = File.separator+"upload"+File.separator+fid+"."+ FileUtils.fileExt(fname);
+            String fkey = fid+"."+ FileUtils.fileExt(fname);
             LinkVo linkVo = LinkVo
                     .builder()
                     .fileName(fname)

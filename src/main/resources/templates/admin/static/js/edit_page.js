@@ -49,19 +49,16 @@ var vm = new Vue({
                     data.append('image_up', files[0]);
                     tale.showLoading();
                     $.ajax({
-                        url: '/admin/api/attach/upload',
+                        url: '/admin/api/attach/',
                         method: 'POST',
                         data: data,
                         processData: false,
                         dataType: 'json',
                         contentType: false,
-                        headers: {
-                            'X-CSRF-TOKEN': document.head.querySelector("[name=csrf_token]").content
-                        },
                         success: function (result) {
                             tale.hideLoading();
                             if (result && result.success) {
-                                var url = $('#attach_url').val() + result.payload[0].fkey;
+                                var url = $('#attach_url').val() + result.payload[0].fileKey;
                                 console.log('url =>' + url);
                                 htmlEditor.summernote('insertImage', url);
                             } else {

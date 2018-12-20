@@ -280,11 +280,17 @@ public final class Commons {
     }
 
     /**
-     * 显示文章缩略图，顺序为：文章第一张图 -> 随机获取
+     * 显示文章缩略图，顺序为：文章图 -> 随机获取
      *
      * @return
      */
     public static String show_thumb(ContentVo contentVo) {
+        if(null == contentVo){
+            return "";
+        }
+        if(StringUtils.isNotBlank(contentVo.getThumbImg())){
+            return  "/upload/thumbnail_"+contentVo.getThumbImg().trim();
+        }
         Long cid = contentVo.getId();
         Long size = cid % 20;
         size = size == 0 ? 1 : size;
@@ -364,7 +370,7 @@ public final class Commons {
     }
 
     public static String attachURL(){
-        return Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url());
+        return Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url()+"/upload/");
     }
 
     /**
