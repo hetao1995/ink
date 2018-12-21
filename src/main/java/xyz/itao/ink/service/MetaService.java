@@ -1,5 +1,8 @@
 package xyz.itao.ink.service;
 
+import com.github.pagehelper.PageInfo;
+import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -42,7 +45,7 @@ public interface MetaService {
      * @param name
      * @return
      */
-    MetaVo getMetaVoByTypeAndName(String type, String name);
+    MetaDomain getMetaDomainByTypeAndName(String type, String name);
 
     /**
      * 根据type获取meta
@@ -50,4 +53,13 @@ public interface MetaService {
      * @return
      */
     List<MetaVo> getMetasByType(String type);
+
+    /**
+     * 更加metaId获取articles
+     * @param id
+     * @param page
+     * @param limit
+     * @return
+     */
+    PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize);
 }

@@ -1,9 +1,13 @@
 package xyz.itao.ink.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.domain.BaseDomain;
+import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
@@ -29,34 +33,16 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
 
     @Autowired
     MetaRepository metaRepository;
+    @Autowired
+    DomainFactory domainFactory;
     @Override
     protected MetaDomain doAssemble(MetaVo vo) {
-        return MetaDomain
-                .builder()
-                .id(vo.getId())
-                .active(vo.getActive())
-                .name(vo.getName())
-                .slug(vo.getSlug())
-                .parentId(vo.getParentId())
-                .type(vo.getType())
-                .sort(vo.getSort())
-                .detail(vo.getDetail())
-                .build();
+        return domainFactory.createMetaDomain().assemble(vo);
     }
 
     @Override
     protected MetaVo doExtract(MetaDomain domain) {
-        return MetaVo
-                .builder()
-                .id(domain.getId())
-                .active(domain.getActive())
-                .name(domain.getName())
-                .slug(domain.getSlug())
-                .parentId(domain.getParentId())
-                .type(domain.getType())
-                .sort(domain.getSort())
-                .detail(domain.getDetail())
-                .build();
+        return domain.vo();
     }
 
     @Override
@@ -104,8 +90,8 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     }
 
     @Override
-    public MetaVo getMetaVoByTypeAndName(String type, String keyword) {
-        return null;
+    public MetaDomain getMetaDomainByTypeAndName(String type, String name) {
+        return metaRepository.loadMetaDomainByTypeAndName(type, name);
     }
 
     @Override
@@ -113,4 +99,13 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
         List<MetaDomain> metaDomains = metaRepository.loadMetaDomainsByType(type);
         return metaDomains.stream().map(d->extract(d)).collect(Collectors.toList());
     }
+
+    @Override
+    public PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaId(id);
+        return new PageInfo<>(contentDomains);
+    }
+
+
 }

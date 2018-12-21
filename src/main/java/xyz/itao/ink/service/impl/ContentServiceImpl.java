@@ -50,12 +50,12 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     protected ContentDomain doUpdate(ContentDomain domain) {
-        return contentRepository.updateContentDomain(domain);
+        return domain.updateById();
     }
 
     @Override
     protected ContentDomain doSave(ContentDomain domain) {
-        return contentRepository.saveNewContentDomain(domain);
+        return domain.save();
     }
 
     @Override

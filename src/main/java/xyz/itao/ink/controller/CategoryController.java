@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.service.ContentService;
@@ -55,20 +57,20 @@ public class CategoryController extends BaseController {
     /**
      * 某个分类详情页分页
      */
-    @GetMapping(value = {"/category/{keyword}/{page}", "/category/{keyword}/{page}.html"})
+    @GetMapping(value = {"/category/{keyword}/{pageNum}", "/category/{keyword}/{pageNum}.html"})
     public String categories(HttpServletRequest request, @PathVariable String keyword,
-                             @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
+                             @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
 
-        page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
-        MetaVo metaVo = metaService.getMetaVoByTypeAndName(TypeConst.CATEGORY, keyword);
-        if (null == metaVo) {
+        pageNum = pageNum < 0 || pageNum > WebConstant.MAX_PAGE ? 1 : pageNum;
+        MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(TypeConst.CATEGORY, keyword);
+        if (null == metaDomain) {
             return this.render_404();
         }
 
-        PageInfo<ContentVo> contentsPage = contentService.getArticles(metaVo.getId(), page, limit);
+        PageInfo<ContentDomain> contentsPage = metaService.getArticlesByMetaId(metaDomain.getId(), pageNum, pageSize);
 
         request.setAttribute("articles", contentsPage);
-        request.setAttribute("meta", metaVo);
+        request.setAttribute("meta", metaDomain);
         request.setAttribute("type", "分类");
         request.setAttribute("keyword", keyword);
         request.setAttribute("is_category", true);
@@ -104,17 +106,17 @@ public class CategoryController extends BaseController {
     /**
      * 标签下文章分页
      */
-    @GetMapping(value = {"tag/{name}/{page}", "tag/{name}/{page}.html"})
-    public String tags(HttpServletRequest request, @PathVariable String name, @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
-        page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
-        MetaVo metaVo = metaService.getMetaVoByTypeAndName(TypeConst.TAG, name);
-        if (null == metaVo) {
+    @GetMapping(value = {"tag/{name}/{pageNum}", "tag/{name}/{pageNum}.html"})
+    public String tags(HttpServletRequest request, @PathVariable String name, @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
+        pageNum = pageNum < 0 || pageNum > WebConstant.MAX_PAGE ? 1 : pageNum;
+        MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(TypeConst.TAG, name);
+        if (null == metaDomain) {
             return this.render_404();
         }
 
-        PageInfo<ContentVo> contentsPage = contentService.getArticles(metaVo.getId(), page, limit);
+        PageInfo<ContentVo> contentsPage = contentService.getArticles(metaDomain.getId(), pageNum, pageSize);
         request.setAttribute("articles", contentsPage);
-        request.setAttribute("meta", metaVo);
+        request.setAttribute("meta", metaDomain);
         request.setAttribute("type", "标签");
         request.setAttribute("keyword", name);
         request.setAttribute("is_tag", true);
