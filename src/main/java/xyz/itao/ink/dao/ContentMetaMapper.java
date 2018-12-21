@@ -28,4 +28,12 @@ public interface ContentMetaMapper {
      * @return
      */
     List<Long> selectAllContentIdByMetaId(Long id);
+
+    /**
+     *
+     * @param contentId
+     * @param metaId
+     * @return
+     */
+    ContentMeta selectByContentIdAndMetaId(Long contentId, Long metaId);
 }

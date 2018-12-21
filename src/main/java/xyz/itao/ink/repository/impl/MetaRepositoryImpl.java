@@ -4,13 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.ContentMetaMapper;
 import xyz.itao.ink.dao.MetaMapper;
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.entity.Content;
+import xyz.itao.ink.domain.entity.ContentMeta;
 import xyz.itao.ink.domain.entity.Meta;
+import xyz.itao.ink.exception.ExceptionEnum;
+import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.MetaRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -74,6 +80,35 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
     }
 
     @Override
+    public List<MetaDomain> loadAllMetaDomainByContentIdAndType(Long contentId, String type) {
+        List<Meta> metas = metaMapper.selectByContentIdAndType(contentId, type);
+        return metas.stream().map(e->assemble(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId) {
+
+         ContentMeta contentMeta = contentMetaMapper.selectByContentIdAndMetaId(contentId, metaId);
+         if(contentMeta == null){
+             throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
+         }
+         contentMeta.setDeleted(true);
+         return contentMetaMapper.updateByPrimaryKeySelective(contentMeta);
+    }
+
+    @Override
+    public boolean saveNewContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId) {
+        return contentMetaMapper.insertSelective(ContentMeta.builder().contentId(contentId).metaId(metaId).build());
+    }
+
+    @Override
+    public List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id) {
+        Meta meta = Meta.builder().id(id).active(true).deleted(false).build();
+        List<Content> contents = metaMapper.selectContentByMeta(meta);
+        return contents.stream().map(content -> domainFactory.createContentDomain().assemble(content)).collect(Collectors.toList());
+    }
+
+    @Override
     protected boolean doSave(Meta entity) {
         return metaMapper.insertSelective(entity);
     }
@@ -91,7 +126,6 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
     @Override
     protected MetaDomain doAssemble(Meta entity) {
         return domainFactory.createMetaDomain().assemble(entity);
-
     }
 
     @Override

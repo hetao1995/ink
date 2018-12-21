@@ -53,7 +53,7 @@ public interface MetaRepository {
      * @param MetaId
      * @return
      */
-    boolean deleteContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long MetaId);
+    boolean deleteContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId);
 
     /**
      * 保存contentMeta
@@ -61,7 +61,7 @@ public interface MetaRepository {
      * @param id1
      * @return
      */
-    boolean saveNewContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long MetaId);
+    boolean saveNewContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId);
 
     /**
      * 通过metaid加载所有激活状态的contentDomain

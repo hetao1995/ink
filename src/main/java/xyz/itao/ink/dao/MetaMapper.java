@@ -1,6 +1,8 @@
 package xyz.itao.ink.dao;
 
 import org.springframework.stereotype.Component;
+import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.domain.entity.Meta;
 
 import xyz.itao.ink.domain.entity.Meta;
@@ -39,4 +41,18 @@ public interface MetaMapper {
      */
     List<Meta> selectByNoNulProperties(Meta record);
 
+    /**
+     * 通过contentId和type加载
+     * @param contentId
+     * @param type
+     * @return
+     */
+    List<Meta> selectByContentIdAndType(Long contentId, String type);
+
+    /**
+     * 通过
+     * @param meta
+     * @return
+     */
+    List<Content> selectContentByMeta(Meta meta);
 }
