@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.CommentMapper;
 import xyz.itao.ink.domain.BaseDomain;
 import xyz.itao.ink.domain.CommentDomain;
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -96,6 +97,13 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
         domain.setParentId(0L);
         return loadByNoNullPropertiesActiveAndNotDelect(domain);
     }
+
+    @Override
+    public List<CommentDomain> loadAllRootCommentDomain(CommentDomain domain) {
+        domain.setParentId(0L);
+        return loadByNoNullPropertiesNotDelect(domain);
+    }
+
 
     @Override
     public boolean deleteCommentDomainById(Long id, Long userId) {

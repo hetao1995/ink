@@ -2,12 +2,14 @@ package xyz.itao.ink.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.dao.ContentMapper;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -31,64 +33,18 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     private ContentRepository contentRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private DomainFactory domainFactory;
 
     @Override
     protected ContentDomain doAssemble(ContentVo vo) {
-        return ContentDomain
-                .builder()
-                .id(vo.getId())
-                .active(vo.getActive())
-                .title(vo.getTitle())
-                .slug(vo.getSlug())
-                .categories(vo.getCategories())
-                .authorId(vo.getAuthorId())
-                .content(vo.getContent())
-                .tags(vo.getTags())
-                .status(vo.getStatus())
-                .type(vo.getType())
-                .hits(vo.getHits())
-                .allowComment(vo.getAllowComment())
-                .commentsNum(vo.getCommentsNum())
-                .allowFeed(vo.getAllowFeed())
-                .allowPing(vo.getAllowPing())
-                .created(vo.getCreated())
-                .modified(vo.getModified())
-                .thumbImg(vo.getThumbImg())
-                .fmtType(vo.getFmtType())
-                .author(vo.getAuthor())
-                .mail(vo.getMail())
-                .url(vo.getUrl())
-                .userRepository(userRepository)
-                .build();
+        return domainFactory.createContentDomain().assemble(vo);
+
     }
 
     @Override
     protected ContentVo doExtract(ContentDomain domain) {
-        return ContentVo
-                .builder()
-                .id(domain.getId())
-                .active(domain.getActive())
-                .title(domain.getTitle())
-                .slug(domain.getSlug())
-                .categories(domain.getCategories())
-                .authorId(domain.getAuthorId())
-                .content(domain.getContent())
-                .tags(domain.getTags())
-                .status(domain.getStatus())
-                .type(domain.getType())
-                .hits(domain.getHits())
-                .allowComment(domain.getAllowComment())
-                .commentsNum(domain.getCommentsNum())
-                .allowFeed(domain.getAllowFeed())
-                .allowPing(domain.getAllowPing())
-                .created(domain.getCreated())
-                .modified(domain.getModified())
-                .thumbImg(domain.getThumbImg())
-                .fmtType(domain.getFmtType())
-                .author(domain.getAuthor())
-                .mail(domain.getMail())
-                .url(domain.getUrl())
-                .build();
+        return domain.vo();
 
     }
 
@@ -125,13 +81,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
-        ContentDomain contentDomain = ContentDomain
-                .builder()
-                .status(articleParam.getStatus())
-                .type(articleParam.getType())
-                .categories(articleParam.getCategories())
-                .title(articleParam.getTitle())
-                .build();
+        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         List<ContentVo> contentVos = contentDomains.stream().map(content-> extract(content)).collect(Collectors.toList());
@@ -155,8 +105,8 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public void hit(ContentVo contentVo) {
-        contentRepository.updateHit(contentVo.getId());
+    public void hit(ContentDomain contentDomain) {
+        contentRepository.updateHit(contentDomain.getId());
     }
 
     @Override
@@ -174,8 +124,8 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public ContentVo loadActiveContentVoByIdOrSlug(String idOrSlug) {
-        ContentDomain contentDomain = ContentDomain.builder().build();
+    public ContentDomain loadActiveContentDomainByIdOrSlug(String idOrSlug) {
+        ContentDomain contentDomain = domainFactory.createContentDomain();
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));
         }else{
@@ -185,12 +135,12 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
         if(contentDomains.isEmpty()){
             return null;
         }
-        return extract(contentDomains.get(0));
+        return contentDomains.get(0);
     }
 
     @Override
-    public ContentVo loadDraftByIdOrSlug(String idOrSlug, UserVo userVo) {
-        ContentDomain contentDomain = ContentDomain.builder().status(TypeConst.DRAFT).build();
+    public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo) {
+        ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(TypeConst.DRAFT);
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));
         }else{
@@ -204,6 +154,6 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
         if(!contentDomain.getAuthorId().equals( userVo.getId())){
             return null;
         }
-        return extract(contentDomain);
+        return contentDomain;
     }
 }

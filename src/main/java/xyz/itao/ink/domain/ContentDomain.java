@@ -2,9 +2,26 @@ package xyz.itao.ink.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.common.util.set.Sets;
+import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.domain.entity.Comment;
+import xyz.itao.ink.domain.entity.Content;
+import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.vo.ContentVo;
+import xyz.itao.ink.exception.ExceptionEnum;
+import xyz.itao.ink.exception.InnerException;
+import xyz.itao.ink.repository.CommentRepository;
+import xyz.itao.ink.repository.ContentRepository;
+import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -12,8 +29,34 @@ import java.util.Date;
  * @description
  */
 @Data
-@Builder
+@Accessors(chain = true)
 public class ContentDomain extends BaseDomain{
+
+    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory){
+        this.userRepository = userRepository;
+        this.contentRepository = contentRepository;
+        this.commentRepository = commentRepository;
+        this.metaRepository =  metaRepository;
+        this.domainFactory = domainFactory;
+    }
+    /**
+     * UserRepository 对象
+     */
+    private UserRepository userRepository;
+
+    /**
+     * commentRepository对象
+     */
+    private CommentRepository commentRepository;
+
+    /**
+     * metaRepository对象
+     */
+    private MetaRepository metaRepository;
+
+    private DomainFactory domainFactory;
+
+    private ContentRepository contentRepository;
     /**
      * 内容的id
      */
@@ -53,16 +96,6 @@ public class ContentDomain extends BaseDomain{
      * 内容状态
      */
     private String status;
-
-    /**
-     * 标签列表
-     */
-    private String tags;
-
-    /**
-     * 分类列表
-     */
-    private String categories;
 
     /**
      * 点击次数
@@ -134,55 +167,234 @@ public class ContentDomain extends BaseDomain{
      */
     private Long updateBy;
 
-    /**
-     * UserRepository 对象
-     */
-    private UserRepository userRepository;
+
 
     /**
-     * 作者姓名
+     * 标签列表
      */
-    private String author;
+    private String tags;
 
     /**
-     * 作者邮箱
+     * 分类列表
      */
-    private String mail;
+    private String categories;
 
     /**
-     * 作者主页
+     * 获取所有激活状态的comment
+     * @return
      */
-    private String url;
-
-    public String getAuthor() {
-        if(author==null){
-            refreshAuthor();
-        }
-        return author;
+    public List<CommentDomain> getActiveComments() {
+        return commentRepository.loadAllActiveRootCommentDomain(CommentDomain.builder().contentId(id).build());
     }
 
-    public String getMail() {
-        if(mail==null){
-            refreshAuthor();
-        }
-        return mail;
+    /**
+     * 获取文章所有的comment
+     * @return
+     */
+    public List<CommentDomain> getComments(){
+        return commentRepository.loadAllRootCommentDomain(CommentDomain.builder().contentId(id).build());
     }
 
-    public String getUrl() {
-        if(url==null){
-            refreshAuthor();
-        }
-        return url;
+    /**
+     * 获取文章作者对象
+     * @return
+     */
+    public UserDomain getAuthor() {
+        return userRepository.loadActiveUserDomainById(authorId);
     }
 
-    private void refreshAuthor(){
-        if(authorId==null || author!=null || mail!=null || url!=null){
-            return ;
-        }
-        UserDomain userDomain = userRepository.loadActiveUserDomainById(authorId);
-        author = userDomain.getDisplayName();
-        url = userDomain.getHomeUrl();
-        mail = userDomain.getEmail();
+    /**
+     * 获取标签Meta
+     * @return
+     */
+    public String getTags() {
+        return getMetas(TypeConst.TAG);
     }
 
+    /**
+     * 存储tag
+     * @param tags
+     */
+    private void saveTags(String tags){
+        saveMetas(tags, TypeConst.TAG);
+    }
+
+    /**
+     * 获取分类meta
+     * @return
+     */
+    public String getCategories() {
+        return getMetas(TypeConst.CATEGORY);
+    }
+
+    /**
+     * 存储category
+     * @param categories
+     */
+    private void saveCategories(String categories){
+        saveMetas(categories, TypeConst.CATEGORY);
+    }
+
+    private void saveMetas(String metas, String type) {
+        Set<String> metaSet = Sets.newHashSet(StringUtils.split(metas, ","));
+        List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
+        for(MetaDomain metaDomain : metaDomains){
+            if(!metaSet.contains(metaDomain.getName())){
+                metaRepository.deleteContentMetaRelationshipByContentIdAndMetaId(id, metaDomain.getId());
+            }else{
+                metaSet.remove(metaDomain.getName());
+            }
+        }
+        for(String name : metaSet){
+            MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, name);
+            if(metaDomain == null){
+                metaDomain = domainFactory.createMetaDomain().setName(name).setActive(true).setDeleted(false);
+                metaDomain = metaDomain.save();
+            }
+            metaRepository.saveNewContentMetaRelationshipByContentIdAndMetaId(id, metaDomain.getId());
+        }
+    }
+
+    private String getMetas(String type){
+        List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
+        return StringUtils.join(metaDomains.stream().map(MetaDomain::getName).collect(Collectors.toList()), ",");
+    }
+
+    public ContentDomain save(){
+        ContentDomain contentDomain = contentRepository.saveNewContentDomain(this);
+        contentDomain.saveTags(this.tags);
+        contentDomain.saveCategories(this.categories);
+        return contentDomain;
+    }
+
+    public ContentDomain updateById(){
+        if(id==null){
+            throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+        }
+        ContentDomain contentDomain = contentRepository.updateContentDomain(this);
+        contentDomain.saveTags(this.tags);
+        contentDomain.saveCategories(this.categories);
+        return contentDomain;
+    }
+
+
+    public  ContentDomain assemble(Content entity){
+        if(entity==null){
+            return this;
+        }
+
+
+        this.setId(entity.getId())
+                .setDeleted(entity.getDeleted())
+                .setCreateTime(entity.getCreateTime())
+                .setCreateBy(entity.getCreateBy())
+                .setUpdateTime(entity.getUpdateTime())
+                .setUpdateBy(entity.getUpdateBy())
+                .setActive(entity.getActive())
+                .setAllowFeed(entity.getAllowFeed())
+                .setAllowPing(entity.getAllowPing())
+                .setAllowComment(entity.getAllowComment())
+                .setCommentsNum(entity.getCommentsNum())
+                .setType(entity.getType())
+                .setHits(entity.getHits())
+                .setStatus(entity.getStatus())
+                .setAuthorId(entity.getAuthorId())
+                .setSlug(entity.getSlug())
+                .setTitle(entity.getTitle())
+                .setContent(entity.getContent())
+                .setCreated(entity.getCreated())
+                .setModified(entity.getModified())
+                .setThumbImg(entity.getThumbImg())
+                .setFmtType(entity.getFmtType());
+        return this;
+    }
+
+    public  ContentDomain assemble(ContentVo vo){
+        if(vo==null){
+            return this;
+        }
+
+        this.setId(vo.getId())
+                .setActive(vo.getActive())
+                .setAllowFeed(vo.getAllowFeed())
+                .setAllowPing(vo.getAllowPing())
+                .setAllowComment(vo.getAllowComment())
+                .setCommentsNum(vo.getCommentsNum())
+                .setType(vo.getType())
+                .setHits(vo.getHits())
+                .setStatus(vo.getStatus())
+                .setAuthorId(vo.getAuthorId())
+                .setSlug(vo.getSlug())
+                .setTitle(vo.getTitle())
+                .setContent(vo.getContent())
+                .setCreated(vo.getCreated())
+                .setModified(vo.getModified())
+                .setThumbImg(vo.getThumbImg())
+                .setFmtType(vo.getFmtType());
+        return this;
+    }
+
+    public ContentDomain assemble(ArticleParam articleParam){
+        if(articleParam==null){
+            return this;
+        }
+        this.setStatus(articleParam.getStatus())
+                .setType(articleParam.getType())
+                .setCategories(articleParam.getCategories())
+                .setTitle(articleParam.getTitle());
+        return this;
+    }
+
+    public  Content entity(){
+        return Content
+                .builder()
+                .id(this.getId())
+                .deleted(this.getDeleted())
+                .createTime(this.getCreateTime())
+                .createBy(this.getCreateBy())
+                .updateTime(this.getUpdateTime())
+                .updateBy(this.getUpdateBy())
+                .active(this.getActive())
+                .allowFeed(this.getAllowFeed())
+                .allowPing(this.getAllowPing())
+                .allowComment(this.getAllowComment())
+                .commentsNum(this.getCommentsNum())
+                .type(this.getType())
+                .hits(this.getHits())
+                .status(this.getStatus())
+                .authorId(this.getAuthorId())
+                .slug(this.getSlug())
+                .title(this.getTitle())
+                .content(this.getContent())
+                .created(this.getCreated())
+                .modified(this.getModified())
+                .thumbImg(this.getThumbImg())
+                .fmtType(this.getFmtType())
+                .build();
+    }
+
+    public ContentVo vo(){
+        return ContentVo
+                .builder()
+                .id(this.getId())
+                .active(this.getActive())
+                .allowFeed(this.getAllowFeed())
+                .allowPing(this.getAllowPing())
+                .allowComment(this.getAllowComment())
+                .commentsNum(this.getCommentsNum())
+                .type(this.getType())
+                .hits(this.getHits())
+                .status(this.getStatus())
+                .authorId(this.getAuthorId())
+                .slug(this.getSlug())
+                .title(this.getTitle())
+                .content(this.getContent())
+                .created(this.getCreated())
+                .modified(this.getModified())
+                .thumbImg(this.getThumbImg())
+                .fmtType(this.getFmtType())
+                .tags(this.getTags())
+                .categories(this.getCategories())
+                .build();
+    }
 }

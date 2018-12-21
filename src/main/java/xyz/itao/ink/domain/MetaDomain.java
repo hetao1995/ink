@@ -1,8 +1,9 @@
 package xyz.itao.ink.domain;
 
-import com.google.common.collect.Lists;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
+import xyz.itao.ink.domain.entity.Meta;
+import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 
@@ -15,8 +16,16 @@ import java.util.List;
  * @description
  */
 @Data
-@Builder
-public class MetaDomain extends BaseDomain{
+@Accessors(chain = true)
+public class MetaDomain extends BaseDomain {
+    
+    MetaDomain(MetaRepository metaRepository){
+        this.metaRepository = metaRepository;
+    }
+    
+    private MetaRepository metaRepository;
+
+
     /**
      * 主键
      */
@@ -81,32 +90,89 @@ public class MetaDomain extends BaseDomain{
      * 修改者
      */
     private Long updateBy;
+    
 
-    private MetaRepository metaRepository;
 
-    private ContentRepository contentRepository;
-
-    /**
-     * 此meta下的文章数
-     */
-    private Integer count;
-
-    public List<Long> getContentIds() {
-        if(contentIds == null){
-            contentIds = metaRepository.loadAllContentIdByMetaId(id);
-            count = contentIds.size();
-        }
-
-        return contentIds;
-    }
-
-    private List<Long> contentIds;
 
     public Integer getCount() {
-        if(count!=null || id==null){
-            return count;
-        }
         return metaRepository.countArticlesByMetaId(id);
+    }
+
+    public List<ContentDomain> getActiveArticles(){
+        return metaRepository.loadAllActiveContentDomainByMetaId(id);
+    }
+
+    public  MetaDomain assemble(Meta entity){
+        if(entity==null){
+            return this;
+        }
+        
+        this.setId(entity.getId())
+                .setDeleted(entity.getDeleted())
+                .setCreateTime(entity.getCreateTime())
+                .setCreateBy(entity.getCreateBy())
+                .setUpdateTime(entity.getUpdateTime())
+                .setUpdateBy(entity.getUpdateBy())
+                .setActive(entity.getActive())
+                .setName(entity.getName())
+                .setSlug(entity.getSlug())
+                .setParentId(entity.getParentId())
+                .setType(entity.getType())
+                .setSort(entity.getSort())
+                .setDetail(entity.getDetail());
+        return this;
+    }
+    
+    public MetaDomain assemble(MetaVo vo){
+        if(vo==null){
+            return this;
+        }
+        this.setId(vo.getId())
+                .setActive(vo.getActive())
+                .setName(vo.getName())
+                .setSlug(vo.getSlug())
+                .setParentId(vo.getParentId())
+                .setType(vo.getType())
+                .setSort(vo.getSort())
+                .setDetail(vo.getDetail());
+        return this;
+    }
+    
+    public Meta entity(){
+        return Meta
+                .builder()
+                .id(this.getId())
+                .deleted(this.getDeleted())
+                .createTime(this.getCreateTime())
+                .createBy(this.getCreateBy())
+                .updateTime(this.getUpdateTime())
+                .updateBy(this.getUpdateBy())
+                .active(this.getActive())
+                .name(this.getName())
+                .slug(this.getSlug())
+                .parentId(this.getParentId())
+                .type(this.getType())
+                .sort(this.getSort())
+                .detail(this.getDetail())
+                .build();
+    }
+
+    public MetaVo vo(){
+        return MetaVo
+                .builder()
+                .id(this.getId())
+                .active(this.getActive())
+                .name(this.getName())
+                .slug(this.getSlug())
+                .parentId(this.getParentId())
+                .type(this.getType())
+                .sort(this.getSort())
+                .detail(this.getDetail())
+                .build();
+    }
+
+    public MetaDomain save(){
+        return metaRepository.saveNewMetaDomain(this);
     }
 
 }

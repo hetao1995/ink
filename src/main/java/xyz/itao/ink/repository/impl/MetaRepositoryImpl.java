@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.ContentMetaMapper;
 import xyz.itao.ink.dao.MetaMapper;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.entity.Meta;
 import xyz.itao.ink.repository.AbstractBaseRepository;
@@ -24,6 +25,10 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Autowired
     ContentMetaMapper contentMetaMapper;
+
+    @Autowired
+    DomainFactory domainFactory;
+
     @Override
     public MetaDomain updateMetaDomain(MetaDomain domain) {
         return update(domain);
@@ -36,21 +41,14 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Override
     public MetaDomain loadMetaDomainByTypeAndName(String type, String name) {
-        MetaDomain metaDomain = MetaDomain
-                .builder()
-                .type(type)
-                .name(name)
-                .build();
+        MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type).setName(name);
         List<MetaDomain> metaDomains = loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
         return metaDomains.isEmpty() ? null : metaDomains.get(0);
     }
 
     @Override
     public List<MetaDomain> loadMetaDomainsByType(String type) {
-        MetaDomain metaDomain = MetaDomain
-                .builder()
-                .type(type)
-                .build();
+        MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type);
         return loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
     }
 
@@ -64,6 +62,15 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
     public List<Long> loadAllContentIdByMetaId(Long id) {
         // todo 先从缓存中查找
         return contentMetaMapper.selectAllContentIdByMetaId(id);
+    }
+
+    @Override
+    public MetaDomain loadMetaDomainById(Long metaId) {
+        List<MetaDomain> metaDomains = loadByNoNullPropertiesNotActiveAndNotDelect(domainFactory.createMetaDomain().setId(metaId));
+        if(metaDomains == null){
+            return null;
+        }
+        return metaDomains.get(0);
     }
 
     @Override
@@ -83,42 +90,12 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Override
     protected MetaDomain doAssemble(Meta entity) {
-        return MetaDomain
-                .builder()
-                .id(entity.getId())
-                .deleted(entity.getDeleted())
-                .createTime(entity.getCreateTime())
-                .createBy(entity.getCreateBy())
-                .updateTime(entity.getUpdateTime())
-                .updateBy(entity.getUpdateBy())
-                .active(entity.getActive())
-                .name(entity.getName())
-                .slug(entity.getSlug())
-                .parentId(entity.getParentId())
-                .type(entity.getType())
-                .sort(entity.getSort())
-                .detail(entity.getDetail())
-                .build();
+        return domainFactory.createMetaDomain().assemble(entity);
 
     }
 
     @Override
     protected Meta doExtract(MetaDomain domain) {
-        return Meta
-                .builder()
-                .id(domain.getId())
-                .deleted(domain.getDeleted())
-                .createTime(domain.getCreateTime())
-                .createBy(domain.getCreateBy())
-                .updateTime(domain.getUpdateTime())
-                .updateBy(domain.getUpdateBy())
-                .active(domain.getActive())
-                .name(domain.getName())
-                .slug(domain.getSlug())
-                .parentId(domain.getParentId())
-                .type(domain.getType())
-                .sort(domain.getSort())
-                .detail(domain.getDetail())
-                .build();
+        return domain.entity();
     }
 }

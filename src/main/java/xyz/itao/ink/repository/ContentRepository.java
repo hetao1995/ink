@@ -69,4 +69,11 @@ public interface ContentRepository {
     List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain);
 
     List<ContentDomain> loadAllContentDomain(ContentDomain contentDomain);
+
+    /**
+     * 获取所有contentId为list范围内的active状态的contentDomain
+     * @param articleIds id 范围
+     * @return
+     */
+    List<ContentDomain> loadAllActiveContentDomainByContentIdIn(List<Long> articleIds);
 }

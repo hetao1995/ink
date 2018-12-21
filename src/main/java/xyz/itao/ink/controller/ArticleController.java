@@ -1,7 +1,6 @@
 package xyz.itao.ink.controller;
 
 import com.github.pagehelper.PageInfo;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -11,8 +10,8 @@ import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.CommentParam;
-import xyz.itao.ink.domain.params.UserParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -21,12 +20,9 @@ import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.SiteService;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.InkUtils;
-import xyz.itao.ink.utils.PatternUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.annotation.Repeatable;
-import java.net.URLEncoder;
 
 /**
  * @author hetao
@@ -53,13 +49,13 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = {"/{idOrSlug}", "/{idOrSlug}.html"})
     public String page(@PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize, HttpServletRequest request) {
-        ContentVo contentVo = contentService.loadActiveContentVoByIdOrSlug(idOrSlug);
-        if (null == contentVo || TypeConst.DRAFT.equals(contentVo.getSlug())) {
+        ContentDomain contentDomain = contentService.loadActiveContentDomainByIdOrSlug(idOrSlug);
+        if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus())) {
             return this.render_404();
         }
-        setArticleAttribute(request, pageNum, pageSize, contentVo);
-        contentService.hit(contentVo);
-        return renderContent(request, contentVo);
+        setArticleAttribute(request, pageNum, pageSize, contentDomain);
+        contentService.hit(contentDomain);
+        return renderContent(request, contentDomain);
     }
 
     /**
@@ -68,14 +64,14 @@ public class ArticleController extends BaseController {
     @GetMapping(value = {"/article/{idOrSlug}", "/article/{idOrSlug}.html"})
     public String post(HttpServletRequest request, @PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize) {
 
-        ContentVo contentVo = contentService.loadActiveContentVoByIdOrSlug(idOrSlug);
-        if (null == contentVo || TypeConst.DRAFT.equals(contentVo.getStatus()) || !TypeConst.ARTICLE.equals(contentVo.getType())) {
+        ContentDomain contentDomain = contentService.loadActiveContentDomainByIdOrSlug(idOrSlug);
+        if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus()) || !TypeConst.ARTICLE.equals(contentDomain.getType())) {
             return this.render_404();
         }
 
-        setArticleAttribute(request, pageNum, pageSize, contentVo);
+        setArticleAttribute(request, pageNum, pageSize, contentDomain);
         request.setAttribute("is_post", true);
-        contentService.hit(contentVo);
+        contentService.hit(contentDomain);
         return this.render("post");
     }
 
@@ -87,12 +83,12 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = {"/preview/{idOrSlug}", "/preview/{idOrSlug}.html"})
     public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserVo userVo){
-        ContentVo contentVo = contentService.loadDraftByIdOrSlug(idOrSlug, userVo);
-        if(null == contentVo){
+        ContentDomain contentDomain = contentService.loadDraftByIdOrSlug(idOrSlug, userVo);
+        if(null == contentDomain){
             return this.render_404();
         }
-        request.setAttribute("article", contentVo);
-        return renderContent(request, contentVo);
+        request.setAttribute("article", contentDomain);
+        return renderContent(request, contentDomain);
     }
 
     /**
@@ -126,15 +122,15 @@ public class ArticleController extends BaseController {
     /**
      * 根据type返回视图
      * @param request
-     * @param contentVo
+     * @param contentDomain
      * @return
      */
-    private String renderContent(HttpServletRequest request, ContentVo contentVo) {
-        if (TypeConst.ARTICLE.equals(contentVo.getType())) {
+    private String renderContent(HttpServletRequest request, ContentDomain contentDomain) {
+        if (TypeConst.ARTICLE.equals(contentDomain.getType())) {
             request.setAttribute("is_post", true);
             return this.render("post");
         }
-        if (TypeConst.PAGE.equals(contentVo.getType())) {
+        if (TypeConst.PAGE.equals(contentDomain.getType())) {
             return this.render("page");
         }
         return this.render_404();
@@ -145,14 +141,14 @@ public class ArticleController extends BaseController {
      * @param request
      * @param pageNum
      * @param pageSize
-     * @param contentVo
+     * @param contentDomain
      */
-    private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentVo contentVo) {
-        request.setAttribute("article", contentVo);
+    private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentDomain contentDomain) {
+        request.setAttribute("article", contentDomain);
         CommentParam commentParam = CommentParam.builder().build();
         commentParam.setPageNum(pageNum);
         commentParam.setPageSize(pageSize);
-        commentParam.setContentId(contentVo.getId());
+        commentParam.setContentId(contentDomain.getId());
         PageInfo<CommentVo> commentVoPageInfo = commentService.loadAllActiveCommentVo(commentParam);
         request.setAttribute("cp", pageNum);
         request.setAttribute("comments", commentVoPageInfo);

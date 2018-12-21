@@ -1,6 +1,8 @@
 package xyz.itao.ink.repository;
 
 import xyz.itao.ink.domain.CommentDomain;
+import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.vo.CommentVo;
 
 import java.util.List;
@@ -14,6 +16,8 @@ public interface CommentRepository {
     CommentDomain updateCommentDomain(CommentDomain domain);
 
     List<CommentDomain> loadAllActiveRootCommentDomain(CommentDomain domain);
+
+    List<CommentDomain> loadAllRootCommentDomain(CommentDomain domain);
 
     boolean deleteCommentDomainById(Long id, Long userId);
 

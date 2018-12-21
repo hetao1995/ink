@@ -92,8 +92,20 @@
       </if>
       </trim>
     </select>
+    <select id="selectAllContentIn" resultType="xyz.itao.ink.domain.entity.Content">
+      select
+      <include refid="Base_Column_List"/>
+      from contents
+      where
+            deleted = #{deleted,jdbcType=BIT} and
+            active = #{active,jdbcType=BIT} and
+            id in
+            <foreach item="id" index="index" collection="articleIds" open="(" separator="," close=")">
+              #{id}
+            </foreach>
+    </select>
 
-  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
+    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
     insert into contents
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

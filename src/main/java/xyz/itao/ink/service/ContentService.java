@@ -54,13 +54,13 @@ public interface ContentService {
      */
     List<ContentVo> selectAllFeedArticles();
 
-    void hit(ContentVo contentVo);
+    void hit(ContentDomain contentDomain);
 
     PageInfo<ContentVo> getArticles(Long id, int page, int limit);
 
     PageInfo<ContentVo> searchArticles(String keyword, int page, int limit);
 
-    ContentVo loadActiveContentVoByIdOrSlug(String idOrSlug);
+    ContentDomain loadActiveContentDomainByIdOrSlug(String idOrSlug);
 
     /**
      * 通过id或者slug查找草稿
@@ -68,5 +68,5 @@ public interface ContentService {
      * @param userVo
      * @return
      */
-    ContentVo loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
+    ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
 }

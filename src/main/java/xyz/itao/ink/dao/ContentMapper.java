@@ -35,4 +35,13 @@ public interface ContentMapper {
      * @return 满足条件的Content实例
      */
     List<Content> selectByNoNulProperties(Content record);
+
+    /**
+     * 查询所有contentId在articlesid中的
+     * @param articleIds
+     * @param deleted
+     * @param active
+     * @return
+     */
+    List<Content> selectAllContentIn(List<Long> articleIds, boolean deleted, boolean active);
 }

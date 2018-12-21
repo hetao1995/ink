@@ -1,5 +1,6 @@
 package xyz.itao.ink.repository;
 
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
 
 import java.util.List;
@@ -30,4 +31,42 @@ public interface MetaRepository {
      * @return
      */
     List<Long> loadAllContentIdByMetaId(Long id);
+
+    /**
+     * 通过id加载metaDomain
+     * @param metaId 主键
+     * @return
+     */
+    MetaDomain loadMetaDomainById(Long metaId);
+
+    /**
+     * 通过contentId和Type查找所有的Meta
+     * @param id
+     * @param type
+     * @return
+     */
+    List<MetaDomain> loadAllMetaDomainByContentIdAndType(Long contentId, String type);
+
+    /**
+     * 通过contetId和metaId删除contentMeta
+     * @param contentId
+     * @param MetaId
+     * @return
+     */
+    boolean deleteContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long MetaId);
+
+    /**
+     * 保存contentMeta
+     * @param id
+     * @param id1
+     * @return
+     */
+    boolean saveNewContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long MetaId);
+
+    /**
+     * 通过metaid加载所有激活状态的contentDomain
+     * @param id
+     * @return
+     */
+    List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id);
 }
