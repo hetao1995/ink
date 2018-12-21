@@ -58,12 +58,7 @@ public interface ContentRepository {
      */
     Long getHit(Long id);
 
-    /**
-     * 通过metaId到contentmeta查找contentdomain
-     * @param metaId meta表的id
-     * @return 查找的结果
-     */
-    List<ContentDomain> loadAllActiveContentDomainByMetaId(Long metaId);
+
 
 
     List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain);

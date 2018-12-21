@@ -90,11 +90,6 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
         return loadActiveContentDomainById(id).getHits();
     }
 
-    @Override
-    public List<ContentDomain> loadAllActiveContentDomainByMetaId(Long metaId) {
-        // todo 通过metaId查找contentdomain
-        return null;
-    }
 
     @Override
     public List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain) {

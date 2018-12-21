@@ -2,6 +2,7 @@ package xyz.itao.ink.repository;
 
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.entity.ContentMeta;
 
 import java.util.List;
 
@@ -56,17 +57,11 @@ public interface MetaRepository {
     boolean deleteContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId);
 
     /**
-     * 保存contentMeta
-     * @param id
-     * @param id1
-     * @return
-     */
-    boolean saveNewContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId);
-
-    /**
      * 通过metaid加载所有激活状态的contentDomain
      * @param id
      * @return
      */
     List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id);
+
+    boolean saveNewContentMeta(ContentMeta contentMeta);
 }

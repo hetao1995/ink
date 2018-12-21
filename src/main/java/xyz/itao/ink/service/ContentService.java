@@ -42,6 +42,13 @@ public interface ContentService {
     PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam);
 
     /**
+     * 分页加载所有的contentDomain
+     * @param articleParam
+     * @return
+     */
+    PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam);
+
+    /**
      * 修改文章
      * @param contentVo
      * @param userVo
@@ -69,4 +76,6 @@ public interface ContentService {
      * @return
      */
     ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
+
+
 }

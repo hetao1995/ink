@@ -92,7 +92,7 @@
       metas.*
       from metas
       join content_metas
-      on metas.id = contents.meta_id
+      on metas.id = content_metas.meta_id
       where content_metas.content_id=#{contentId, jdbcType=BIGINT}
         and
       metas.type = #{type,jdbcType=VARCHAR}
@@ -102,7 +102,7 @@
     contents.*
     from contents
     join content_metas
-    on content.id = content_metas.content_id
+    on contents.id = content_metas.content_id
     join metas
     on metas.id = content_metas.meta_id
     where

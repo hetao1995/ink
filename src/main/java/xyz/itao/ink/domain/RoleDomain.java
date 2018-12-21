@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ import java.util.Date;
  */
 @Data
 @Builder
+@Accessors(chain = true)
 public class RoleDomain extends BaseDomain{
     /**
      * 角色id

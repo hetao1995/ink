@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.*;
  */
 @Data
 @Builder
+@Accessors(chain = true)
 public class UserDomain extends BaseDomain implements CredentialsContainer {
 
     /**

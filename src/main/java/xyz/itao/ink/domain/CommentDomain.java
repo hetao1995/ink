@@ -3,6 +3,7 @@ package xyz.itao.ink.domain;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import xyz.itao.ink.repository.UserRepository;
 
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Date;
  */
 @Data
 @Builder
+@Accessors(chain = true)
 public class CommentDomain extends BaseDomain {
     /**
      * 评论的id

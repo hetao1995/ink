@@ -17,6 +17,7 @@ import xyz.itao.ink.repository.CommentRepository;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
+import xyz.itao.ink.utils.DateUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -236,6 +237,9 @@ public class ContentDomain extends BaseDomain{
     }
 
     private void saveMetas(String metas, String type) {
+        if(metas == null){
+            return ;
+        }
         Set<String> metaSet = Sets.newHashSet(StringUtils.split(metas, ","));
         List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
         for(MetaDomain metaDomain : metaDomains){
@@ -248,10 +252,19 @@ public class ContentDomain extends BaseDomain{
         for(String name : metaSet){
             MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, name);
             if(metaDomain == null){
-                metaDomain = domainFactory.createMetaDomain().setName(name).setActive(true).setDeleted(false);
+                metaDomain = domainFactory
+                        .createMetaDomain()
+                        .setName(name)
+                        .setActive(true)
+                        .setDeleted(false)
+                        .setType(type)
+                        .setCreateBy(authorId)
+                        .setUpdateBy(authorId)
+                        .setParentId(0L);
                 metaDomain = metaDomain.save();
             }
-            metaRepository.saveNewContentMetaRelationshipByContentIdAndMetaId(id, metaDomain.getId());
+            metaDomain.saveContentMeta(id, authorId);
+
         }
     }
 
@@ -261,6 +274,8 @@ public class ContentDomain extends BaseDomain{
     }
 
     public ContentDomain save(){
+        this.createTime = DateUtils.getNow();
+        this.updateTime = DateUtils.getNow();
         ContentDomain contentDomain = contentRepository.saveNewContentDomain(this);
         contentDomain.saveTags(this.tags);
         contentDomain.saveCategories(this.categories);
@@ -271,6 +286,7 @@ public class ContentDomain extends BaseDomain{
         if(id==null){
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
+        this.updateTime = DateUtils.getNow();
         ContentDomain contentDomain = contentRepository.updateContentDomain(this);
         contentDomain.saveTags(this.tags);
         contentDomain.saveCategories(this.categories);
@@ -329,6 +345,8 @@ public class ContentDomain extends BaseDomain{
                 .setContent(vo.getContent())
                 .setCreated(vo.getCreated())
                 .setModified(vo.getModified())
+                .setCategories(vo.getCategories())
+                .setTags(vo.getTags())
                 .setThumbImg(vo.getThumbImg())
                 .setFmtType(vo.getFmtType());
         return this;

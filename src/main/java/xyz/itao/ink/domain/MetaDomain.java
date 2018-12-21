@@ -2,10 +2,13 @@ package xyz.itao.ink.domain;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import xyz.itao.ink.domain.entity.ContentMeta;
 import xyz.itao.ink.domain.entity.Meta;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
+import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -172,7 +175,24 @@ public class MetaDomain extends BaseDomain {
     }
 
     public MetaDomain save(){
+        this.createTime = DateUtils.getNow();
+        this.updateTime = DateUtils.getNow();
         return metaRepository.saveNewMetaDomain(this);
     }
 
+    public boolean saveContentMeta(Long contentId, Long userId){
+        ContentMeta contentMeta = ContentMeta
+                .builder()
+                .id(IdUtils.nextId())
+                .createTime(DateUtils.getNow())
+                .updateTime(DateUtils.getNow())
+                .active(true)
+                .deleted(false)
+                .updateBy(userId)
+                .createBy(userId)
+                .contentId(contentId)
+                .metaId(id)
+                .build();
+        return metaRepository.saveNewContentMeta(contentMeta);
+    }
 }

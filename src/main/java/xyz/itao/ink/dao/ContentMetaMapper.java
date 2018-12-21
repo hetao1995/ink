@@ -1,5 +1,6 @@
 package xyz.itao.ink.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.ContentMeta;
 
@@ -35,5 +36,5 @@ public interface ContentMetaMapper {
      * @param metaId
      * @return
      */
-    ContentMeta selectByContentIdAndMetaId(Long contentId, Long metaId);
+    ContentMeta selectByContentIdAndMetaId(@Param("contentId") Long contentId, @Param("metaId") Long metaId);
 }

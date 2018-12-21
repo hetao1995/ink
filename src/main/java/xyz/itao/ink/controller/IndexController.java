@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ArchiveVo;
 import xyz.itao.ink.domain.vo.ContentVo;
@@ -64,7 +63,7 @@ public class IndexController extends BaseController{
         articleParam.setPageSize(limit);
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setStatus(TypeConst.PUBLISH);
-        request.setAttribute("articles", contentService.loadAllContentVo(articleParam));
+        request.setAttribute("articles", contentService.loadAllContentDomain(articleParam));
 //        request.setAttribute("page_num", page);
 //        request.setAttribute("limit", limit);
 //        request.setAttribute("is_home", true);

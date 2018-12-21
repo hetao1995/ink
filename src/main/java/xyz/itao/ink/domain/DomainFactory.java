@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.repository.CommentRepository;
 import xyz.itao.ink.repository.ContentRepository;
@@ -19,24 +20,28 @@ public class DomainFactory {
      * UserRepository 对象
      */
     @Autowired
+    @Lazy
     private UserRepository userRepository;
 
     /**
      * commentRepository对象
      */
     @Autowired
+    @Lazy
     private CommentRepository commentRepository;
 
     /**
      * metaRepository对象
      */
     @Autowired
+    @Lazy
     private MetaRepository metaRepository;
 
     /**
      * contentRepository对象
      */
     @Autowired
+    @Lazy
     private ContentRepository contentRepository;
 
     /**

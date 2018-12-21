@@ -1,5 +1,6 @@
 package xyz.itao.ink.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.entity.Content;
@@ -47,7 +48,7 @@ public interface MetaMapper {
      * @param type
      * @return
      */
-    List<Meta> selectByContentIdAndType(Long contentId, String type);
+    List<Meta> selectByContentIdAndType(@Param("contentId") Long contentId, @Param("type") String type);
 
     /**
      * 通过

@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.Date;
  * @description
  */
 @Data
+@Accessors(chain = true)
 public abstract class BaseDomain implements Serializable {
     /**
      * id

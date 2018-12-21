@@ -14,9 +14,11 @@ import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.ContentRepository;
+import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.ContentService;
+import xyz.itao.ink.service.MetaService;
 import xyz.itao.ink.utils.PatternUtils;
 
 import java.util.List;
@@ -35,6 +37,8 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     private UserRepository userRepository;
     @Autowired
     private DomainFactory domainFactory;
+    @Autowired
+    private MetaRepository metaRepository;
 
     @Override
     protected ContentDomain doAssemble(ContentVo vo) {
@@ -84,8 +88,16 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
-        List<ContentVo> contentVos = contentDomains.stream().map(content-> extract(content)).collect(Collectors.toList());
+        List<ContentVo> contentVos = contentDomains.stream().map(d->extract(d)).collect(Collectors.toList());
         return new PageInfo<>(contentVos);
+    }
+
+    @Override
+    public PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam) {
+        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
+        PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
+        List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
+        return new PageInfo<>(contentDomains);
     }
 
     @Override
@@ -112,7 +124,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Override
     public PageInfo<ContentVo> getArticles(Long metaId, int page, int limit) {
         PageHelper.startPage(page, limit);
-        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomainByMetaId(metaId);
+        List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaId(metaId);
         List<ContentVo> contentVos = contentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
         return new PageInfo<>(contentVos);
     }

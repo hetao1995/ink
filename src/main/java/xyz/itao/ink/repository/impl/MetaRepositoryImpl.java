@@ -14,6 +14,8 @@ import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.MetaRepository;
+import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,16 +98,17 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
          return contentMetaMapper.updateByPrimaryKeySelective(contentMeta);
     }
 
-    @Override
-    public boolean saveNewContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId) {
-        return contentMetaMapper.insertSelective(ContentMeta.builder().contentId(contentId).metaId(metaId).build());
-    }
 
     @Override
     public List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id) {
         Meta meta = Meta.builder().id(id).active(true).deleted(false).build();
         List<Content> contents = metaMapper.selectContentByMeta(meta);
         return contents.stream().map(content -> domainFactory.createContentDomain().assemble(content)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean saveNewContentMeta(ContentMeta contentMeta) {
+        return contentMetaMapper.insertSelective(contentMeta);
     }
 
     @Override

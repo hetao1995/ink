@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.SiteService;
@@ -154,7 +155,7 @@ public final class Commons {
      * @param contents
      * @return
      */
-    public static String permalink(ContentVo contents) {
+    public static String permalink(ContentDomain contents) {
         return permalink(contents.getId(), contents.getSlug());
     }
 
@@ -284,14 +285,14 @@ public final class Commons {
      *
      * @return
      */
-    public static String show_thumb(ContentVo contentVo) {
-        if(null == contentVo){
+    public static String show_thumb(ContentDomain contentDomain) {
+        if(null == contentDomain){
             return "";
         }
-        if(StringUtils.isNotBlank(contentVo.getThumbImg())){
-            return  "/upload/thumbnail_"+contentVo.getThumbImg().trim();
+        if(StringUtils.isNotBlank(contentDomain.getThumbImg())){
+            return  "/upload/thumbnail_"+contentDomain.getThumbImg().trim();
         }
-        Long cid = contentVo.getId();
+        Long cid = contentDomain.getId();
         Long size = cid % 20;
         size = size == 0 ? 1 : size;
         return "/user/img/rand/" + size + ".jpg";
