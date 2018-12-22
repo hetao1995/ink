@@ -669,4 +669,11 @@ public class DateUtils {
     public static Date toDate(long unixTime) {
         return Date.from(Instant.ofEpochSecond(unixTime));
     }
+
+    public static Date getMonthsAfter(Date date, int months){
+        Calendar calender = Calendar.getInstance();
+        calender.setTime(date);
+        calender.add(Calendar.MONTH, months);
+        return calender.getTime();
+    }
 }

@@ -96,6 +96,10 @@
       where content_metas.content_id=#{contentId, jdbcType=BIGINT}
         and
       metas.type = #{type,jdbcType=VARCHAR}
+        and
+      metas.deleted = false
+        and
+      metas.active = true
     </select>
   <select id="selectContentByMeta" resultMap="ContentResultMap">
     select

@@ -3,16 +3,15 @@ package xyz.itao.ink.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.constant.TypeConst;
-import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.dao.ContentMapper;
+import xyz.itao.ink.domain.ArchiveDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -21,7 +20,6 @@ import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.ContentService;
-import xyz.itao.ink.service.MetaService;
 import xyz.itao.ink.utils.PatternUtils;
 
 import java.util.List;
@@ -177,5 +175,15 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
             return null;
         }
         return contentDomain;
+    }
+
+    @Override
+    public PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam) {
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(),articleParam.getOrderBy());
+        List<Archive> archives = contentRepository.loadContentArchives(articleParam.getType(), articleParam.getStatus());
+        List<ArchiveDomain> archiveDomains = archives.stream().map(e->domainFactory.createArchiveDomain().assemble(e).setType(articleParam.getType()).setStatus(articleParam.getStatus())).collect(Collectors.toList());
+        PageInfo<ArchiveDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(archiveDomains);
+        return pageInfo;
     }
 }

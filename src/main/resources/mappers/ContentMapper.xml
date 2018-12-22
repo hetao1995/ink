@@ -28,9 +28,8 @@
     <result column="update_by" property="updateBy" jdbcType="BIGINT" />
   </resultMap>
   <resultMap id="ArchiveResultMap" type="xyz.itao.ink.domain.entity.Archive">
-    <result column="date_str" property="dateStr" javaType="VARCHAR"/>
-    <result column="count" property="count" javaType="INTEGER"/>
-    <association property="articles" resultMap="BaseResultMap"/>
+    <result column="date_str" property="dateStr" jdbcType="VARCHAR"/>
+    <result column="count" property="count" jdbcType="INTEGER"/>
   </resultMap>
   <sql id="Base_Column_List" >
     id, author_id, deleted, active, title, slug, type, status, tags, categories, hits,
@@ -111,14 +110,23 @@
     </select>
     <select id="selectAllContentArchive" resultMap="ArchiveResultMap">
       select
-      date_format(from_unixtime(created), '%Y年%m月') as date_str, count(0) as count ,<include refid="Base_Column_List"/>
+      date_format(from_unixtime(created), '%Y年%m月') as date_str, count(0) as count
       from contents
       where type = #{type,jdbcType=VARCHAR}
       and status = #{status,jdbcType=VARCHAR}
       group by date_str
     </select>
+  <select id="selectContentCreatedBetween" resultType="xyz.itao.ink.domain.entity.Content">
+    SELECT
+      <include refid="Base_Column_List"/>
+    FROM contents
+    WHERE type = #{type,jdbcType=VARCHAR}
+    and status = #{status,jdbcType=VARCHAR}
+    and created
+      between #{start,jdbcType=INTEGER} and #{end, jdbcType=INTEGER}
+  </select>
 
-    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
+  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
     insert into contents
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

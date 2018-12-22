@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.ContentMapper;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.ContentRepository;
@@ -104,6 +105,17 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     @Override
     public List<ContentDomain> loadAllActiveContentDomainByContentIdIn(List<Long> articleIds) {
         List<Content> contents = contentMapper.selectAllContentIn(articleIds, false, true);
+        return contents.stream().map(e->assemble(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Archive> loadContentArchives(String type, String status) {
+        return contentMapper.selectAllContentArchive(type, status);
+    }
+
+    @Override
+    public List<ContentDomain> loadAllContentDomainCreatedBetween(String type, String status, Integer start, Integer end) {
+        List<Content> contents = contentMapper.selectContentCreatedBetween(type,status,start,end);
         return contents.stream().map(e->assemble(e)).collect(Collectors.toList());
     }
 }

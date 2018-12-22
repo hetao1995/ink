@@ -1,6 +1,7 @@
 package xyz.itao.ink.repository;
 
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.vo.ContentVo;
 
 import java.util.List;
@@ -71,4 +72,16 @@ public interface ContentRepository {
      * @return
      */
     List<ContentDomain> loadAllActiveContentDomainByContentIdIn(List<Long> articleIds);
+
+    List<Archive> loadContentArchives(String type, String status);
+
+    /**
+     * 获取created 在start和end之间的contentDoamin
+     * @param type
+     * @param status
+     * @param start
+     * @param end
+     * @return
+     */
+    List<ContentDomain> loadAllContentDomainCreatedBetween(String type, String status, Integer start, Integer end);
 }

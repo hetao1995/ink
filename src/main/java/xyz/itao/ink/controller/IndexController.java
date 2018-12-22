@@ -1,6 +1,7 @@
 package xyz.itao.ink.controller;
 
 import com.github.pagehelper.PageInfo;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -9,8 +10,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.ArchiveDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.entity.Archive;
+import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.SiteService;
@@ -47,28 +50,24 @@ public class IndexController extends BaseController{
     /**
      * 首页分页显示
      * @param request request
-     * @param page 第几页
-     * @param limit 每页大小
+     * @param pageNum 第几页
+     * @param pageSize 每页大小
      * @return
      */
-    @GetMapping(value = "/page/{page}")
-    public String index(HttpServletRequest request, @PathVariable int page, @RequestParam(value = "limit", defaultValue = "12") int limit) {
-//        p = p < 0 || p > WebConst.MAX_PAGE ? 1 : p;
+    @GetMapping(value = {"/page/{pageNum}","/page/{pageNum}.html"})
+    public String index(HttpServletRequest request, @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
 
-        if (page > 1) {
-            this.title(request, "第" + page + "页");
+        if (pageNum > 1) {
+            this.title(request, "第" + pageNum + "页");
         }
         ArticleParam articleParam = ArticleParam.builder().build();
-        articleParam.setPageNum(page);
-        articleParam.setPageSize(limit);
+        articleParam.setPageNum(pageNum);
+        articleParam.setPageSize(pageSize);
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setStatus(TypeConst.PUBLISH);
         articleParam.setOrderBy("created desc");
         request.setAttribute("articles", contentService.loadAllContentDomain(articleParam));
-//        request.setAttribute("page_num", page);
-//        request.setAttribute("limit", limit);
-//        request.setAttribute("is_home", true);
-//        request.setAttribute("page_prefix", "/page");
+        request.setAttribute("is_home", true);
         return this.render("index");
     }
     /**
@@ -112,10 +111,23 @@ public class IndexController extends BaseController{
      *
      * @return
      */
-    @GetMapping(value = {"/archives", "/archives.html"})
-    public String archives(HttpServletRequest request) {
-        List<Archive> archives = siteService.getArchives();
-        request.setAttribute("archives", archives);
+    @GetMapping(value = {"/archive", "/archive.html"})
+    public String archives(HttpServletRequest request,  @RequestParam(defaultValue = "12") Integer pageSize) {
+        return archives(request,0, pageSize);
+    }
+
+    @GetMapping(value = {"/archive/{pageNum}","/archive/{pageNum}.html"})
+    public String archives(HttpServletRequest request, @PathVariable Integer pageNum, @RequestParam(defaultValue = "12") Integer pageSize){
+        ArticleParam articleParam = ArticleParam
+                .builder()
+                .type(TypeConst.ARTICLE)
+                .status(TypeConst.PUBLISH)
+                .orderBy("date_str desc")
+                .build();
+        articleParam.setPageNum(pageNum);
+        articleParam.setPageSize(pageSize);
+        PageInfo<ArchiveDomain> archivePage = contentService.loadContentArchives(articleParam);
+        request.setAttribute("archivePage", archivePage);
         request.setAttribute("is_archive", true);
         return this.render("archives");
     }

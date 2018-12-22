@@ -1,8 +1,10 @@
 package xyz.itao.ink.service;
 
 import com.github.pagehelper.PageInfo;
+import xyz.itao.ink.domain.ArchiveDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -78,4 +80,10 @@ public interface ContentService {
      */
     ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
 
+    /**
+     * 加载所有content的归档
+     * @param articleParam
+     * @return
+     */
+    PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam);
 }

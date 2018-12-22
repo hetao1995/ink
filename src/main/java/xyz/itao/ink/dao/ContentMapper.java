@@ -48,10 +48,20 @@ public interface ContentMapper {
     List<Content> selectAllContentIn(List<Long> articleIds, boolean deleted, boolean active);
 
     /**
-     * 查询所有文章的归档
+     * 查询所有文章的归档源信息
      * @param type
      * @param status
      * @return
      */
-    List<Archive> selectAllContentArchive(@Param("type") String type, String status);
+    List<Archive> selectAllContentArchive(@Param("type") String type, @Param("status") String status);
+
+    /**
+     * 查询所有crated在start和end之间的content
+     * @param type
+     * @param status
+     * @param start
+     * @param end
+     * @return
+     */
+    List<Content> selectContentCreatedBetween(@Param("type") String type, @Param("status") String status, @Param("start") Integer start, @Param("end") Integer end);
 }

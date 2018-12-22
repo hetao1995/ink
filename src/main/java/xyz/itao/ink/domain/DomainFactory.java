@@ -60,4 +60,12 @@ public class DomainFactory {
         return new MetaDomain(metaRepository);
     }
 
+    /**
+     * 生成archiveDomain对象
+     * @return
+     */
+    public ArchiveDomain createArchiveDomain(){
+        return new ArchiveDomain(contentRepository);
+    }
+
 }
