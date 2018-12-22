@@ -17,7 +17,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ArchiveVo {
     private String         dateStr;
-    private Date date;
+    private Date           date;
     private String         count;
     private List<ContentVo> articles;
 }

@@ -1,8 +1,10 @@
 package xyz.itao.ink.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.constant.TypeConst;
@@ -31,6 +33,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Service("contentService")
+@Slf4j
 public class ContentServiceImpl extends AbstractBaseService<ContentDomain, ContentVo> implements ContentService {
     @Autowired
     private ContentRepository contentRepository;
@@ -87,20 +90,22 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Override
     public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
-        PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         List<ContentVo> contentVos = contentDomains.stream().map(d->extract(d)).collect(Collectors.toList());
-        return new PageInfo<>(contentVos);
+        PageInfo<ContentVo> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(contentVos);
+        return pageInfo;
     }
 
     @Override
     public PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
-        System.out.println("+++++++++++++++++start page++++++++++++++++++");
-        PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
-        System.out.println("+++++++++++++++++end page++++++++++++++++++");
-        return new PageInfo<>(contentDomains);
+        PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(contentDomains);
+        return pageInfo;
     }
 
     @Override
@@ -126,9 +131,11 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public PageInfo<ContentDomain> getArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
+        Page page = PageHelper.startPage(pageNum, pageSize);
         List<ContentDomain> contentDomains = metaDomain.getActiveArticles();
-        return new PageInfo<>(contentDomains);
+        PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(contentDomains);
+        return pageInfo;
     }
 
 

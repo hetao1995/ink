@@ -86,13 +86,13 @@
                                         </div>
 
                                         <ul class="pagination m-b-5 pull-right">
-                                            <li v-if="articlePage.hasPrevPage">
-                                                <a @click="load(articlePage.prevPage)" aria-label="Previous">
+                                            <li v-if="articlePage.hasPreviousPage">
+                                                <a @click="load(articlePage.prePage)" aria-label="Previous">
                                                     <i class="fa fa-angle-left"></i>&nbsp;上一页
                                                 </a>
                                             </li>
 
-                                            <li class="page-item" v-for="num in articlePage.navPageNums"
+                                            <li class="page-item" v-for="num in articlePage.navigatepageNums"
                                                 :class="{ active: articlePage.pageNum == num }">
                                                 <a @click="load(num)">
                                                     {{ num }}</i>
@@ -128,7 +128,7 @@
                 title:'',
                 status: '',
                 categories: '',
-                page: 1
+                pageNum: 1
             },
             categories:[]
         },
@@ -153,9 +153,9 @@
                     }
                 });
             },
-            load: function (page) {
+            load: function (pageNum) {
                 var $vm = this;
-                $vm.search.page = page;
+                $vm.search.pageNum = pageNum;
 
                 tale.get({
                     url: '/admin/api/articles',

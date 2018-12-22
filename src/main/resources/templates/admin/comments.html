@@ -67,13 +67,13 @@
                                 </div>
 
                                 <ul v-if="commentPage.list.length > 0" class="pagination m-b-5 pull-right">
-                                    <li v-if="commentPage.hasPrevPage">
-                                        <a @click="load(commentPage.prevPage)" aria-label="Previous">
+                                    <li v-if="commentPage.hasPreviousPage">
+                                        <a @click="load(commentPage.prePage)" aria-label="Previous">
                                             <i class="fa fa-angle-left"></i>&nbsp;上一页
                                         </a>
                                     </li>
 
-                                    <li class="page-item" v-for="num in commentPage.navPageNums" :class="{ active: commentPage.pageNum == num }">
+                                    <li class="page-item" v-for="num in commentPage.navigatepageNums" :class="{ active: commentPage.pageNum == num }">
                                         <a @click="load(num)">
                                             {{ num }}</i>
                                         </a>
@@ -111,13 +111,13 @@
             this.load(1);
         },
         methods: {
-            load: function (page) {
+            load: function (pageNum) {
                 var $vm = this;
                 tale.get({
                     url: '/admin/api/comments',
                     data: {
-                        page: page,
-                        limit: 12
+                        pageNum: pageNum,
+                        pageSize: 12
                     },
                     success: function (data) {
                         $vm.commentPage = data.payload;

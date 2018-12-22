@@ -58,13 +58,13 @@
                                     </div>
 
                                     <ul class="pagination m-b-5 pull-right">
-                                        <li v-if="articlePage.hasPrevPage">
+                                        <li v-if="articlePage.hasPreviousPage">
                                             <a @click="load(articlePage.prevPage)" aria-label="Previous">
                                                 <i class="fa fa-angle-left"></i>&nbsp;上一页
                                             </a>
                                         </li>
 
-                                        <li class="page-item" v-for="num in articlePage.navPageNums" :class="{ active: articlePage.pageNum == num }">
+                                        <li class="page-item" v-for="num in articlePage.navigatepageNums" :class="{ active: articlePage.pageNum == num }">
                                             <a @click="load(num)">
                                                 {{ num }}</i>
                                             </a>
@@ -101,12 +101,12 @@
             this.load(1);
         },
         methods: {
-            load: function (page) {
+            load: function (pageNum) {
                 var $vm = this;
                 tale.get({
                     url: '/admin/api/pages',
                     data: {
-                        page: page,
+                        pageNum: pageNum,
                         limit: 12
                     },
                     success: function (data) {

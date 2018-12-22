@@ -50,8 +50,8 @@ public class CategoryController extends BaseController {
      * 某个分类详情页
      */
     @GetMapping(value = {"/category/{keyword}", "/category/{keyword}.html"})
-    public String categories(HttpServletRequest request, @PathVariable String keyword, @RequestParam(defaultValue = "12") int limit) {
-        return this.categories(request, keyword, 1, limit);
+    public String categories(HttpServletRequest request, @PathVariable String keyword, @RequestParam(defaultValue = "12") int pageSize) {
+        return this.categories(request, keyword, 1, pageSize);
     }
 
     /**
@@ -67,7 +67,7 @@ public class CategoryController extends BaseController {
             return this.render_404();
         }
 
-        PageInfo<ContentDomain> contentsPage = metaService.getArticlesByMetaId(metaDomain.getId(), pageNum, pageSize);
+        PageInfo<ContentDomain> contentsPage = contentService.getArticlesByMeta(metaDomain, pageNum, pageSize);
 
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaDomain);

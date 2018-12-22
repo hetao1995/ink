@@ -1,5 +1,6 @@
 package xyz.itao.ink.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,10 +80,12 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
 
     @Override
     public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
-        PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize());
+        Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize());
         List<CommentDomain> commentDomains = commentRepository.loadAllRootCommentDomain();
         List<CommentVo> commentVos = commentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
-        return new PageInfo<>(commentVos);
+        PageInfo<CommentVo> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(commentVos);
+        return pageInfo;
     }
 
     @Override

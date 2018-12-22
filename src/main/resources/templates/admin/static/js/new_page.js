@@ -42,7 +42,7 @@ var vm = new Vue({
 
 
                 var options = {
-                    url: '/admin/api/page',
+                    url: '/admin/api/page/',
                     data: params,
                     success: function (result) {
                         if (result && result.success) {

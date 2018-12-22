@@ -34,7 +34,9 @@
                 </div>
             </div>
         </th:block>
-
+    </div>
+    <div class="lists-navigator clearfix">
+        <div th:replace="comm/macros::pageNav(${articles},'←','→',${is_tag}? 'tag/'+${keyword}: 'category/'+${keyword})"></div>
     </div>
 </div>
 </body>

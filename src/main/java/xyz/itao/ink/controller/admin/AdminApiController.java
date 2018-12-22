@@ -121,6 +121,7 @@ public class AdminApiController {
     public RestResponse articleList(ArticleParam articleParam) {
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setOrderBy("create_time desc");
+        System.out.println("articleParam"+articleParam);
         PageInfo<ContentVo> contentVoPageInfo = contentService.loadAllContentVo(articleParam);
         return RestResponse.ok(contentVoPageInfo);
     }
