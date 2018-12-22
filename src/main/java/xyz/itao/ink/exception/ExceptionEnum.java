@@ -34,7 +34,9 @@ public enum ExceptionEnum {
     PASSWORD_EMPTY("密码不能为空！",24),
     USER_NOT_FIND("没有找到该用户！",31),
     ROLE_NOT_FOUND("没有找到该角色！",32),
-    WRONG_OLD_PASSWORD("旧密码不正确，请核对！",41);
+    WRONG_OLD_PASSWORD("旧密码不正确，请核对！",41),
+    FORBIDDEN_OPERATION("该数据不允许此操作！",51),
+    HAS_NOT_FIND_DATA("该数据不存在,请确认！",52);
 
     private String message;
     private Integer code;

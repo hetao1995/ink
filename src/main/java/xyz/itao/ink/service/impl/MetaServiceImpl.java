@@ -5,10 +5,11 @@ import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xyz.itao.ink.domain.BaseDomain;
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -105,6 +106,19 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
         PageHelper.startPage(pageNum, pageSize);
         List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaId(id);
         return new PageInfo<>(contentDomains);
+    }
+
+    @Override
+    public MetaDomain updateCategory(Long id, MetaParam metaParam, UserVo userVo) {
+        MetaDomain metaDomain = metaRepository.loadMetaDomainById(id);
+        if(metaDomain==null){
+            throw new TipException(ExceptionEnum.HAS_NOT_FIND_DATA);
+        }
+        if(!TypeConst.CATEGORY.equals(metaDomain.getType())){
+            throw  new TipException(ExceptionEnum.FORBIDDEN_OPERATION);
+        }
+        metaDomain.setName(metaParam.getName()).setUpdateBy(userVo.getId());
+        return metaDomain.updateById();
     }
 
 

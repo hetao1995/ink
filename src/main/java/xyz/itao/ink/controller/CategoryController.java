@@ -114,7 +114,7 @@ public class CategoryController extends BaseController {
             return this.render_404();
         }
 
-        PageInfo<ContentVo> contentsPage = contentService.getArticles(metaDomain.getId(), pageNum, pageSize);
+        PageInfo<ContentDomain> contentsPage = contentService.getArticlesByMeta(metaDomain, pageNum, pageSize);
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaDomain);
         request.setAttribute("type", "标签");

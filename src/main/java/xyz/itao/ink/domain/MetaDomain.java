@@ -93,7 +93,6 @@ public class MetaDomain extends BaseDomain {
      * 修改者
      */
     private Long updateBy;
-    
 
 
 
@@ -171,6 +170,7 @@ public class MetaDomain extends BaseDomain {
                 .type(this.getType())
                 .sort(this.getSort())
                 .detail(this.getDetail())
+                .count(this.getCount())
                 .build();
     }
 
@@ -178,6 +178,11 @@ public class MetaDomain extends BaseDomain {
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
         return metaRepository.saveNewMetaDomain(this);
+    }
+
+    public MetaDomain updateById(){
+        this.updateTime = DateUtils.getNow();
+        return metaRepository.updateMetaDomain(this);
     }
 
     public boolean saveContentMeta(Long contentId, Long userId){

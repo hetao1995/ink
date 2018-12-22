@@ -52,4 +52,9 @@ public class MetaVo {
      * 排序
      */
     private Integer sort;
+
+    /**
+     * 下属文章数目
+     */
+    private Integer count;
 }

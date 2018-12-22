@@ -139,8 +139,8 @@
                     tale.alertError('请输入分类名');
                     return;
                 }
-                tale.post({
-                    url: '/admin/api/category',
+                var options = {
+                    url: '/admin/api/category/',
                     data: {id: $vm.id, name: $vm.name},
                     success: function (result) {
                         if (result && result.success) {
@@ -152,7 +152,13 @@
                             tale.alertError(result.msg || '保存失败');
                         }
                     }
-                });
+                };
+                if($vm.id !== '' ){
+                    options.url += $vm.id;
+                    tale.put(options);
+                }else{
+                    tale.post(options);
+                }
             },
             edit: function(index){
                 var item = this.categories[index];
@@ -165,7 +171,7 @@
                     title: '确定删除该项吗?',
                     then: function () {
                         tale.delete({
-                            url: '/admin/api/category/' + id,
+                            url: '/admin/api/meta/' + id,
                             success: function (result) {
                                 if (result && result.success) {
                                     tale.alertOk('删除成功');

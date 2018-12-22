@@ -2,6 +2,7 @@ package xyz.itao.ink.service;
 
 import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -63,7 +64,7 @@ public interface ContentService {
 
     void hit(ContentDomain contentDomain);
 
-    PageInfo<ContentVo> getArticles(Long id, int page, int limit);
+    PageInfo<ContentDomain> getArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize);
 
     PageInfo<ContentVo> searchArticles(String keyword, int page, int limit);
 
@@ -76,6 +77,5 @@ public interface ContentService {
      * @return
      */
     ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
-
 
 }

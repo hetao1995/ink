@@ -3,6 +3,7 @@ package xyz.itao.ink.service;
 import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -62,4 +63,12 @@ public interface MetaService {
      * @return
      */
     PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize);
+
+    /**
+     * 跟新category
+     * @param id
+     * @param metaParam
+     * @param userVo
+     */
+    MetaDomain updateCategory(Long id, MetaParam metaParam, UserVo userVo);
 }

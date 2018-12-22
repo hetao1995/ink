@@ -74,8 +74,8 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Override
     public MetaDomain loadMetaDomainById(Long metaId) {
-        List<MetaDomain> metaDomains = loadByNoNullPropertiesNotActiveAndNotDelect(domainFactory.createMetaDomain().setId(metaId));
-        if(metaDomains == null){
+        List<MetaDomain> metaDomains = loadByNoNullPropertiesNotDelect(domainFactory.createMetaDomain().setId(metaId));
+        if(metaDomains.isEmpty()){
             return null;
         }
         return metaDomains.get(0);

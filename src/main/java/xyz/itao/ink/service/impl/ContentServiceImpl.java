@@ -10,6 +10,7 @@ import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.dao.ContentMapper;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -95,8 +96,10 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Override
     public PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
+        System.out.println("+++++++++++++++++start page++++++++++++++++++");
         PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
+        System.out.println("+++++++++++++++++end page++++++++++++++++++");
         return new PageInfo<>(contentDomains);
     }
 
@@ -122,12 +125,12 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public PageInfo<ContentVo> getArticles(Long metaId, int page, int limit) {
-        PageHelper.startPage(page, limit);
-        List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaId(metaId);
-        List<ContentVo> contentVos = contentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
-        return new PageInfo<>(contentVos);
+    public PageInfo<ContentDomain> getArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<ContentDomain> contentDomains = metaDomain.getActiveArticles();
+        return new PageInfo<>(contentDomains);
     }
+
 
     @Override
     public PageInfo<ContentVo> searchArticles(String keyword, int page, int limit) {

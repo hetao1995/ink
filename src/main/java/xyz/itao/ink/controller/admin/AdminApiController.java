@@ -15,6 +15,7 @@ import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
+import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.dto.ThemeDto;
 import xyz.itao.ink.domain.params.*;
 import xyz.itao.ink.domain.vo.*;
@@ -164,18 +165,27 @@ public class AdminApiController {
     @SysLog("保存分类")
     @PostMapping("/category")
     public RestResponse<?> saveCategory(@RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getCname(), metaParam.getMid(), userVo);
+        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getName(), metaParam.getId(), userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
+    @SysLog("修改分类")
+    @PutMapping("/category/{id}")
+    public RestResponse<?> putCategory(@PathVariable Long id, @RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo){
+        MetaDomain metaDomain = metaService.updateCategory(id, metaParam, userVo);
+        return RestResponse.ok(metaDomain.vo());
+    }
+
     @SysLog("删除分类/标签")
-    @DeleteMapping("category/{id}")
+    @DeleteMapping("/meta/{id}")
     public RestResponse<?> deleteMeta(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         metaService.deleteMetaById(id, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
+
+
 
     @GetMapping("/comments")
     public RestResponse commentList(CommentParam commentParam) {
@@ -241,13 +251,13 @@ public class AdminApiController {
 
     @GetMapping("/categories")
     public RestResponse categoryList() {
-        List<MetaVo> categories = siteService.getMetaVo(TypeConst.RECENT_META, TypeConst.CATEGORY, WebConstant.MAX_POSTS);
+        List<MetaVo> categories = metaService.getMetasByType(TypeConst.CATEGORY);
         return RestResponse.ok(categories);
     }
 
     @GetMapping("/tags")
     public RestResponse tagList() {
-        List<MetaVo> tags = siteService.getMetaVo(TypeConst.RECENT_META, TypeConst.TAG, WebConstant.MAX_POSTS);
+        List<MetaVo> tags = metaService.getMetasByType(TypeConst.TAG);
         return RestResponse.ok(tags);
     }
 
