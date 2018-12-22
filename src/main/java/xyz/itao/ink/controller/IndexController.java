@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
-import xyz.itao.ink.domain.vo.ArchiveVo;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.SiteService;
@@ -115,7 +114,7 @@ public class IndexController extends BaseController{
      */
     @GetMapping(value = {"/archives", "/archives.html"})
     public String archives(HttpServletRequest request) {
-        List<ArchiveVo> archives = siteService.getArchives();
+        List<Archive> archives = siteService.getArchives();
         request.setAttribute("archives", archives);
         request.setAttribute("is_archive", true);
         return this.render("archives");

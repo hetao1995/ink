@@ -1,6 +1,8 @@
 package xyz.itao.ink.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.entity.Content;
 
 import java.util.List;
@@ -44,4 +46,12 @@ public interface ContentMapper {
      * @return
      */
     List<Content> selectAllContentIn(List<Long> articleIds, boolean deleted, boolean active);
+
+    /**
+     * 查询所有文章的归档
+     * @param type
+     * @param status
+     * @return
+     */
+    List<Archive> selectAllContentArchive(@Param("type") String type, String status);
 }

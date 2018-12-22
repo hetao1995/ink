@@ -4,13 +4,10 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xyz.itao.ink.constant.TypeConst;
-import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.domain.BaseDomain;
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.exception.ExceptionEnum;
-import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.exception.TipException;
 import xyz.itao.ink.service.*;
 import xyz.itao.ink.utils.InkUtils;
@@ -43,7 +40,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public List<ArchiveVo> getArchives() {
+    public List<Archive> getArchives() {
         return null;
     }
 

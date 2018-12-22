@@ -1,8 +1,9 @@
-package xyz.itao.ink.domain.vo;
+package xyz.itao.ink.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
+import xyz.itao.ink.domain.entity.Content;
 
 import java.util.Date;
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.List;
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ArchiveVo {
+public class Archive {
     private String         dateStr;
     private Date           date;
     private String         count;
-    private List<ContentVo> articles;
+    private List<Content> articles;
 }

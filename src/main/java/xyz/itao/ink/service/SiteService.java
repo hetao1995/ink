@@ -1,5 +1,6 @@
 package xyz.itao.ink.service;
 
+import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
 
@@ -15,7 +16,7 @@ public interface SiteService {
 
     List<MetaVo> getMetaVo(String searchType, String type, int limit);
 
-    List<ArchiveVo> getArchives();
+    List<Archive> getArchives();
 
     List<CommentVo> recentComments(int i);
 

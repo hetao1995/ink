@@ -27,6 +27,11 @@
     <result column="create_by" property="createBy" jdbcType="BIGINT" />
     <result column="update_by" property="updateBy" jdbcType="BIGINT" />
   </resultMap>
+  <resultMap id="ArchiveResultMap" type="xyz.itao.ink.domain.entity.Archive">
+    <result column="date_str" property="dateStr" javaType="VARCHAR"/>
+    <result column="count" property="count" javaType="INTEGER"/>
+    <association property="articles" resultMap="BaseResultMap"/>
+  </resultMap>
   <sql id="Base_Column_List" >
     id, author_id, deleted, active, title, slug, type, status, tags, categories, hits,
     allow_comment, comments_num, allow_ping, allow_feed, content, thumb_img, fmt_type,
@@ -103,6 +108,14 @@
             <foreach item="id" index="index" collection="articleIds" open="(" separator="," close=")">
               #{id}
             </foreach>
+    </select>
+    <select id="selectAllContentArchive" resultMap="ArchiveResultMap">
+      select
+      date_format(from_unixtime(created), '%Y年%m月') as date_str, count(0) as count ,<include refid="Base_Column_List"/>
+      from contents
+      where type = #{type,jdbcType=VARCHAR}
+      and status = #{status,jdbcType=VARCHAR}
+      group by date_str
     </select>
 
     <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
