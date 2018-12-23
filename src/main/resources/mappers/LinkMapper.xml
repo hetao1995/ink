@@ -53,6 +53,11 @@
       </if>
       </trim>
     </select>
+  <select id="countLink" resultType="java.lang.Long">
+    SELECT count(1)
+    FROM links
+    WHERE deleted = false
+  </select>
 
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Link" >
     insert into links

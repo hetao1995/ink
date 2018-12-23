@@ -15,6 +15,8 @@ import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.CommentDomain;
+import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.StatisticsDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.vo.*;
@@ -50,28 +52,24 @@ public class IndexController extends BaseController {
     CommentService commentService;
     @Autowired
     ContentService contentService;
+    @Autowired
+    DomainFactory domainFactory;
 
     /**
      * 仪表盘
      */
     @GetMapping(value = {"", "/index"})
     public String index(HttpServletRequest request) {
-//        CommentParam commentParam = CommentParam.builder().build();
-//        commentParam.setPageSize(5);
-//        commentParam.setPageNum(1);
-//        commentParam.setOrderBy("create_time desc");
         ArticleParam articleParam = ArticleParam.builder().build();
         articleParam.setPageSize(8);
         articleParam.setPageNum(1);
         articleParam.setOrderBy("created desc");
 
-//        List<CommentVo> commentVos   = commentService.loadAllCommentVo(commentParam).getList();
         List<ContentVo> contentVo   = contentService.loadAllContentVo(articleParam).getList();
-        StatisticsVo statisticsVo = siteService.getStatistics();
+        StatisticsDomain statisticsDomain = domainFactory.createStatisticsDomain();
 
-//        request.setAttribute("comments", commentVos);
         request.setAttribute("articles", contentVo);
-        request.setAttribute("statistics", statisticsVo);
+        request.setAttribute("statistics", statisticsDomain);
         return "admin/index";
     }
 

@@ -71,7 +71,9 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
                 .active(true)
                 .build();
         List<User> users = doLoadByNoNullProperties(user);
-        if(users.isEmpty()) return null;
+        if(users.isEmpty()) {
+            return null;
+        }
         return assemble(users.get(0));
     }
 

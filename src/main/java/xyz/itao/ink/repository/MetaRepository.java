@@ -63,5 +63,17 @@ public interface MetaRepository {
      */
     List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id);
 
+    /**
+     * 存储contentMeta对应关系
+     * @param contentMeta
+     * @return
+     */
     boolean saveNewContentMeta(ContentMeta contentMeta);
+
+    /**
+     * 统计cate对应的meta数目
+     * @param type
+     * @return
+     */
+    Long countMetaNum(String type);
 }

@@ -18,6 +18,7 @@ import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -277,6 +278,8 @@ public class ContentDomain extends BaseDomain{
     public ContentDomain save(){
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
+        this.id = IdUtils.nextId();
+        this.deleted = false;
         ContentDomain contentDomain = contentRepository.saveNewContentDomain(this);
         contentDomain.saveTags(this.tags);
         contentDomain.saveCategories(this.categories);

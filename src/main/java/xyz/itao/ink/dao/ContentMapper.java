@@ -64,4 +64,12 @@ public interface ContentMapper {
      * @return
      */
     List<Content> selectContentCreatedBetween(@Param("type") String type, @Param("status") String status, @Param("start") Integer start, @Param("end") Integer end);
+
+    /**
+     * 查找为type和active的content数目
+     * @param type
+     * @param active
+     * @return
+     */
+    Long countContentByTypeAndActive(@Param("type") String type, @Param("active") boolean active);
 }

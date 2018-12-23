@@ -60,7 +60,8 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
 
     @Override
     public ContentDomain saveNewContentDomain(ContentDomain domain) {
-        return save(domain);
+        contentMapper.insertSelective(domain.entity());
+        return domain;
     }
 
     @Override
@@ -117,5 +118,10 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     public List<ContentDomain> loadAllContentDomainCreatedBetween(String type, String status, Integer start, Integer end) {
         List<Content> contents = contentMapper.selectContentCreatedBetween(type,status,start,end);
         return contents.stream().map(e->assemble(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Long countContentNum(String type, boolean active) {
+        return contentMapper.countContentByTypeAndActive(type, active);
     }
 }

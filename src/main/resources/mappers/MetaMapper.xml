@@ -140,8 +140,14 @@
       </if>
     </trim>
   </select>
+    <select id="countMetaByType" resultType="java.lang.Long">
+      SELECT count(1)
+      from metas
+      WHERE type = #{type,jdbcType=VARCHAR}
+      and deleted = false
+    </select>
 
-  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Meta" >
+    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Meta" >
     insert into metas
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

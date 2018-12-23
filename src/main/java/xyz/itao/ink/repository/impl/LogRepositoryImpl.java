@@ -15,6 +15,7 @@ import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.LogRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -60,7 +61,7 @@ public class LogRepositoryImpl extends AbstractBaseRepository<LogDomain, Log> im
         for(Log log : logs){
             logDomains.add(assemble(log));
         }
-        return logDomains;
+        return logs.stream().map(e->assemble(e)).collect(Collectors.toList());
     }
 
     @Override

@@ -48,6 +48,13 @@ public class DomainFactory {
     private LogRepository logRepository;
 
     /**
+     * LinkRepository对象
+     */
+    @Autowired
+    @Lazy
+    private LinkRepository linkRepository;
+
+    /**
      * 生成ContentDoamin
      * @return
      */
@@ -79,7 +86,19 @@ public class DomainFactory {
         return new CommentDomain(userRepository, contentRepository, commentRepository);
     }
 
+    /**
+     * 生成LogDomain对象
+     * @return
+     */
     public LogDomain createLogDomain(){
-        return new LogDomain(logRepository);
+        return new LogDomain(logRepository, userRepository);
+    }
+
+    /**
+     * 生成StatisticsDomain对象
+     * @return
+     */
+    public StatisticsDomain createStatisticsDomain(){
+        return new StatisticsDomain(contentRepository,commentRepository, metaRepository, linkRepository);
     }
 }

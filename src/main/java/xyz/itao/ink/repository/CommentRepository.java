@@ -29,4 +29,5 @@ public interface CommentRepository {
 
     List<CommentDomain> loadAllRootCommentDomain();
 
+    Long countCommentNum(boolean active);
 }

@@ -1,6 +1,7 @@
 package xyz.itao.ink.service.impl;
 
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -17,6 +18,7 @@ import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.LogService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -29,13 +31,11 @@ public class LogServiceImpl extends AbstractBaseService<LogDomain, LogVo> implem
     LogRepository logRepository;
     @Override
     public PageInfo<LogVo> getLogs(PageParam pageParam) {
-        PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
-        List<LogDomain> logDomainList = logRepository.loadAllLogs();
-        List<LogVo> logVos = Lists.newArrayList();
-        for(LogDomain logDomain : logDomainList){
-            logVos.add(extract(logDomain));
-        }
-        PageInfo<LogVo> pageInfo = new PageInfo<>(logVos);
+        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
+        List<LogDomain> logDomains = logRepository.loadAllLogs();
+        List<LogVo> logVos = logDomains.stream().map(LogDomain::vo).collect(Collectors.toList());
+        PageInfo<LogVo> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(logVos);
         return pageInfo;
     }
 

@@ -17,4 +17,10 @@ public interface LinkRepository {
     LinkDomain updateLinkDomain(LinkDomain domain);
 
     LinkDomain saveNewLinkDomain(LinkDomain domain);
+
+    /**
+     * 统计link数目
+     * @return
+     */
+    Long countLinkNum();
 }

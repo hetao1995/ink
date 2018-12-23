@@ -36,4 +36,10 @@ public interface LinkMapper {
      * @return 满足条件的Content实例
      */
     List<Link> selectByNoNulProperties(Link record);
+
+    /**
+     * 统计所有的link数目
+     * @return
+     */
+    Long countLink();
 }

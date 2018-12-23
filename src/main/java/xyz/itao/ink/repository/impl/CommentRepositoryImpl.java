@@ -111,4 +111,9 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
         return loadByNoNullPropertiesNotDelect(domainFactory.createCommentDomain());
     }
 
+    @Override
+    public Long countCommentNum(boolean active) {
+        return commentMapper.countCommentByActive(active);
+    }
+
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @author hetao
  * @date 2018-12-05
@@ -18,10 +20,6 @@ public class LogVo {
      */
     private Long id;
 
-    /**
-     * 发起人id
-     */
-    private Long userId;
 
     /**
      * 访问者id
@@ -42,4 +40,14 @@ public class LogVo {
      * 执行的操作
      */
     private String action;
+
+    /**
+     * 操作人
+     */
+    private String operator;
+
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

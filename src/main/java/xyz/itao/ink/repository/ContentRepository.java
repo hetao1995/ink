@@ -84,4 +84,12 @@ public interface ContentRepository {
      * @return
      */
     List<ContentDomain> loadAllContentDomainCreatedBetween(String type, String status, Integer start, Integer end);
+
+    /**
+     * 统计content数目
+     * @param type 是什么类型的content
+     * @param active 是否active
+     * @return
+     */
+    Long countContentNum(String type, boolean active);
 }

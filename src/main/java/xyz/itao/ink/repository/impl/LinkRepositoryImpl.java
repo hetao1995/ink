@@ -42,6 +42,11 @@ public class LinkRepositoryImpl extends AbstractBaseRepository<LinkDomain, Link>
     }
 
     @Override
+    public Long countLinkNum() {
+        return linkMapper.countLink();
+    }
+
+    @Override
     protected boolean doSave(Link entity) {
         return linkMapper.insertSelective(entity);
     }

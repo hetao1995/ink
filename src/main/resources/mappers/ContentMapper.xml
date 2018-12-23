@@ -125,8 +125,17 @@
     and created
       between #{start,jdbcType=INTEGER} and #{end, jdbcType=INTEGER}
   </select>
+    <select id="countContentByTypeAndActive" resultType="java.lang.Long">
+      SELECT count(1)
+      FROM contents
+      WHERE type = #{type,jdbcType=VARCHAR}
+      and
+            active = #{active,jdbcType=BIT}
+      and
+            deleted = false
+    </select>
 
-  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
+    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
     insert into contents
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

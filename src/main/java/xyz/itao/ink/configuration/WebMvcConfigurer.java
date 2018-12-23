@@ -22,8 +22,10 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.filter.EmptyStringParameterFilter;
 import xyz.itao.ink.interceptor.BaseInterceptor;
+import xyz.itao.ink.interceptor.SysLogInterceptor;
 
 import java.util.List;
 
@@ -36,6 +38,8 @@ import java.util.List;
 public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     @Autowired
     BaseInterceptor baseInterceptor;
+    @Autowired
+    SysLogInterceptor sysLogInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/user/**").addResourceLocations("classpath:/templates/themes/default/static/");
@@ -48,6 +52,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(baseInterceptor);
+        registry.addInterceptor(sysLogInterceptor);
         super.addInterceptors(registry);
     }
 

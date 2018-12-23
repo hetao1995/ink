@@ -95,7 +95,9 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
         }
 
         commentVo.setAuthorId(userVo.getId());
-        commentVo.setParentId(0L);
+        if(commentVo.getParentId()==null) {
+            commentVo.setParentId(0L);
+        }
         save(commentVo, userVo.getId());
         return userVo;
     }

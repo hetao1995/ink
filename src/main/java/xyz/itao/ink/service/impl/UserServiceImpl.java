@@ -48,6 +48,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
         CommonValidator.valid(userVo, false);
         userVo.setActive(true);
         userVo.setPermanent(false);
+        userVo.setSalt(BCrypt.gensalt());
         return save(userVo, 0L);
     }
 

@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 import xyz.itao.ink.domain.entity.Log;
 import xyz.itao.ink.domain.vo.LogVo;
 import xyz.itao.ink.repository.LogRepository;
+import xyz.itao.ink.repository.UserRepository;
 
 import java.util.Date;
 
@@ -17,10 +18,12 @@ import java.util.Date;
 @Accessors(chain = true)
 public class LogDomain extends BaseDomain {
     
-    LogDomain(LogRepository logRepository){
+    LogDomain(LogRepository logRepository, UserRepository userRepository){
         this.logRepository = logRepository;
+        this.userRepository = userRepository;
     }
     LogRepository logRepository;
+    UserRepository userRepository;
     
     /**
      * 日志的id
@@ -81,6 +84,10 @@ public class LogDomain extends BaseDomain {
      * 被谁修改
      */
     private Long updateBy;
+
+    public  UserDomain getUserDomain(){
+        return userRepository.loadActiveUserDomainById(userId);
+    }
     
     public LogDomain assemble(Log entity){
         return this
@@ -117,6 +124,7 @@ public class LogDomain extends BaseDomain {
     }
     
     public LogVo vo(){
+        UserDomain userDomain = this.getUserDomain();
         return LogVo
                 .builder()
                 .id(this.getId())
@@ -124,7 +132,8 @@ public class LogDomain extends BaseDomain {
                 .agent(this.getAgent())
                 .data(this.getData())
                 .action(this.getAction())
-                .userId(this.getUserId())
+                .operator(userDomain==null ? this.getIp() : userDomain.getDisplayName())
+                .createTime(this.createTime)
                 .build();
     }
 

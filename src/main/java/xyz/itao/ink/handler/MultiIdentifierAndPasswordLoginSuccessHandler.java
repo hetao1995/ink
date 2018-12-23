@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.MultiIdentifierAndPasswordAuthenticationToken;

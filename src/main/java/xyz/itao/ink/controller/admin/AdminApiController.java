@@ -54,6 +54,7 @@ public class AdminApiController {
     LinkService linkService;
     @GetMapping(value = "/logs")
     public RestResponse sysLogs( PageParam pageParam) {
+        pageParam.setOderBy("create_time desc");
         PageInfo<LogVo> logVoPageInfo = logService.getLogs(pageParam);
         return RestResponse.ok(logVoPageInfo);
     }
@@ -92,9 +93,9 @@ public class AdminApiController {
         if (StringUtils.isBlank(contentVo.getCategories())) {
             contentVo.setCategories("默认分类");
         }
-        Long cid = contentService.publishNewContent(contentVo, userVo).getId();
+        Long id = contentService.publishNewContent(contentVo, userVo).getId();
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
-        return RestResponse.ok(cid);
+        return RestResponse.ok(id);
     }
 
     @DeleteMapping(value = "/article/{id}")
@@ -205,11 +206,12 @@ public class AdminApiController {
     }
 
     @SysLog("修改评论状态")
-    @PutMapping("/comment")
-    public RestResponse<?> updateStatus( @RequestBody CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    @PutMapping("/comment/{id}")
+    public RestResponse<?> updateStatus( @RequestBody CommentVo commentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         if(WebConstant.COMMENT_APPROVED.equals(commentVo.getStatus())){
             commentVo.setActive(true);
         }
+        commentVo.setId(id);
         commentService.updateCommentVo(commentVo, userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
@@ -217,7 +219,7 @@ public class AdminApiController {
 
     @SysLog("回复评论")
     @PostMapping("/comment")
-    public RestResponse<?> postComment(CommentVo commentVo, UserParam userParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> postComment(CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
         CommonValidator.valid(commentVo);
         commentService.postNewComment(commentVo,userVo);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);

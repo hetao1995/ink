@@ -112,6 +112,11 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
     }
 
     @Override
+    public Long countMetaNum(String type) {
+        return metaMapper.countMetaByType(type);
+    }
+
+    @Override
     protected boolean doSave(Meta entity) {
         return metaMapper.insertSelective(entity);
     }

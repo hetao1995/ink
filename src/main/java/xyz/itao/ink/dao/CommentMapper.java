@@ -35,4 +35,11 @@ public interface CommentMapper {
      * @return 满足条件的Content实例
      */
     List<Comment> selectByNoNulProperties(Comment record);
+
+    /**
+     * 统计当前comment数目
+     * @param active
+     * @return
+     */
+    Long countCommentByActive(boolean active);
 }

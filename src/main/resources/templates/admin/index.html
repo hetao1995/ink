@@ -111,7 +111,7 @@
                                             <div class="panel-body">
                                                 <ul class="list-group">
                                                     <li class="list-group-item" v-for="item in logPage.list">
-                                                        <span>{{item.created | formatUnix}} &nbsp;&nbsp;<kbd>{{item.action}}</kbd></span>
+                                                        <span>{{item.createTime/1000 | formatUnix}} &nbsp;&nbsp;<em>{{item.operator}}</em> &nbsp;&nbsp;<kbd>{{item.action}}</kbd></span>
                                                     </li>
                                                 </ul>
                                                 <ul class="pager">

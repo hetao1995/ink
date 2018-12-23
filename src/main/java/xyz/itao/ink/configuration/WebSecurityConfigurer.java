@@ -47,7 +47,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //需登陆才能访问的url
 //                .antMatchers("/backend/**").hasRole("USER")
                 //默认其它的请求都需要认证
-                .anyRequest().authenticated()
+//                .anyRequest().authenticated()
 //                .anyRequest().permitAll()
                 .and()
                 //CRSF禁用，因为不使用session

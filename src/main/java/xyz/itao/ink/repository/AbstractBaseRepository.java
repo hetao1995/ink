@@ -31,7 +31,11 @@ public abstract class AbstractBaseRepository<D extends BaseDomain, E> {
         if(!saved){
             throw new InnerException(ExceptionEnum.PERSISTENCE_FAIL, domain);
         }
-        return assemble(doLoadByNoNullProperties(entity).get(0));
+//        List<E> ds = doLoadByNoNullProperties(entity);
+//        if(ds==null || ds.isEmpty()) {
+//            return null;
+//        }
+        return assemble(entity);
     }
 
     /**

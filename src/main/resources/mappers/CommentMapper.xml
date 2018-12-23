@@ -61,8 +61,15 @@
       </if>
       </trim>
     </select>
+    <select id="countCommentByActive" resultType="java.lang.Long">
+      SELECT count(1)
+      FROM comments
+      WHERE active = #{active,jdbcType=BIT}
+      and
+            deleted = false
+    </select>
 
-  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Comment" >
+    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Comment" >
     insert into comments
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

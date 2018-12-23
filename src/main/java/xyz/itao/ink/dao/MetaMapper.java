@@ -56,4 +56,11 @@ public interface MetaMapper {
      * @return
      */
     List<Content> selectContentByMeta(Meta meta);
+
+    /**
+     * 统计所有该type的meta数目
+     * @param type
+     * @return
+     */
+    Long countMetaByType(@Param("type") String type);
 }
