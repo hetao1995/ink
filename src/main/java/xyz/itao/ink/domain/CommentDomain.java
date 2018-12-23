@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import xyz.itao.ink.domain.entity.Comment;
+import xyz.itao.ink.domain.params.CommentParam;
+import xyz.itao.ink.domain.vo.CommentVo;
+import xyz.itao.ink.repository.CommentRepository;
+import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.UserRepository;
 
 import java.util.Date;
@@ -14,9 +19,28 @@ import java.util.Date;
  * @description
  */
 @Data
-@Builder
 @Accessors(chain = true)
 public class CommentDomain extends BaseDomain {
+
+    CommentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository){
+        this.userRepository = userRepository;
+        this.contentRepository = contentRepository;
+        this.commentRepository = commentRepository;
+    }
+    /**
+     * UserRepository 对象
+     */
+    private UserRepository userRepository;
+
+    /**
+     * ContentRepository 对象
+     */
+    private ContentRepository contentRepository;
+
+    /**
+     * CommentRepository对象
+     */
+    private CommentRepository commentRepository;
     /**
      * 评论的id
      */
@@ -82,54 +106,89 @@ public class CommentDomain extends BaseDomain {
      */
     private Long updateBy;
 
-    /**
-     * UserRepository 对象
-     */
-    private UserRepository userRepository;
-
-    /**
-     * 作者姓名
-     */
-    private String author;
-
-    /**
-     * 作者邮箱
-     */
-    private String mail;
-
-    /**
-     * 作者主页
-     */
-    private String url;
-
-    public String getAuthor() {
-        if(author==null){
-            refreshAuthor();
-        }
-        return author;
+    public UserDomain getAuthor() {
+        return userRepository.loadActiveUserDomainById(authorId);
     }
 
-    public String getMail() {
-        if(mail==null){
-            refreshAuthor();
-        }
-        return mail;
+    public ContentDomain getContentDomain(){
+        return contentRepository.loadActiveContentDomainById(contentId);
     }
 
-    public String getUrl() {
-        if(url==null){
-            refreshAuthor();
-        }
-        return url;
+    public CommentDomain assemble(Comment entity){
+        return this
+                .setId(entity.getId())
+                .setDeleted(entity.getDeleted())
+                .setCreateTime(entity.getCreateTime())
+                .setCreateBy(entity.getCreateBy())
+                .setUpdateTime(entity.getUpdateTime())
+                .setUpdateBy(entity.getUpdateBy())
+                .setActive(entity.getActive())
+                .setType(entity.getType())
+                .setStatus(entity.getStatus())
+                .setParentId(entity.getParentId())
+                .setContentId(entity.getContentId())
+                .setAuthorId(entity.getAuthorId())
+                .setContent(entity.getContent());
     }
 
-    private void refreshAuthor(){
-        if(authorId==null || author!=null || mail!=null || url!=null){
-            return ;
-        }
-        UserDomain userDomain = userRepository.loadActiveUserDomainById(authorId);
-        author = userDomain.getDisplayName();
-        url = userDomain.getHomeUrl();
-        mail = userDomain.getEmail();
+    public CommentDomain assemble(CommentVo vo){
+        return this
+                .setId(vo.getId())
+                .setActive(vo.getActive())
+                .setAuthorId(vo.getAuthorId())
+                .setContentId(vo.getContentId())
+                .setParentId(vo.getParentId())
+                .setStatus(vo.getStatus())
+                .setType(vo.getType())
+                .setContent(vo.getContent());
+    }
+
+    public CommentDomain assemble(CommentParam param){
+        return this.setContentId(param.getContentId());
+    }
+
+    public Comment entity(){
+        return Comment
+                .builder()
+                .id(this.getId())
+                .deleted(this.getDeleted())
+                .createTime(this.getCreateTime())
+                .createBy(this.getCreateBy())
+                .updateTime(this.getUpdateTime())
+                .updateBy(this.getUpdateBy())
+                .active(this.getActive())
+                .type(this.getType())
+                .status(this.getStatus())
+                .parentId(this.getParentId())
+                .contentId(this.getContentId())
+                .authorId(this.getAuthorId())
+                .content(this.getContent())
+                .build();
+    }
+
+    public CommentVo vo(){
+        return CommentVo
+                .builder()
+                .id(this.getId())
+                .active(this.getActive())
+                .authorId(this.getAuthorId())
+                .contentId(this.getContentId())
+                .parentId(this.getParentId())
+                .status(this.getStatus())
+                .type(this.getType())
+                .content(this.getContent())
+                .author(this.getAuthor().getDisplayName())
+                .mail(this.getAuthor().getEmail())
+                .url(this.getAuthor().getHomeUrl())
+                .createTime(this.getCreateTime())
+                .build();
+    }
+
+    public CommentDomain save(){
+        return commentRepository.saveNewCommentDomain(this);
+    }
+
+    public CommentDomain updateById(){
+        return commentRepository.updateCommentDomain(this);
     }
 }

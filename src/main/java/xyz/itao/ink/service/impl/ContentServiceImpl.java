@@ -88,7 +88,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Override
     public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
-        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize());
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         List<ContentVo> contentVos = contentDomains.stream().map(d->extract(d)).collect(Collectors.toList());
         PageInfo<ContentVo> pageInfo = new PageInfo<>(page);
@@ -99,6 +99,16 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Override
     public PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
+        List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
+        PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(contentDomains);
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<ContentDomain> loadAllActiveContentDomain(ArticleParam articleParam) {
+        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);

@@ -4,10 +4,7 @@ import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-import xyz.itao.ink.repository.CommentRepository;
-import xyz.itao.ink.repository.ContentRepository;
-import xyz.itao.ink.repository.MetaRepository;
-import xyz.itao.ink.repository.UserRepository;
+import xyz.itao.ink.repository.*;
 
 /**
  * @author hetao
@@ -43,6 +40,12 @@ public class DomainFactory {
     @Autowired
     @Lazy
     private ContentRepository contentRepository;
+    /**
+     * LogRepository对象
+     */
+    @Autowired
+    @Lazy
+    private LogRepository logRepository;
 
     /**
      * 生成ContentDoamin
@@ -68,4 +71,15 @@ public class DomainFactory {
         return new ArchiveDomain(contentRepository);
     }
 
+    /**
+     * 生成CommentDomain对象
+     * @return
+     */
+    public CommentDomain createCommentDomain(){
+        return new CommentDomain(userRepository, contentRepository, commentRepository);
+    }
+
+    public LogDomain createLogDomain(){
+        return new LogDomain(logRepository);
+    }
 }

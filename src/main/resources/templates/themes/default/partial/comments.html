@@ -49,12 +49,12 @@
                                             <div class="comment-header">
                                                 <!--设置get请求的参数-->
                                                 <img class="avatar"
-                                                     th:src="@{${commons.gravatar(comment.mail)}(s='80',r='G',d='')}"
-                                                     th:title="${comment.author}"
+                                                     th:src="@{${commons.gravatar(comment.author.Email)}(s='80',r='G',d='')}"
+                                                     th:title="${comment.author.displayName}"
                                                      width="80" height="80"/>
                                                 <span class="comment-author">
                                     <a href="##" rel="external nofollow"
-                                       th:text="${comment.author}"></a>
+                                       th:text="${comment.author.displayName}"></a>
                                 </span>
                                             </div>
                                             <div class="comment-content">

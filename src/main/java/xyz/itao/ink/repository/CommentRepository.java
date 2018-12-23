@@ -19,6 +19,8 @@ public interface CommentRepository {
 
     List<CommentDomain> loadAllRootCommentDomain(CommentDomain domain);
 
+    List<CommentDomain> loadAllActiveRootCommentDomainByContentId(Long id);
+
     boolean deleteCommentDomainById(Long id, Long userId);
 
     CommentDomain saveNewCommentDomain(CommentDomain domain);
@@ -26,4 +28,5 @@ public interface CommentRepository {
     CommentDomain loadCommentDomainById(Long id);
 
     List<CommentDomain> loadAllRootCommentDomain();
+
 }

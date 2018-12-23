@@ -53,7 +53,7 @@ public class AdminApiController {
     @Autowired
     LinkService linkService;
     @GetMapping(value = "/logs")
-    public RestResponse sysLogs(@RequestParam PageParam pageParam) {
+    public RestResponse sysLogs( PageParam pageParam) {
         PageInfo<LogVo> logVoPageInfo = logService.getLogs(pageParam);
         return RestResponse.ok(logVoPageInfo);
     }
@@ -190,7 +190,7 @@ public class AdminApiController {
 
     @GetMapping("/comments")
     public RestResponse commentList(CommentParam commentParam) {
-
+        commentParam.setOrderBy("create_time desc");
         PageInfo<CommentVo> commentsPage = commentService.loadAllCommentVo(commentParam);
         return RestResponse.ok(commentsPage);
     }

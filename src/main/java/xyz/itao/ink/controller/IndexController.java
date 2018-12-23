@@ -66,7 +66,7 @@ public class IndexController extends BaseController{
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setStatus(TypeConst.PUBLISH);
         articleParam.setOrderBy("created desc");
-        request.setAttribute("articles", contentService.loadAllContentDomain(articleParam));
+        request.setAttribute("articles", contentService.loadAllActiveContentDomain(articleParam));
         request.setAttribute("is_home", true);
         return this.render("index");
     }

@@ -52,6 +52,13 @@ public interface ContentService {
     PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam);
 
     /**
+     * 分页加载所有的active contentDomain
+     * @param articleParam
+     * @return
+     */
+    PageInfo<ContentDomain> loadAllActiveContentDomain(ArticleParam articleParam);
+
+    /**
      * 修改文章
      * @param contentVo
      * @param userVo
@@ -86,4 +93,5 @@ public interface ContentService {
      * @return
      */
     PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam);
+
 }

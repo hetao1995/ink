@@ -28,7 +28,7 @@ public class StatisticsVo implements Serializable {
     // 标签数
     private long tags;
     // 附件数
-    private long attachs;
+    private long attaches;
     // 友链数
     private long links;
 

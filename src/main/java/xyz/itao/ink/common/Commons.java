@@ -2,15 +2,22 @@ package xyz.itao.ink.common;
 
 import com.github.pagehelper.PageInfo;
 import com.vdurmont.emoji.EmojiParser;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.params.CommentParam;
+import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
+import xyz.itao.ink.service.CommentService;
+import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.SiteService;
 import xyz.itao.ink.utils.CryptoUtils;
 import xyz.itao.ink.utils.DateUtils;
@@ -30,9 +37,11 @@ import java.util.regex.Pattern;
 @Component
 public final class Commons {
     @Autowired
-    static SiteService siteService;
+     ContentService contentService;
+    @Autowired
+     CommentService commentService;
 
-    public static String THEME = "themes/default";
+    public  static String THEME = "themes/default";
 
     /**
      * 判断分页中是否有数据
@@ -40,7 +49,7 @@ public final class Commons {
      * @param paginator
      * @return
      */
-    public static boolean is_empty(PageInfo paginator) {
+    public  boolean is_empty(PageInfo paginator) {
         return paginator == null || (paginator.getList() == null) || (paginator.getList().size() == 0);
     }
 
@@ -68,7 +77,7 @@ public final class Commons {
      *
      * @return
      */
-    public static String site_title() {
+    public  String site_title() {
         return site_option("site_title");
     }
 
@@ -108,7 +117,7 @@ public final class Commons {
      * @param len
      * @return
      */
-    public static String substr(String str, int len) {
+    public  String substr(String str, int len) {
         if (str.length() > len) {
             return str.substring(0, len);
         }
@@ -120,7 +129,7 @@ public final class Commons {
      *
      * @return
      */
-    public static String theme_url() {
+    public  String theme_url() {
         return site_url(Commons.THEME);
     }
 
@@ -130,7 +139,7 @@ public final class Commons {
      * @param sub
      * @return
      */
-    public static String theme_url(String sub) {
+    public  String theme_url(String sub) {
         return site_url(Commons.THEME + sub);
     }
 
@@ -140,7 +149,7 @@ public final class Commons {
      * @param email
      * @return
      */
-    public static String gravatar(String email) {
+    public  String gravatar(String email) {
         String avatarUrl = "https://github.com/identicons/";
         if (StringUtils.isBlank(email)) {
             email = "user@hanshuai.xin";
@@ -155,7 +164,7 @@ public final class Commons {
      * @param contents
      * @return
      */
-    public static String permalink(ContentDomain contents) {
+    public  String permalink(ContentDomain contents) {
         return permalink(contents.getId(), contents.getSlug());
     }
 
@@ -167,7 +176,7 @@ public final class Commons {
      * @param str
      * @return
      */
-    public static String random(int max, String str) {
+    public  String random(int max, String str) {
         return RandomUtils.nextInt(1, max) + str;
     }
 
@@ -178,7 +187,7 @@ public final class Commons {
      * @param slug
      * @return
      */
-    public static String permalink(Long id, String slug) {
+    public  String permalink(Long id, String slug) {
         return site_url("/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
     }
 
@@ -188,12 +197,16 @@ public final class Commons {
      * @param unixTime
      * @return
      */
-    public static String fmtdate(Integer unixTime) {
+    public  String fmtdate(Integer unixTime) {
         return fmtdate(unixTime, "yyyy-MM-dd");
     }
 
-    public static String fmtdate(Date date){
+    public  String fmtdate(Date date){
         return DateUtils.dateFormat(date,"yyyy-MM-dd" );
+    }
+
+    public String fmtdate(Date date, String format){
+        return DateUtils.dateFormat(date, format);
     }
     /**
      * 格式化unix时间戳为日期
@@ -202,7 +215,7 @@ public final class Commons {
      * @param patten
      * @return
      */
-    public static String fmtdate(Integer unixTime, String patten) {
+    public  String fmtdate(Integer unixTime, String patten) {
         if (null != unixTime && StringUtils.isNotBlank(patten)) {
             return DateUtils.formatDateByUnixTime(unixTime, patten);
         }
@@ -215,7 +228,7 @@ public final class Commons {
      * @param categories
      * @return
      */
-    public static String show_categories(String categories) throws UnsupportedEncodingException {
+    public  String show_categories(String categories) throws UnsupportedEncodingException {
         if (StringUtils.isNotBlank(categories)) {
             String[] arr = categories.split(",");
             StringBuffer sbuf = new StringBuffer();
@@ -233,7 +246,7 @@ public final class Commons {
      * @param tags
      * @return
      */
-    public static String show_tags(String tags) throws UnsupportedEncodingException {
+    public  String show_tags(String tags) throws UnsupportedEncodingException {
         if (StringUtils.isNotBlank(tags)) {
             String[] arr = tags.split(",");
             StringBuffer sbuf = new StringBuffer();
@@ -252,7 +265,7 @@ public final class Commons {
      * @param len   要截取文字的个数
      * @return
      */
-    public static String intro(String value, int len) {
+    public  String intro(String value, int len) {
         int pos = value.indexOf("<!--more-->");
         if (pos != -1) {
             String html = value.substring(0, pos);
@@ -272,7 +285,7 @@ public final class Commons {
      * @param value
      * @return
      */
-    public static String article(String value) {
+    public  String article(String value) {
         if (StringUtils.isNotBlank(value)) {
             value = value.replace("<!--more-->", "\r\n");
             return InkUtils.mdToHtml(value);
@@ -285,7 +298,7 @@ public final class Commons {
      *
      * @return
      */
-    public static String show_thumb(ContentDomain contentDomain) {
+    public  String show_thumb(ContentDomain contentDomain) {
         if(null == contentDomain){
             return "";
         }
@@ -311,12 +324,13 @@ public final class Commons {
         return EmojiParser.parseToUnicode(value);
     }
 
+    private static final Pattern SRC_PATTERN = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
     /**
      * 获取文章第一张图片
      *
      * @return
      */
-    public static String show_thumb(String content) {
+    public  String show_thumb(String content) {
         content = InkUtils.mdToHtml(content);
         if (content.contains("<img")) {
             String img = "";
@@ -326,7 +340,7 @@ public final class Commons {
             if (m_image.find()) {
                 img = img + "," + m_image.group();
                 // //匹配src
-                Matcher m = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)").matcher(img);
+                Matcher m = SRC_PATTERN.matcher(img);
                 if (m.find()) {
                     return m.group(1);
                 }
@@ -335,7 +349,7 @@ public final class Commons {
         return "";
     }
 
-    private static final String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
+    private  final String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
 
     /**
      * 显示文章图标
@@ -343,7 +357,7 @@ public final class Commons {
      * @param cid
      * @return
      */
-    public static String show_icon(long cid) {
+    public  String show_icon(long cid) {
         return ICONS[(int) (cid % ICONS.length)];
     }
 
@@ -352,7 +366,7 @@ public final class Commons {
      *
      * @return
      */
-    public static Map<String, String> social() {
+    public  Map<String, String> social() {
         final String prefix = "social_";
         Map<String, String> map = new HashMap<>();
         map.put("weibo", WebConstant.initConfig.get(prefix + "weibo"));
@@ -366,12 +380,12 @@ public final class Commons {
         return site_option("site_theme", "default");
     }
 
-    public static String cdnURL(){
-        return Commons.site_option(TypeConst.CDN_URL, "/admin");
+    public  String cdnURL(){
+        return site_option(TypeConst.CDN_URL, "/admin");
     }
 
-    public static String attachURL(){
-        return Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url()+"/upload/");
+    public  String attachURL(){
+        return site_option(TypeConst.ATTACH_URL, site_url()+"/upload/");
     }
 
     /**
@@ -379,11 +393,14 @@ public final class Commons {
      * @param limit
      * @return
      */
-    public static List<ContentVo> recent_articles(int limit) {
-        if (null == siteService) {
+    public  List<ContentDomain> recent_articles(int limit) {
+        if (null == contentService) {
             return new ArrayList<>(0);
         }
-        return siteService.getContens(TypeConst.RECENT_ARTICLE, limit);
+        ArticleParam articleParam = ArticleParam.builder().orderBy("created desc").build();
+        articleParam.setPageSize(limit);
+        articleParam.setPageNum(1);
+        return contentService.loadAllActiveContentDomain(articleParam).getList();
     }
 
     /**
@@ -392,11 +409,14 @@ public final class Commons {
      * @param limit 查找多少个
      * @return
      */
-    public static List<CommentVo> recent_comments(int limit) {
-        if (null == siteService) {
+    public  List<CommentDomain> recent_comments(int limit) {
+        if (null == commentService) {
             return new ArrayList<>(0);
         }
-        return siteService.recentComments(limit);
+        CommentParam commentParam = CommentParam.builder().orderBy("create_time desc").build();
+        commentParam.setPageNum(1);
+        commentParam.setPageSize(limit);
+        return commentService.loadAllActiveCommentDomain(commentParam).getList();
     }
 
 }

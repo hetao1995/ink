@@ -28,7 +28,7 @@
                 <h3 class="meta-title">最新文章</h3>
                 <th:block th:each="article : ${commons.recent_articles(8)}">
                     <li>
-                        <a th:href="${commons.permalink()}">${title()}</a>
+                        <a th:href="${commons.permalink(article)}" th:text="${article.title}"></a>
                     </li>
                 </th:block>
             </div>
@@ -36,7 +36,7 @@
                 <h3 class="meta-title">最新评论</h3>
                 <th:block th:each="comm: ${commons.recent_comments(8)}">
                     <li>
-                        <a th:href="|${commons.site_url('/article/')}${comm.contentId}#comment-${comm.id}|">${comm.author}：${comm.content}</a>
+                        <a th:href="|${commons.site_url('/article/')}${comm.contentId}#comment-${comm.id}|" th:text="|${comm.author.displayName}：${comm.content}|"></a>
                     </li>
                 </th:block>
 

@@ -6,6 +6,7 @@ import org.springframework.core.log.LogDelegateFactory;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.LogMapper;
 import xyz.itao.ink.domain.BaseDomain;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.LogDomain;
 import xyz.itao.ink.domain.entity.Log;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -24,7 +25,8 @@ import java.util.List;
 public class LogRepositoryImpl extends AbstractBaseRepository<LogDomain, Log> implements LogRepository {
     @Autowired
     LogMapper logMapper;
-
+    @Autowired
+    DomainFactory domainFactory;
     @Override
     protected boolean doSave(Log entity) {
         return logMapper.insert(entity);
@@ -42,40 +44,12 @@ public class LogRepositoryImpl extends AbstractBaseRepository<LogDomain, Log> im
 
     @Override
     protected LogDomain doAssemble(Log entity) {
-        return LogDomain
-                .builder()
-                .id(entity.getId())
-                .deleted(entity.getDeleted())
-                .createTime(entity.getCreateTime())
-                .createBy(entity.getCreateBy())
-                .updateTime(entity.getUpdateTime())
-                .updateBy(entity.getUpdateBy())
-                .active(entity.getActive())
-                .ip(entity.getIp())
-                .agent(entity.getAgent())
-                .data(entity.getData())
-                .action(entity.getAction())
-                .userId(entity.getUserId())
-                .build();
+        return domainFactory.createLogDomain().assemble(entity);
     }
 
     @Override
     protected Log doExtract(LogDomain domain) {
-        return  Log
-                .builder()
-                .id(domain.getId())
-                .deleted(domain.getDeleted())
-                .createTime(domain.getCreateTime())
-                .createBy(domain.getCreateBy())
-                .updateTime(domain.getUpdateTime())
-                .updateBy(domain.getUpdateBy())
-                .active(domain.getActive())
-                .ip(domain.getIp())
-                .agent(domain.getAgent())
-                .data(domain.getData())
-                .action(domain.getAction())
-                .userId(domain.getUserId())
-                .build();
+        return domain.entity();
 
     }
 

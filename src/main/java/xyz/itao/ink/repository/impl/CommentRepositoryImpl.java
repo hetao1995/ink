@@ -6,6 +6,7 @@ import xyz.itao.ink.dao.CommentMapper;
 import xyz.itao.ink.domain.BaseDomain;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -28,6 +29,8 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
     CommentMapper commentMapper;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DomainFactory domainFactory;
 
     @Override
     protected boolean doSave(Comment entity) {
@@ -46,43 +49,12 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
 
     @Override
     protected CommentDomain doAssemble(Comment entity) {
-        return CommentDomain
-                .builder()
-                .id(entity.getId())
-                .deleted(entity.getDeleted())
-                .createTime(entity.getCreateTime())
-                .createBy(entity.getCreateBy())
-                .updateTime(entity.getUpdateTime())
-                .updateBy(entity.getUpdateBy())
-                .active(entity.getActive())
-                .type(entity.getType())
-                .status(entity.getStatus())
-                .parentId(entity.getParentId())
-                .contentId(entity.getContentId())
-                .authorId(entity.getAuthorId())
-                .userRepository(userRepository)
-                .content(entity.getContent())
-                .build();
+        return domainFactory.createCommentDomain().assemble(entity);
     }
 
     @Override
     protected Comment doExtract(CommentDomain domain) {
-        return Comment
-                .builder()
-                .id(domain.getId())
-                .deleted(domain.getDeleted())
-                .createTime(domain.getCreateTime())
-                .createBy(domain.getCreateBy())
-                .updateTime(domain.getUpdateTime())
-                .updateBy(domain.getUpdateBy())
-                .active(domain.getActive())
-                .type(domain.getType())
-                .status(domain.getStatus())
-                .parentId(domain.getParentId())
-                .contentId(domain.getContentId())
-                .authorId(domain.getAuthorId())
-                .content(domain.getContent())
-                .build();
+        return domain.entity();
     }
 
     @Override
@@ -104,6 +76,11 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
         return loadByNoNullPropertiesNotDelect(domain);
     }
 
+    @Override
+    public List<CommentDomain> loadAllActiveRootCommentDomainByContentId(Long contentId) {
+        return loadAllActiveRootCommentDomain(domainFactory.createCommentDomain().setContentId(contentId));
+    }
+
 
     @Override
     public boolean deleteCommentDomainById(Long id, Long userId) {
@@ -122,7 +99,7 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
 
     @Override
     public CommentDomain loadCommentDomainById(Long id) {
-         List<CommentDomain> commentDomains = loadByNoNullPropertiesNotDelect(CommentDomain.builder().id(id).build());
+         List<CommentDomain> commentDomains = loadByNoNullPropertiesNotDelect(domainFactory.createCommentDomain().setId(id));
          if(commentDomains.isEmpty()){
              return null;
          }
@@ -131,7 +108,7 @@ public class CommentRepositoryImpl extends AbstractBaseRepository<CommentDomain,
 
     @Override
     public List<CommentDomain> loadAllRootCommentDomain() {
-        return loadByNoNullPropertiesNotDelect(CommentDomain.builder().parentId(0L).build());
+        return loadByNoNullPropertiesNotDelect(domainFactory.createCommentDomain());
     }
 
 }

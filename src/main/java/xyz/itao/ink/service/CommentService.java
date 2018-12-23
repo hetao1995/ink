@@ -1,7 +1,10 @@
 package xyz.itao.ink.service;
 
 import com.github.pagehelper.PageInfo;
+import xyz.itao.ink.domain.CommentDomain;
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.CommentParam;
+import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.params.UserParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -19,12 +22,6 @@ public interface CommentService {
      */
     PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam);
 
-    /**
-     * 加载文章中所有审核通过的comment
-     * @param commentParam
-     * @return
-     */
-    PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam);
 
     /**
      * 通过id删除commentg
@@ -49,5 +46,18 @@ public interface CommentService {
      */
     UserVo postNewComment(CommentVo commentVo,  UserVo userVo);
 
+    /**
+     * 加载所有conentDoamin中所有审核通过的评论
+     * @param pageParam
+     * @param contentDomain
+     * @return
+     */
+    PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain);
 
+    /**
+     * 根据commentParam加载所有的CommentDomain
+     * @param commentParam
+     * @return
+     */
+    PageInfo<CommentDomain> loadAllActiveCommentDomain(CommentParam commentParam);
 }

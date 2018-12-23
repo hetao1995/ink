@@ -186,7 +186,7 @@ public class ContentDomain extends BaseDomain{
      * @return
      */
     public List<CommentDomain> getActiveComments() {
-        return commentRepository.loadAllActiveRootCommentDomain(CommentDomain.builder().contentId(id).build());
+        return commentRepository.loadAllActiveRootCommentDomainByContentId(id);
     }
 
     /**
@@ -194,7 +194,7 @@ public class ContentDomain extends BaseDomain{
      * @return
      */
     public List<CommentDomain> getComments(){
-        return commentRepository.loadAllRootCommentDomain(CommentDomain.builder().contentId(id).build());
+        return commentRepository.loadAllActiveRootCommentDomainByContentId(id);
     }
 
     /**

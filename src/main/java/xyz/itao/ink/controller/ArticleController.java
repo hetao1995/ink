@@ -10,8 +10,11 @@ import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.params.CommentParam;
+import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -145,13 +148,13 @@ public class ArticleController extends BaseController {
      */
     private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentDomain contentDomain) {
         request.setAttribute("article", contentDomain);
-        CommentParam commentParam = CommentParam.builder().build();
-        commentParam.setPageNum(pageNum);
-        commentParam.setPageSize(pageSize);
-        commentParam.setContentId(contentDomain.getId());
-        PageInfo<CommentVo> commentVoPageInfo = commentService.loadAllActiveCommentVo(commentParam);
+        ArticleParam articleParam = ArticleParam.builder().build();
+        articleParam.setPageNum(pageNum);
+        articleParam.setPageSize(pageSize);
+        articleParam.setOrderBy("create_time desc");
+        PageInfo<CommentDomain> commentPage = commentService.loadAllActiveCommentDomain(articleParam, contentDomain);
         request.setAttribute("cp", pageNum);
-        request.setAttribute("comments", commentVoPageInfo);
+        request.setAttribute("comments", commentPage);
     }
 
 }

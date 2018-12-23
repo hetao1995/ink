@@ -41,28 +41,12 @@ public class LogServiceImpl extends AbstractBaseService<LogDomain, LogVo> implem
 
     @Override
     protected LogDomain doAssemble(LogVo vo) {
-        return LogDomain
-                .builder()
-                .id(vo.getId())
-                .ip(vo.getIp())
-                .agent(vo.getAgent())
-                .data(vo.getData())
-                .action(vo.getAction())
-                .userId(vo.getUserId())
-                .build();
+        return null;
     }
 
     @Override
     protected LogVo doExtract(LogDomain domain) {
-        return LogVo
-                .builder()
-                .id(domain.getId())
-                .ip(domain.getIp())
-                .agent(domain.getAgent())
-                .data(domain.getData())
-                .action(domain.getAction())
-                .userId(domain.getUserId())
-                .build();
+        return domain.vo();
     }
 
     @Override

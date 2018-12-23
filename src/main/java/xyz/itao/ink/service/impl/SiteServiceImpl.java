@@ -62,7 +62,7 @@ public class SiteServiceImpl implements SiteService {
                 .builder()
                 .articles(0L)
                 .comments(0L)
-                .attachs(0L)
+                .attaches(0L)
                 .build();
         return statisticsVo;
 

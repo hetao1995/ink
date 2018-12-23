@@ -14,11 +14,11 @@ import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
+import xyz.itao.ink.domain.CommentDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.vo.*;
-import xyz.itao.ink.service.CommentService;
-import xyz.itao.ink.service.LogService;
-import xyz.itao.ink.service.OptionService;
-import xyz.itao.ink.service.SiteService;
+import xyz.itao.ink.service.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -48,17 +48,28 @@ public class IndexController extends BaseController {
     LogService logService;
     @Autowired
     CommentService commentService;
+    @Autowired
+    ContentService contentService;
 
     /**
      * 仪表盘
      */
     @GetMapping(value = {"", "/index"})
     public String index(HttpServletRequest request) {
-        List<CommentVo> commentVos   = siteService.recentComments(5);
-        List<ContentVo> contentVo   = siteService.getContens(TypeConst.RECENT_ARTICLE, 5);
+//        CommentParam commentParam = CommentParam.builder().build();
+//        commentParam.setPageSize(5);
+//        commentParam.setPageNum(1);
+//        commentParam.setOrderBy("create_time desc");
+        ArticleParam articleParam = ArticleParam.builder().build();
+        articleParam.setPageSize(8);
+        articleParam.setPageNum(1);
+        articleParam.setOrderBy("created desc");
+
+//        List<CommentVo> commentVos   = commentService.loadAllCommentVo(commentParam).getList();
+        List<ContentVo> contentVo   = contentService.loadAllContentVo(articleParam).getList();
         StatisticsVo statisticsVo = siteService.getStatistics();
 
-        request.setAttribute("comments", commentVos);
+//        request.setAttribute("comments", commentVos);
         request.setAttribute("articles", contentVo);
         request.setAttribute("statistics", statisticsVo);
         return "admin/index";

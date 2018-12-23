@@ -14,4 +14,5 @@ import lombok.*;
 @AllArgsConstructor
 public class CommentParam extends PageParam{
     private Long contentId;
+    private String orderBy;
 }

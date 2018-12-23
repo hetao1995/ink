@@ -6,7 +6,11 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.domain.CommentDomain;
+import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.params.CommentParam;
+import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.params.UserParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -33,39 +37,16 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     CommentRepository commentRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    DomainFactory domainFactory;
     @Override
     protected CommentDomain doAssemble(CommentVo vo) {
-        return CommentDomain
-                .builder()
-                .id(vo.getId())
-                .active(vo.getActive())
-                .authorId(vo.getAuthorId())
-                .contentId(vo.getContentId())
-                .parentId(vo.getParentId())
-                .status(vo.getStatus())
-                .type(vo.getType())
-                .userRepository(userRepository)
-                .content(vo.getContent())
-                .build();
+        return domainFactory.createCommentDomain().assemble(vo);
     }
 
     @Override
     protected CommentVo doExtract(CommentDomain domain) {
-        return CommentVo
-                .builder()
-                .id(domain.getId())
-                .active(domain.getActive())
-                .authorId(domain.getAuthorId())
-                .contentId(domain.getContentId())
-                .parentId(domain.getParentId())
-                .status(domain.getStatus())
-                .type(domain.getType())
-                .author(domain.getAuthor())
-                .mail(domain.getMail())
-                .url(domain.getUrl())
-                .content(domain.getContent())
-                .createTime(domain.getCreateTime())
-                .build();
+        return domain.vo();
     }
 
     @Override
@@ -80,7 +61,7 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
 
     @Override
     public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
-        Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize());
+        Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllRootCommentDomain();
         List<CommentVo> commentVos = commentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
         PageInfo<CommentVo> pageInfo = new PageInfo<>(page);
@@ -88,13 +69,6 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
         return pageInfo;
     }
 
-    @Override
-    public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
-        PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize());
-        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain(CommentDomain.builder().contentId(commentParam.getContentId()).build());
-        List<CommentVo> commentVos = commentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
-        return new PageInfo<>(commentVos);
-    }
 
     @Override
     public boolean deleteCommentById(Long id, UserVo userVo) {
@@ -124,5 +98,23 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
         commentVo.setParentId(0L);
         save(commentVo, userVo.getId());
         return userVo;
+    }
+
+    @Override
+    public PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain) {
+        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+        List<CommentDomain> commentDomains = contentDomain.getComments();
+        PageInfo<CommentDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(commentDomains);
+        return pageInfo;
+    }
+
+    @Override
+    public PageInfo<CommentDomain> loadAllActiveCommentDomain(CommentParam commentParam) {
+        Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
+        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain(domainFactory.createCommentDomain().assemble(commentParam));
+        PageInfo<CommentDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(commentDomains);
+        return pageInfo;
     }
 }
