@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.constant.TypeConst;
-import xyz.itao.ink.domain.ArchiveDomain;
-import xyz.itao.ink.domain.ContentDomain;
-import xyz.itao.ink.domain.DomainFactory;
-import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.*;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
@@ -65,8 +62,12 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public boolean deleteById(Long id, UserVo userVo) {
-        return delete(ContentVo.builder().id(id).build(), userVo.getId());
+    public void deleteById(Long id, UserDomain userDomain) {
+        domainFactory
+                .createContentDomain()
+                .setId(id)
+                .setUpdateBy(userDomain.getId())
+                .deleteById();
     }
 
     @Override
@@ -76,13 +77,19 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public ContentVo publishNewContent(ContentVo contentVo, UserVo userVo) {
+    public ContentVo publishNewContent(ContentVo contentVo, UserDomain userDomain) {
         if(TypeConst.PUBLISH.equals(contentVo.getStatus())){
             contentVo.setActive(true);
         }else{
             contentVo.setActive(false);
         }
-        return save(contentVo, userVo.getId());
+        return domainFactory
+                .createContentDomain()
+                .assemble(contentVo)
+                .setUpdateBy(userDomain.getId())
+                .setCreateBy(userDomain.getId())
+                .save()
+                .vo();
     }
 
     @Override
@@ -117,13 +124,17 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public void updateContentVo(ContentVo contentVo, UserVo userVo) {
+    public void updateContentVo(ContentVo contentVo, UserDomain userDomain) {
         if(TypeConst.PUBLISH.equals(contentVo.getStatus())){
             contentVo.setActive(true);
         }else{
             contentVo.setActive(false);
         }
-        update(contentVo, userVo.getId());
+        domainFactory
+                .createContentDomain()
+                .assemble(contentVo)
+                .setUpdateBy(userDomain.getId())
+                .updateById();
     }
 
     @Override
@@ -169,7 +180,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     }
 
     @Override
-    public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo) {
+    public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain) {
         ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(TypeConst.DRAFT);
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));
@@ -181,7 +192,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
             return null;
         }
         contentDomain = contentDomains.get(0);
-        if(!contentDomain.getAuthorId().equals( userVo.getId())){
+        if(!contentDomain.getAuthorId().equals( userDomain.getId())){
             return null;
         }
         return contentDomain;

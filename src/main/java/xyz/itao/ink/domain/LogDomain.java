@@ -6,6 +6,8 @@ import xyz.itao.ink.domain.entity.Log;
 import xyz.itao.ink.domain.vo.LogVo;
 import xyz.itao.ink.repository.LogRepository;
 import xyz.itao.ink.repository.UserRepository;
+import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
 
@@ -138,6 +140,13 @@ public class LogDomain extends BaseDomain {
     }
 
     public LogDomain save(){
-        return logRepository.saveNewLogDomain(this);
+        this
+                .setId(IdUtils.nextId())
+                .setActive(true)
+                .setDeleted(false)
+                .setCreateTime(DateUtils.getNow())
+                .setUpdateTime(DateUtils.getNow());
+         logRepository.saveNewLogDomain(this);
+        return this;
     }
 }

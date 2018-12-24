@@ -1,5 +1,6 @@
 package xyz.itao.ink.interceptor;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import xyz.itao.ink.utils.IpUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * @author hetao
@@ -37,6 +39,7 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Autowired
     private Commons commons;
 
+    @Autowired
     private Props props;
 
 
@@ -50,16 +53,20 @@ public class BaseInterceptor implements HandlerInterceptor {
         log.debug("用户访问地址: {}, 来路地址: {}", uri, IpUtils.getIpAddrByRequest(request));
 
 
-        //请求拦截处理
-        UserVo userVo = (UserVo) request.getAttribute(WebConstant.LOGIN_USER);
         request.setAttribute("props", props);
         return true;
     }
 
     @Override
-    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
 //        OptionVo ov = optionService.getOptionByName("site_record");
-        httpServletRequest.setAttribute("commons", commons);//一些工具类和公共方法
+        request.setAttribute("commons", commons);//一些工具类和公共方法
+        String themJson = props.get("theme_default_options", "");
+        System.out.println("themJson"+themJson);
+        Map<String, String> map = JSON.parseObject(themJson, Map.class);
+        for(Map.Entry<String, String> entry : map.entrySet()){
+            request.setAttribute(entry.getKey(), entry.getValue());
+        }
 //        httpServletRequest.setAttribute("option", ov);
 //        httpServletRequest.setAttribute("adminCommons", adminCommons);
     }

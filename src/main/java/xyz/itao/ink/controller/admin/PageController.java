@@ -38,12 +38,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class PageController extends BaseController {
 
-    @Autowired
-    private ContentService contentService;
-    @Autowired
-    private OptionService optionService;
-    @Autowired
-    private SiteService siteService;
 
     @GetMapping(value = "")
     public String index(){

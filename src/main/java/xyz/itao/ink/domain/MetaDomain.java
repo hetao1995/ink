@@ -4,7 +4,10 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import xyz.itao.ink.domain.entity.ContentMeta;
 import xyz.itao.ink.domain.entity.Meta;
+import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.MetaVo;
+import xyz.itao.ink.exception.ExceptionEnum;
+import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.utils.DateUtils;
@@ -106,7 +109,7 @@ public class MetaDomain extends BaseDomain {
 
     public  MetaDomain assemble(Meta entity){
         if(entity==null){
-            return this;
+            return null;
         }
         
         this.setId(entity.getId())
@@ -127,7 +130,7 @@ public class MetaDomain extends BaseDomain {
     
     public MetaDomain assemble(MetaVo vo){
         if(vo==null){
-            return this;
+            return null;
         }
         this.setId(vo.getId())
                 .setActive(vo.getActive())
@@ -138,6 +141,16 @@ public class MetaDomain extends BaseDomain {
                 .setSort(vo.getSort())
                 .setDetail(vo.getDetail());
         return this;
+    }
+
+    public MetaDomain assemble(MetaParam metaParam) {
+        if(metaParam==null){
+            return this;
+        }
+        return this.setId(metaParam.getId())
+                .setName(metaParam.getName())
+                .setParentId(metaParam.getParentId());
+
     }
     
     public Meta entity(){
@@ -177,6 +190,7 @@ public class MetaDomain extends BaseDomain {
     public MetaDomain save(){
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
+        this.active = true;
         return metaRepository.saveNewMetaDomain(this);
     }
 
@@ -199,5 +213,23 @@ public class MetaDomain extends BaseDomain {
                 .metaId(id)
                 .build();
         return metaRepository.saveNewContentMeta(contentMeta);
+    }
+
+
+
+    public MetaDomain loadById() {
+        if(id==null){
+            throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+        }
+        MetaDomain metaDomain = metaRepository.loadMetaDomainById(id);
+        return assemble(metaDomain.entity());
+    }
+
+    public MetaDomain deleteById() {
+        if(id==null){
+            throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+        }
+        this.setDeleted(true);
+        return this.updateById();
     }
 }

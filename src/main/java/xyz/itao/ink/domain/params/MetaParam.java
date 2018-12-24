@@ -11,4 +11,5 @@ import lombok.Data;
 public class MetaParam {
     private Long id;
     private String name;
+    private Long parentId = 0L;
 }

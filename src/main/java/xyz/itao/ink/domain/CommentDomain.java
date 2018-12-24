@@ -144,7 +144,9 @@ public class CommentDomain extends BaseDomain {
     }
 
     public CommentDomain assemble(CommentParam param){
-        return this.setContentId(param.getContentId());
+        return this
+                .setContentId(param.getContentId())
+                .setParentId(param.getParentId());
     }
 
     public Comment entity(){
@@ -190,5 +192,10 @@ public class CommentDomain extends BaseDomain {
 
     public CommentDomain updateById(){
         return commentRepository.updateCommentDomain(this);
+    }
+
+    public CommentDomain deleteById() {
+        this.deleted = true;
+        return updateById();
     }
 }

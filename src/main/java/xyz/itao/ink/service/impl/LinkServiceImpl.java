@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.LinkDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -51,17 +52,17 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
     }
 
     @Override
-    public void deleteAttachesById(Long id, UserVo userVo) {
+    public void deleteAttachesById(Long id, UserDomain userDomain) {
         LinkDomain linkDomain = linkRepository.loadLinkDomainById(id);
         if(linkDomain==null){
             throw  new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
         }
-        delete(extract(linkDomain), userVo.getId());
+        delete(extract(linkDomain), userDomain.getId());
     }
 
 
     @Override
-    public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserVo userVo)  {
+    public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain)  {
         List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {
             String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
@@ -71,7 +72,7 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
             LinkVo linkVo = LinkVo
                     .builder()
                     .fileName(fname)
-                    .authorId(userVo.getId())
+                    .authorId(userDomain.getId())
                     .fileKey(fkey)
                     .fileType(ftype)
                     .active(true)
@@ -87,7 +88,7 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
                     String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
                     ImageUtils.cutCenterImage(WebConstant.UP_DIR + fkey, WebConstant.UP_DIR +thumbnailFilePath, 270, 380);
                 }
-                res.add(save(linkVo, userVo.getId()));
+                res.add(save(linkVo, userDomain.getId()));
             } catch (IOException e) {
                 log.debug("上传文件失败！", e);
                 e.printStackTrace();

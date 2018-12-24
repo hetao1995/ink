@@ -266,7 +266,6 @@ public class ContentDomain extends BaseDomain{
                 metaDomain = metaDomain.save();
             }
             metaDomain.saveContentMeta(id, authorId);
-
         }
     }
 
@@ -297,6 +296,21 @@ public class ContentDomain extends BaseDomain{
         return contentDomain;
     }
 
+    public ContentDomain deleteById(){
+        if(id==null){
+            throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+        }
+        this.setDeleted(true);
+        return this.updateById();
+    }
+
+    public ContentDomain loadById(){
+        if(id==null){
+            throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+        }
+        ContentDomain contentDomain = contentRepository.loadContentDomainById(id);
+        return assemble(contentDomain.entity());
+    }
 
     public  ContentDomain assemble(Content entity){
         if(entity==null){
@@ -355,6 +369,8 @@ public class ContentDomain extends BaseDomain{
                 .setFmtType(vo.getFmtType());
         return this;
     }
+
+
 
     public ContentDomain assemble(ArticleParam articleParam){
         if(articleParam==null){

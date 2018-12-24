@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -42,14 +43,20 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     @Autowired
     UserRepository userRepository;
     @Autowired
+    DomainFactory domainFactory;
+    @Autowired
     PasswordEncoder passwordEncoder;
     @Override
-    public UserVo registerTemporaryUser(UserVo userVo) {
+    public UserDomain registerTemporaryUser(UserVo userVo) {
         CommonValidator.valid(userVo, false);
         userVo.setActive(true);
         userVo.setPermanent(false);
-        userVo.setSalt(BCrypt.gensalt());
-        return save(userVo, 0L);
+        return domainFactory
+                .createUserDomain()
+                .assemble(userVo)
+                .setUpdateBy(0L)
+                .setCreateBy(0L)
+                .save();
     }
 
 
@@ -138,27 +145,31 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     }
 
     @Override
-    public void updateProfile(String screenName, String email, UserVo userVo) {
+    public void updateProfile(String screenName, String email, UserDomain userDomain) {
+        UserVo userVo = UserVo.builder().displayName(screenName).email(email).build();
+        CommonValidator.valid(userVo, true);
         if(screenName!=null) {
-            userVo.setDisplayName(screenName);
+            userDomain.setDisplayName(screenName);
         }
         if(email!=null) {
-            userVo.setEmail(email);
+            userDomain.setEmail(email);
         }
-        CommonValidator.valid(userVo, true);
-        update(userVo, userVo.getId());
+        userDomain
+                .setUpdateBy(userDomain.getId())
+                .updateById();
     }
 
     @Override
-    public void updatePassword(String old_password, String password, UserVo userVo) {
-        UserDomain userDomain = userRepository.loadActiveUserDomainById(userVo.getId());
+    public void updatePassword(String old_password, String password, UserDomain userDomain) {
         if(!passwordEncoder.matches(old_password, userDomain.getPassword())){
             throw  new TipException(ExceptionEnum.WRONG_OLD_PASSWORD);
         }
-        userVo.setPassword(password);
+        UserVo userVo = UserVo.builder().password(password).build();
         CommonValidator.valid(userVo, true);
-        userVo.setPassword(passwordEncoder.encode(password));
-        update(userVo, userDomain.getId());
+        userDomain
+                .setPassword(passwordEncoder.encode(password))
+                .setUpdateBy(userDomain.getId())
+                .updateById();
     }
 
     @Override
@@ -168,37 +179,13 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
 
     @Override
     protected UserDomain doAssemble(UserVo vo) {
-        return UserDomain
-                .builder()
-                .id(vo.getId())
-                .active(vo.getActive())
-                .displayName(vo.getDisplayName())
-                .email(vo.getEmail())
-                .homeUrl(vo.getHomeUrl())
-                .permanent(vo.getPermanent())
-                .lastLogin(vo.getLastLogin())
-                .salt(vo.getSalt())
-                .username(vo.getUsername())
-                .password(vo.getPassword())
-                .build();
+        return domainFactory.createUserDomain().assemble(vo);
 
     }
 
     @Override
     protected UserVo doExtract(UserDomain domain) {
-        return UserVo
-                .builder()
-                .id(domain.getId())
-                .active(domain.getActive())
-                .displayName(domain.getDisplayName())
-                .email(domain.getEmail())
-                .homeUrl(domain.getHomeUrl())
-                .permanent(domain.getPermanent())
-                .lastLogin(domain.getLastLogin())
-                .salt(domain.getSalt())
-                .username(domain.getUsername())
-                .password(domain.getPassword())
-                .build();
+        return domain.vo();
     }
 
     @Override

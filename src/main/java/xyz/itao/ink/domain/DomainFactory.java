@@ -56,6 +56,9 @@ public class DomainFactory {
     @Autowired
     @Lazy
     private OptionRepository optionRepository;
+    @Autowired
+    @Lazy
+    private UserRoleRepository userRoleRepository;
 
     /**
      * 生成ContentDoamin
@@ -107,5 +110,9 @@ public class DomainFactory {
 
     public OptionDomain createOptionDomain(){
         return new OptionDomain(optionRepository);
+    }
+
+    public UserDomain createUserDomain(){
+        return new UserDomain(userRepository, userRoleRepository);
     }
 }

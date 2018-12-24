@@ -38,8 +38,6 @@ public class IndexController extends BaseController{
     @Autowired
     SiteService siteService;
     @Autowired
-    Commons commons;
-    @Autowired
     Props props;
 
     /**
@@ -148,7 +146,7 @@ public class IndexController extends BaseController{
         List<ContentVo> articles = contentService.selectAllFeedArticles();
         String xml = null;
         try {
-            xml = InkUtils.getRssXml(articles, commons.site_url(),commons.site_title(), props.get("site_description",""));
+            xml = InkUtils.getRssXml(articles, props.get(WebConstant.OPTION_SITE_URL,""),props.get(WebConstant.OPTION_SITE_TITLE, "ink"), props.get(WebConstant.OPTION_SITE_DESCRIPTION,""));
             response.setContentType("text/xml; charset=utf-8");
         } catch (Exception e) {
             log.error("生成 rss 失败", e);
@@ -162,11 +160,11 @@ public class IndexController extends BaseController{
      * @return
      */
     @GetMapping(value = {"/sitemap", "/sitemap.xml"})
-    public String sitemap(HttpServletResponse response) {
+    public String siteMap(HttpServletResponse response) {
         List<ContentVo> articles = contentService.selectAllFeedArticles();
         String xml = null;
         try {
-            xml = InkUtils.getSitemapXml(articles, commons.site_url());
+            xml = InkUtils.getSitemapXml(articles, props.get(WebConstant.OPTION_SITE_URL, ""));
             response.setContentType("text/xml; charset=utf-8");
 
         } catch (Exception e) {

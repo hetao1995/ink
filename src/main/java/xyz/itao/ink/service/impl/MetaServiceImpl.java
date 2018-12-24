@@ -9,6 +9,8 @@ import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.domain.entity.Meta;
 import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
@@ -81,8 +83,25 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     }
 
     @Override
-    public void deleteMetaById(Long id, UserVo userVo) {
-        delete(MetaVo.builder().id(id).build(), userVo.getId());
+    public void saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
+        metaParam.setId(null);
+        domainFactory
+                .createMetaDomain()
+                .assemble(metaParam)
+                .setType(type)
+                .setCreateBy(userDomain.getId())
+                .setUpdateBy(userDomain.getId())
+                .save();
+
+    }
+
+    @Override
+    public void deleteMetaById(Long id, UserDomain userDomain) {
+        domainFactory
+                .createMetaDomain()
+                .setId(id)
+                .setUpdateBy(userDomain.getId())
+                .deleteById();
     }
 
     @Override
@@ -109,15 +128,19 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     }
 
     @Override
-    public MetaDomain updateCategory(Long id, MetaParam metaParam, UserVo userVo) {
-        MetaDomain metaDomain = metaRepository.loadMetaDomainById(id);
+    public MetaDomain updateCategory(Long id, MetaParam metaParam, UserDomain userDomain) {
+        MetaDomain metaDomain = domainFactory
+                .createMetaDomain()
+                .assemble(metaParam)
+                .setId(id)
+                .loadById();
         if(metaDomain==null){
             throw new TipException(ExceptionEnum.HAS_NOT_FIND_DATA);
         }
         if(!TypeConst.CATEGORY.equals(metaDomain.getType())){
             throw  new TipException(ExceptionEnum.FORBIDDEN_OPERATION);
         }
-        metaDomain.setName(metaParam.getName()).setUpdateBy(userVo.getId());
+        metaDomain.setName(metaParam.getName()).setUpdateBy(userDomain.getId());
         return metaDomain.updateById();
     }
 

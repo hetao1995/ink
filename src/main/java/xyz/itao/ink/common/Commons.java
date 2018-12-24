@@ -71,7 +71,7 @@ public final class Commons {
      * @return
      */
     public  String site_url(String sub) {
-        return site_option("site_url") + sub;
+        return site_option(WebConstant.OPTION_SITE_URL) + sub;
     }
 
     /**
@@ -80,7 +80,7 @@ public final class Commons {
      * @return
      */
     public  String site_title() {
-        return site_option("site_title");
+        return site_option(WebConstant.OPTION_SITE_TITLE);
     }
 
     /**
@@ -148,8 +148,8 @@ public final class Commons {
      */
     public  String gravatar(String email) {
         String avatarUrl = "https://github.com/identicons/";
-        if (StringUtils.isBlank(email)) {
-            email = "user@hanshuai.xin";
+        if(email==null){
+            email = "default";
         }
         String hash = CryptoUtils.MD5encode(email.trim().toLowerCase());
         return avatarUrl + hash + ".png";

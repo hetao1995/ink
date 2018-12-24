@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.ArchiveDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
@@ -22,7 +23,7 @@ public interface ContentService {
      * @param id content的id
      * @return 是否删除成功
      */
-    boolean deleteById(Long id, UserVo userVo);
+    void deleteById(Long id, UserDomain userDomain);
 
     /**
      * 通过id加载ContentVo
@@ -36,7 +37,7 @@ public interface ContentService {
      * @param contentVo 发布的内容
      * @return  发布后的vo
      */
-    ContentVo publishNewContent(ContentVo contentVo, UserVo userVo);
+    ContentVo publishNewContent(ContentVo contentVo, UserDomain userVo);
 
     /**
      * 分页加载所有的contentvo
@@ -63,7 +64,7 @@ public interface ContentService {
      * @param contentVo
      * @param userVo
      */
-    void updateContentVo(ContentVo contentVo, UserVo userVo);
+    void updateContentVo(ContentVo contentVo, UserDomain userDomain);
 
     /**
      * 获取所有的feed页
@@ -85,7 +86,7 @@ public interface ContentService {
      * @param userVo
      * @return
      */
-    ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserVo userVo);
+    ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain);
 
     /**
      * 加载所有content的归档

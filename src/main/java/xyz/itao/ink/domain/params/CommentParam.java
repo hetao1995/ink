@@ -15,4 +15,5 @@ import lombok.*;
 public class CommentParam extends PageParam{
     private Long contentId;
     private String orderBy;
+    private Long parentId = 0L;
 }

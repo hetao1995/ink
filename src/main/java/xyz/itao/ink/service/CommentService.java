@@ -3,6 +3,7 @@ package xyz.itao.ink.service;
 import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.params.UserParam;
@@ -29,14 +30,14 @@ public interface CommentService {
      * @param userVo 操作的用户
      * @return
      */
-    boolean deleteCommentById(Long id, UserVo userVo);
+    void deleteCommentById(Long id, UserDomain userDomain);
 
     /**
      * 修改commnet
      * @param commentVo
      * @param userVo
      */
-    void updateCommentVo(CommentVo commentVo, UserVo userVo);
+    void updateCommentVo(CommentVo commentVo, UserDomain userDomain);
 
     /**
      * 发布一条新的评论
@@ -44,7 +45,7 @@ public interface CommentService {
      * @param userParam 如果是匿名发布，此param有效
      * @param userVo 如果是登录用户，此uservo有效
      */
-    UserVo postNewComment(CommentVo commentVo,  UserVo userVo);
+    UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain);
 
     /**
      * 加载所有conentDoamin中所有审核通过的评论

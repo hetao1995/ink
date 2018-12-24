@@ -10,6 +10,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
@@ -46,16 +47,11 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
         if(sysLog==null){
             return true;
         }
-        UserVo userVo = (UserVo) request.getAttribute(WebConstant.LOGIN_USER);
-        Long userId = userVo==null? 0 : userVo.getId();
+        UserDomain userDomain = (UserDomain) request.getAttribute(WebConstant.LOGIN_USER);
+        Long userId = userDomain==null? 0 : userDomain.getId();
 
         domainFactory
                 .createLogDomain()
-                .setId(IdUtils.nextId())
-                .setActive(true)
-                .setDeleted(false)
-                .setCreateTime(DateUtils.getNow())
-                .setUpdateTime(DateUtils.getNow())
                 .setCreateBy(userId)
                 .setUpdateBy(userId)
                 .setIp(IpUtils.getIpAddrByRequest(request))

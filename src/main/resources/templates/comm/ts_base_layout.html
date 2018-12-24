@@ -12,7 +12,7 @@
     function saveThemeOptions(formId) {
         var param = $('#' + formId).serialize();
         tale.post({
-            url : '/admin/api/themes/setting',
+            url : '/admin/api/themes/',
             data: param,
             success: function (result) {
                 if(result && result.success){
@@ -30,7 +30,7 @@
     function saveIndiviSetting() {
         var param = $('#indivi-form').serialize();
         tale.post({
-            url : '/admin/api/themes/setting',
+            url : '/admin/api/themes/',
             data: param,
             success: function (result) {
                 if(result && result.success){

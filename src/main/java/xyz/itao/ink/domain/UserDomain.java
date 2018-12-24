@@ -2,14 +2,21 @@ package xyz.itao.ink.domain;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.util.Assert;
+import xyz.itao.ink.domain.entity.User;
+import xyz.itao.ink.domain.vo.UserVo;
+import xyz.itao.ink.exception.ExceptionEnum;
+import xyz.itao.ink.exception.InnerException;
+import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.repository.UserRoleRepository;
+import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.*;
 
@@ -19,10 +26,18 @@ import java.util.*;
  * @description user域
  */
 @Data
-@Builder
 @Accessors(chain = true)
 public class UserDomain extends BaseDomain implements CredentialsContainer {
 
+    UserDomain(UserRepository userRepository, UserRoleRepository userRoleRepository){
+        this.userRoleRepository = userRoleRepository;
+        this.userRepository = userRepository;
+    }
+    /**
+     * 角色的repository，用于获取当前用户的角色
+     */
+    private UserRoleRepository userRoleRepository;
+    private UserRepository userRepository;
     /**
      * id
      */
@@ -98,10 +113,7 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
      */
     private String homeUrl;
 
-    /**
-     * 角色的repository，用于获取当前用户的角色
-     */
-    private UserRoleRepository userRoleRepository;
+
 
     /**
      * 用户角色
@@ -113,7 +125,7 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
      *
      * @return 所有角色数组
      */
-    public List<String> getRoles() {
+    private List<String> getRoles() {
         // roles已经加载或者id未初始化，直接返回roles
         if (roles != null || id == null || userRoleRepository == null) {
             return roles;
@@ -143,5 +155,97 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         }
         return authorities;
+    }
+    
+    public UserDomain assemble(User entity){
+        if(entity==null){
+            return null;
+        }
+
+        return this.setId(entity.getId())
+                .setDeleted(entity.getDeleted())
+                .setCreateTime(entity.getCreateTime())
+                .setCreateBy(entity.getCreateBy())
+                .setUpdateTime(entity.getUpdateTime())
+                .setUpdateBy(entity.getUpdateBy())
+                .setActive(entity.getActive())
+                .setPermanent(entity.getPermanent())
+                .setSalt(entity.getSalt())
+                .setDisplayName(entity.getDisplayName())
+                .setUsername(entity.getUsername())
+                .setEmail(entity.getEmail())
+                .setHomeUrl(entity.getHomeUrl())
+                .setPassword(entity.getPassword())
+                .setLastLogin(entity.getLastLogin());
+    }
+    
+    public UserDomain assemble(UserVo vo){
+        return this
+                .setId(vo.getId())
+                .setActive(vo.getActive())
+                .setDisplayName(vo.getDisplayName())
+                .setEmail(vo.getEmail())
+                .setHomeUrl(vo.getHomeUrl())
+                .setPermanent(vo.getPermanent())
+                .setLastLogin(vo.getLastLogin())
+                .setSalt(vo.getSalt())
+                .setUsername(vo.getUsername())
+                .setPassword(vo.getPassword());
+    }
+    
+    public User entity(){
+        return User
+                .builder()
+                .id(this.getId())
+                .deleted(this.getDeleted())
+                .createTime(this.getCreateTime())
+                .createBy(this.getCreateBy())
+                .updateTime(this.getUpdateTime())
+                .updateBy(this.getUpdateBy())
+                .permanent(this.getPermanent())
+                .active(this.getActive())
+                .salt(this.getSalt())
+                .displayName(this.getDisplayName())
+                .username(this.getUsername())
+                .email(this.getEmail())
+                .homeUrl(this.getHomeUrl())
+                .password(this.getPassword())
+                .lastLogin(this.getLastLogin())
+                .build();
+    }
+    
+    public UserVo vo(){
+        return UserVo
+                .builder()
+                .id(this.getId())
+                .active(this.getActive())
+                .displayName(this.getDisplayName())
+                .email(this.getEmail())
+                .homeUrl(this.getHomeUrl())
+                .permanent(this.getPermanent())
+                .lastLogin(this.getLastLogin())
+                .salt(this.getSalt())
+                .username(this.getUsername())
+                .password(this.getPassword())
+                .build();
+    }
+
+    public UserDomain updateById() {
+        if(id==null){
+            throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+        }
+        this.setUpdateTime(DateUtils.getNow());
+        userRepository.updateUserDomain(this);
+        return this;
+    }
+
+    public UserDomain save() {
+        this.id = IdUtils.nextId();
+        this.setCreateTime(DateUtils.getNow());
+        this.setUpdateTime(DateUtils.getNow());
+        this.setDeleted(false);
+        this.setSalt(BCrypt.gensalt());
+        userRepository.saveNewUserDomain(this);
+        return this;
     }
 }

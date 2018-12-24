@@ -13,7 +13,7 @@ public interface UserService {
     /**
      * @param userVo user 信息
      */
-    UserVo registerTemporaryUser(UserVo userVo);
+    UserDomain registerTemporaryUser(UserVo userVo);
 
     /**
      * 获取Jwt登录的Token
@@ -99,7 +99,7 @@ public interface UserService {
      * @param email 邮箱
      * @param userVo 更新谁的
      */
-    void updateProfile(String screenName, String email, UserVo userVo);
+    void updateProfile(String screenName, String email, UserDomain userDomain);
 
     /**
      * 修改密码
@@ -107,7 +107,7 @@ public interface UserService {
      * @param password 新密码
      * @param userVo 修改谁的
      */
-    void updatePassword(String old_password, String password, UserVo userVo);
+    void updatePassword(String old_password, String password, UserDomain userDomain);
 
     /**
      * 提取uservo

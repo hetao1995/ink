@@ -45,8 +45,6 @@ public class IndexController extends BaseController {
 
 
     @Autowired
-    private SiteService siteService;
-    @Autowired
     LogService logService;
     @Autowired
     CommentService commentService;

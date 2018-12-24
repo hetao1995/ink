@@ -9,6 +9,7 @@ import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.UserService;
 
@@ -31,19 +32,19 @@ public class AuthController  {
     @SysLog("保存个人信息")
     @PutMapping("/profile")
     @ResponseBody
-    public RestResponse saveProfile(String screenName, String email, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        userService.updateProfile(screenName, email, userVo);
+    public RestResponse saveProfile(String screenName, String email, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        userService.updateProfile(screenName, email, userDomain);
         return RestResponse.ok();
     }
 
     @SysLog("修改登录密码")
     @PutMapping("/password")
     @ResponseBody
-    public RestResponse upPwd(@RequestParam(value = "old_password") String oldPassword, @RequestParam(value = "password") String password, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse upPwd(@RequestParam(value = "old_password") String oldPassword, @RequestParam(value = "password") String password, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         if (StringUtils.isBlank(oldPassword) || StringUtils.isBlank(password)) {
             return RestResponse.fail("请确认信息输入完整");
         }
-        userService.updatePassword(oldPassword, password, userVo);
+        userService.updatePassword(oldPassword, password, userDomain);
 
         return RestResponse.ok();
     }

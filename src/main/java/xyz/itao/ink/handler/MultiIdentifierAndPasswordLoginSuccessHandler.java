@@ -28,7 +28,7 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
     @Autowired
     private UserService userService;
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)  {
         String token = userService.getJwtLoginToken((UserDomain) authentication.getPrincipal(), ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe());
 //        response.setHeader("Authorization", token);
         Cookie cookie = new Cookie("Authorization", token);

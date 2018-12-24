@@ -2,6 +2,7 @@ package xyz.itao.ink.service;
 
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.multipart.MultipartFile;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
 import xyz.itao.ink.domain.vo.UserVo;
@@ -26,7 +27,7 @@ public interface LinkService {
      * @param id 文件id
      * @param userVo 删除的人
      */
-    void deleteAttachesById(Long id, UserVo userVo);
+    void deleteAttachesById(Long id, UserDomain userDomain);
 
     /**
      * 保存上传的文件
@@ -34,5 +35,5 @@ public interface LinkService {
      * @param userVo 上传者
      * @return 没有上传成功的文件名称
      */
-    List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserVo userVo);
+    List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain);
 }

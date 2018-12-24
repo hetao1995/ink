@@ -124,4 +124,9 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     public Long countContentNum(String type, boolean active) {
         return contentMapper.countContentByTypeAndActive(type, active);
     }
+
+    @Override
+    public ContentDomain loadContentDomainById(Long id) {
+        return domainFactory.createContentDomain().assemble(contentMapper.selectByPrimaryKey(id));
+    }
 }

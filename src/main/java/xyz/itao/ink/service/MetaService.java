@@ -3,6 +3,7 @@ package xyz.itao.ink.service;
 import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
@@ -26,12 +27,14 @@ public interface MetaService {
      */
     void saveMeta(String type, String name, Long mid, UserVo userVo);
 
+    void saveMeta(String type, MetaParam metaParam, UserDomain userDomain);
+
     /**
      * 通过id删除meta
      * @param id
      * @param userVo
      */
-    void deleteMetaById(Long id, UserVo userVo);
+    void deleteMetaById(Long id, UserDomain userVo);
 
     /**
      * 获取meta数据的映射
@@ -70,5 +73,7 @@ public interface MetaService {
      * @param metaParam
      * @param userVo
      */
-    MetaDomain updateCategory(Long id, MetaParam metaParam, UserVo userVo);
+    MetaDomain updateCategory(Long id, MetaParam metaParam, UserDomain userDomain);
+
+
 }

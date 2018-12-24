@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import xyz.itao.ink.common.Commons;
+import xyz.itao.ink.common.Props;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.service.OptionService;
 
@@ -28,7 +30,7 @@ public class ThemeCotroller extends BaseController {
     @Autowired
     OptionService optionService;
     @Autowired
-    Commons commons;
+    Props props;
 
     @GetMapping("")
     public String themeIndex(){
@@ -40,7 +42,7 @@ public class ThemeCotroller extends BaseController {
      */
     @GetMapping("/setting")
     public String setting(HttpServletRequest request) {
-        String currentTheme = commons.siteTheme();
+        String currentTheme = props.get(WebConstant.OPTION_SITE_THEME, "default");
         String key          = "theme_" + currentTheme + "_options";
 
         String              option = optionService.getOption(key);

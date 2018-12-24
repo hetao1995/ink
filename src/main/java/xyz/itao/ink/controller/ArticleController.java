@@ -13,6 +13,7 @@ import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.PageParam;
@@ -42,8 +43,6 @@ public class ArticleController extends BaseController {
     @Autowired
     private CommentService commentService;
 
-    @Autowired
-    private SiteService siteService;
 
     @Autowired
     private UserService userService;
@@ -89,8 +88,8 @@ public class ArticleController extends BaseController {
      * @return
      */
     @GetMapping(value = {"/preview/{idOrSlug}", "/preview/{idOrSlug}.html"})
-    public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserVo userVo){
-        ContentDomain contentDomain = contentService.loadDraftByIdOrSlug(idOrSlug, userVo);
+    public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserDomain userDomain){
+        ContentDomain contentDomain = contentService.loadDraftByIdOrSlug(idOrSlug, userDomain);
         if(null == contentDomain){
             return this.render_404();
         }
@@ -105,7 +104,7 @@ public class ArticleController extends BaseController {
     @StopRepeatSubmit(key = "comment")
     @PostMapping(value = "comment")
     @ResponseBody
-    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserVo userVo) {
+    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserDomain userDomain) {
 
         CommonValidator.valid(commentVo);
 
@@ -117,10 +116,10 @@ public class ArticleController extends BaseController {
             commentVo.setActive(true);
         }
 
-        UserVo newUserVo = commentService.postNewComment(commentVo,userVo);
-        if(userVo==null || userVo.getId()==null){
+        UserDomain newUserDomain = commentService.postNewComment(commentVo,userDomain);
+        if(userDomain==null || userDomain.getId()==null){
             // 将临时用户jwt放入cookie
-            String jwt = userService.getJwtLoginToken(newUserVo, true);
+            String jwt = userService.getJwtLoginToken(newUserDomain, true);
             InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt);
         }
         return RestResponse.ok();

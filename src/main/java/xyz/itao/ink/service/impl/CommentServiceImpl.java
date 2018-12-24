@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.PageParam;
@@ -71,19 +72,27 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
 
 
     @Override
-    public boolean deleteCommentById(Long id, UserVo userVo) {
-        return commentRepository.deleteCommentDomainById(id, userVo.getId());
+    public void deleteCommentById(Long id, UserDomain userDomain) {
+        domainFactory
+                .createCommentDomain()
+                .setId(id)
+                .setUpdateBy(userDomain.getId())
+                .deleteById();
     }
 
     @Override
-    public void updateCommentVo(CommentVo commentVo, UserVo userVo) {
-        update(commentVo, userVo.getId());
+    public void updateCommentVo(CommentVo commentVo, UserDomain userDomain) {
+        domainFactory
+                .createCommentDomain()
+                .assemble(commentVo)
+                .setUpdateBy(userDomain.getId())
+                .updateById();
     }
 
     @Override
-    public UserVo postNewComment(CommentVo commentVo,  UserVo userVo) {
-        if(userVo == null){
-            userVo = UserVo
+    public UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain) {
+        if(userDomain == null){
+            UserVo userVo = UserVo
                     .builder()
                     .username(commentVo.getAuthor())
                     .email(commentVo.getMail())
@@ -91,15 +100,20 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
                     .displayName(commentVo.getAuthor())
                     .lastLogin(DateUtils.getNow())
                     .build();
-            userVo = userService.registerTemporaryUser(userVo);
-        }
+            userDomain = userService.registerTemporaryUser(userVo);
 
-        commentVo.setAuthorId(userVo.getId());
+        }
+        commentVo.setAuthorId(userDomain.getId());
         if(commentVo.getParentId()==null) {
             commentVo.setParentId(0L);
         }
-        save(commentVo, userVo.getId());
-        return userVo;
+        domainFactory
+                .createCommentDomain()
+                .assemble(commentVo)
+                .setUpdateBy(userDomain.getId())
+                .setCreateBy(userDomain.getId())
+                .save();
+        return userDomain;
     }
 
     @Override

@@ -3,6 +3,7 @@ package xyz.itao.ink.repository.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.UserMapper;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.User;
 import xyz.itao.ink.repository.AbstractBaseRepository;
@@ -22,13 +23,12 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
     UserMapper userMapper;
     @Autowired
     UserRoleRepository userRoleRepository;
+    @Autowired
+    DomainFactory domainFactory;
 
     @Override
     public UserDomain loadActiveUserDomainById(Long id) {
-        UserDomain userDomain = UserDomain
-                .builder()
-                .id(id)
-                .build();
+        UserDomain userDomain = domainFactory.createUserDomain().setId(id);
         List<UserDomain> userDomains = loadByNoNullPropertiesActiveAndNotDelect(userDomain);
         return userDomains.isEmpty() ? null : userDomains.get(0);
     }
@@ -89,47 +89,12 @@ public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User>
 
     @Override
     protected UserDomain doAssemble(User entity) {
-        return UserDomain
-                .builder()
-                .id(entity.getId())
-                .deleted(entity.getDeleted())
-                .createTime(entity.getCreateTime())
-                .createBy(entity.getCreateBy())
-                .updateTime(entity.getUpdateTime())
-                .updateBy(entity.getUpdateBy())
-                .permanent(entity.getPermanent())
-                .active(entity.getActive())
-                .salt(entity.getSalt())
-                .displayName(entity.getDisplayName())
-                .username(entity.getUsername())
-                .email(entity.getEmail())
-                .homeUrl(entity.getHomeUrl())
-                .password(entity.getPassword())
-                .lastLogin(entity.getLastLogin())
-                .userRoleRepository(userRoleRepository)
-                .build();
+        return domainFactory.createUserDomain().assemble(entity);
     }
 
     @Override
     protected User doExtract(UserDomain domain) {
-        return User
-                .builder()
-                .id(domain.getId())
-                .deleted(domain.getDeleted())
-                .createTime(domain.getCreateTime())
-                .createBy(domain.getCreateBy())
-                .updateTime(domain.getUpdateTime())
-                .updateBy(domain.getUpdateBy())
-                .permanent(domain.getPermanent())
-                .active(domain.getActive())
-                .salt(domain.getSalt())
-                .displayName(domain.getDisplayName())
-                .username(domain.getUsername())
-                .email(domain.getEmail())
-                .homeUrl(domain.getHomeUrl())
-                .password(domain.getPassword())
-                .lastLogin(domain.getLastLogin())
-                .build();
+        return domain.entity();
     }
 
     @Override

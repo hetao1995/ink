@@ -2,6 +2,7 @@ package xyz.itao.ink.controller.admin;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +68,8 @@ public class AdminApiController {
 
     @SysLog("删除页面")
     @DeleteMapping(value = "/page/{id}")
-    public RestResponse<?> deletePage(@PathVariable Long id,@RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        contentService.deleteById(id, userVo);
+    public RestResponse<?> deletePage(@PathVariable Long id,@RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        contentService.deleteById(id, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -87,10 +88,10 @@ public class AdminApiController {
     }
 
     @PostMapping(value = "/article")
-    public RestResponse newArticle(@RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse newArticle(@RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         CommonValidator.valid(contentVo);
         contentVo.setType(TypeConst.ARTICLE);
-        contentVo.setAuthorId(userVo.getId());
+        contentVo.setAuthorId(userDomain.getId());
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         //将点击数设初始化为0
         contentVo.setHits(0L);
@@ -99,20 +100,20 @@ public class AdminApiController {
         if (StringUtils.isBlank(contentVo.getCategories())) {
             contentVo.setCategories("默认分类");
         }
-        Long id = contentService.publishNewContent(contentVo, userVo).getId();
+        Long id = contentService.publishNewContent(contentVo, userDomain).getId();
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok(id);
     }
 
     @DeleteMapping(value = "/article/{id}")
-    public RestResponse<?> deleteArticle(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        contentService.deleteById(id, userVo);
+    public RestResponse<?> deleteArticle(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        contentService.deleteById(id, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @PutMapping(value = "/article/{id}")
-    public RestResponse updateArticle(@RequestBody ContentVo contentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse updateArticle(@RequestBody ContentVo contentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         if (null == contentVo || id == null) {
             return RestResponse.fail("缺少参数，请重试");
         }
@@ -120,7 +121,7 @@ public class AdminApiController {
         contentVo.setId(id);
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         CommonValidator.valid(contentVo);
-        contentService.updateContentVo(contentVo, userVo);
+        contentService.updateContentVo(contentVo, userDomain);
         return RestResponse.ok(contentVo.getId());
     }
 
@@ -143,21 +144,21 @@ public class AdminApiController {
 
     @SysLog("发布页面")
     @PostMapping("/page")
-    public RestResponse<?> newPage( @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> newPage( @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
 
         CommonValidator.valid(contentVo);
         contentVo.setType(TypeConst.PAGE);
         contentVo.setAllowPing(true);
-        contentVo.setAuthorId(userVo.getId());
+        contentVo.setAuthorId(userDomain.getId());
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
-        contentService.publishNewContent(contentVo, userVo);
+        contentService.publishNewContent(contentVo, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("修改页面")
     @PutMapping("/page/{id}")
-    public RestResponse<?> updatePage(@PathVariable Long id, @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> updatePage(@PathVariable Long id, @RequestBody ContentVo contentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         CommonValidator.valid(contentVo);
 
         if (null == id) {
@@ -166,29 +167,29 @@ public class AdminApiController {
         contentVo.setId(id);
         contentVo.setType(TypeConst.PAGE);
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
-        contentService.updateContentVo(contentVo, userVo);
+        contentService.updateContentVo(contentVo, userDomain);
         return RestResponse.ok(id);
     }
 
     @SysLog("保存分类")
     @PostMapping("/category")
-    public RestResponse<?> saveCategory(@RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        metaService.saveMeta(TypeConst.CATEGORY, metaParam.getName(), metaParam.getId(), userVo);
+    public RestResponse<?> saveCategory(@RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        metaService.saveMeta(TypeConst.CATEGORY, metaParam, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("修改分类")
     @PutMapping("/category/{id}")
-    public RestResponse<?> putCategory(@PathVariable Long id, @RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo){
-        MetaDomain metaDomain = metaService.updateCategory(id, metaParam, userVo);
+    public RestResponse<?> putCategory(@PathVariable Long id, @RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain){
+        MetaDomain metaDomain = metaService.updateCategory(id, metaParam, userDomain);
         return RestResponse.ok(metaDomain.vo());
     }
 
     @SysLog("删除分类/标签")
     @DeleteMapping("/meta/{id}")
-    public RestResponse<?> deleteMeta(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        metaService.deleteMetaById(id, userVo);
+    public RestResponse<?> deleteMeta(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        metaService.deleteMetaById(id, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -204,30 +205,30 @@ public class AdminApiController {
 
     @SysLog("删除评论")
     @DeleteMapping("/comment/{id}")
-    public RestResponse<?> deleteComment(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> deleteComment(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
 
-        boolean commentVo = commentService.deleteCommentById(id, userVo);
+        commentService.deleteCommentById(id, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("修改评论状态")
     @PutMapping("/comment/{id}")
-    public RestResponse<?> updateStatus( @RequestBody CommentVo commentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> updateStatus( @RequestBody CommentVo commentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         if(WebConstant.COMMENT_APPROVED.equals(commentVo.getStatus())){
             commentVo.setActive(true);
         }
         commentVo.setId(id);
-        commentService.updateCommentVo(commentVo, userVo);
+        commentService.updateCommentVo(commentVo, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
     @SysLog("回复评论")
     @PostMapping("/comment")
-    public RestResponse<?> postComment(CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> postComment(CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         CommonValidator.valid(commentVo);
-        commentService.postNewComment(commentVo,userVo);
+        commentService.postNewComment(commentVo,userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
@@ -242,19 +243,19 @@ public class AdminApiController {
 
     @SysLog("删除附件")
     @DeleteMapping("/attach/{id}")
-    public RestResponse<?> deleteAttach(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        linkService.deleteAttachesById(id, userVo);
+    public RestResponse<?> deleteAttach(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        linkService.deleteAttachesById(id, userDomain);
         return RestResponse.ok();
     }
 
     @PostMapping(value = "/attach")
     @ResponseBody
     @SysLog("上传文件")
-    public RestResponse<?> uploadAttach(@RequestParam("file") MultipartFile[] multipartFiles, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> uploadAttach(@RequestParam("file") MultipartFile[] multipartFiles, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         if(multipartFiles==null){
             RestResponse.fail("请选择文件上传！");
         }
-        List<LinkVo> uploadFiles = linkService.saveFiles(multipartFiles, userVo);
+        List<LinkVo> uploadFiles = linkService.saveFiles(multipartFiles, userDomain);
         return RestResponse.ok(uploadFiles);
     }
 
@@ -309,7 +310,7 @@ public class AdminApiController {
             if (!"*".equals(advanceParam.getPluginName())) {
                 key = "plugin_" + advanceParam.getPluginName();
             } else {
-                props.set(TypeConst.ATTACH_URL, commons.site_url(), userDomain);
+                props.set(TypeConst.ATTACH_URL, props.get(WebConstant.OPTION_SITE_URL, ""), userDomain);
             }
             optionService.deleteOption(key, userDomain);
         }
@@ -359,14 +360,14 @@ public class AdminApiController {
 
     @SysLog("保存主题设置")
     @PostMapping("/themes")
-    public RestResponse<?> saveSetting(Map<String, String> query, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+    public RestResponse<?> saveSetting(@RequestParam Map<String, String> query, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
 //        Map<String, List<String>> query = request.parameters();
 
         // theme_milk_options => {  }
-        String currentTheme = commons.siteTheme();
+        String currentTheme = props.get(WebConstant.OPTION_SITE_THEME, "default");
         String key          = "theme_" + currentTheme + "_options";
 
-        Map<String, String> options = new HashMap<>();
+        Map<String, String> options = Maps.newHashMap();
         query.forEach(options::put);
 
         props.set(key, JSON.toJSONString(options), userDomain);
@@ -397,7 +398,7 @@ public class AdminApiController {
             return RestResponse.fail("缺少参数，请重试");
         }
         String content   = templateParam.getContent();
-        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + commons.siteTheme();
+        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default");
         String filePath  = themePath + File.separatorChar + templateParam.getFileName();
         if (Files.exists(Paths.get(filePath))) {
             byte[] rf_wiki_byte = content.getBytes("UTF-8");

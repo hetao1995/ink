@@ -35,9 +35,6 @@ import java.nio.file.Paths;
 public class InstallController extends BaseController {
     @Autowired
     private SiteService siteService;
-
-    @Autowired
-    private OptionService optionService;
     @Autowired
     private Props props;
 
@@ -63,14 +60,14 @@ public class InstallController extends BaseController {
         UserDomain userDomain  = siteService.installSite(installParam);
 
 
-        props.set("site_title", installParam.getSiteTitle(), userDomain);
-        props.set("site_url", userDomain.getHomeUrl(), userDomain);
+        props.set(WebConstant.OPTION_SITE_TITLE, installParam.getSiteTitle(), userDomain);
+        props.set(WebConstant.OPTION_SITE_URL, userDomain.getHomeUrl(), userDomain);
 
 
         return RestResponse.ok();
     }
 
     private boolean isRepeatInstall() {
-        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&&props.getBoolean("allow_install", true);
+        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&&props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, true);
     }
 }

@@ -92,4 +92,11 @@ public interface ContentRepository {
      * @return
      */
     Long countContentNum(String type, boolean active);
+
+    /**
+     * 通过id获取ContentDoamin
+     * @param id
+     * @return
+     */
+    ContentDomain loadContentDomainById(Long id);
 }
