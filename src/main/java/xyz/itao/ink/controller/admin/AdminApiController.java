@@ -316,25 +316,21 @@ public class AdminApiController {
 
         if (StringUtils.isNotBlank(advanceParam.getCdnURL())) {
             props.set(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL(), userDomain);
-            WebConstant.OPTIONS.put(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
         }
 
         // 是否允许重新安装
         if (StringUtils.isNotBlank(advanceParam.getAllowInstall())) {
             props.set(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall(), userDomain);
-            WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
         }
 
         // 评论是否需要审核
         if (StringUtils.isNotBlank(advanceParam.getAllowCommentAudit())) {
             props.set(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit(), userDomain);
-            WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
         }
 
         // 是否允许公共资源CDN
         if (StringUtils.isNotBlank(advanceParam.getAllowCloudCDN())) {
             props.set(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN(), userDomain);
-            WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
         }
         return RestResponse.ok();
     }
@@ -375,7 +371,6 @@ public class AdminApiController {
 
         props.set(key, JSON.toJSONString(options), userDomain);
 
-        WebConstant.OPTIONS = optionService.loadOptions();
         return RestResponse.ok();
     }
 
@@ -385,7 +380,6 @@ public class AdminApiController {
         props.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme(), userDomain);
 //        delete().from(Site.class).where(Site::getName).like("theme_option_%").execute();
         optionService.deleteAllThemes(userDomain);
-        WebConstant.OPTIONS.put(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
         BaseController.THEME = "themes/" + themeParam.getSiteTheme();
 
         String themePath = "/templates/themes/" + themeParam.getSiteTheme();

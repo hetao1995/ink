@@ -154,11 +154,11 @@ public class InkUtils {
     /**
      * 获取RSS输出
      */
-    public static String getRssXml(java.util.List<ContentVo> articles, String siteUrl) throws FeedException {
+    public static String getRssXml(java.util.List<ContentVo> articles, String siteUrl, String siteTitle, String siteDescription) throws FeedException {
         Channel channel = new Channel("rss_2.0");
-        channel.setTitle((String) WebConstant.OPTIONS.get("site_title"));
+        channel.setTitle(siteTitle);
         channel.setLink(siteUrl);
-        channel.setDescription((String) WebConstant.OPTIONS.get("site_description"));
+        channel.setDescription(siteDescription);
         channel.setLanguage("zh-CN");
         java.util.List<Item> items = new ArrayList<>();
         articles.forEach(post -> {

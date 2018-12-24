@@ -48,7 +48,7 @@ public class InstallController extends BaseController {
     @GetMapping
     public String index(HttpServletRequest request) {
         boolean existInstall   = Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"));
-        boolean allowReinstall = (boolean) WebConstant.OPTIONS.getOrDefault(WebConstant.OPTION_ALLOW_INSTALL, false);
+        boolean allowReinstall = props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, false);
         request.setAttribute("is_install", !allowReinstall && existInstall);
         return "install";
     }
@@ -66,12 +66,11 @@ public class InstallController extends BaseController {
         props.set("site_title", installParam.getSiteTitle(), userDomain);
         props.set("site_url", userDomain.getHomeUrl(), userDomain);
 
-        WebConstant.OPTIONS  = optionService.loadOptions();
 
         return RestResponse.ok();
     }
 
     private boolean isRepeatInstall() {
-        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&&(boolean) WebConstant.OPTIONS.getOrDefault("allow_install", true);
+        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&&props.getBoolean("allow_install", true);
     }
 }

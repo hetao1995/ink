@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.StopRepeatSubmit;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.CommonValidator;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -46,6 +47,9 @@ public class ArticleController extends BaseController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Props props;
 
     /**
      * 自定义页面,如关于页
@@ -105,7 +109,7 @@ public class ArticleController extends BaseController {
 
         CommonValidator.valid(commentVo);
 
-        if ((Boolean)WebConstant.OPTIONS.getOrDefault(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, true)) {
+        if (props.getBoolean(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, true)) {
             commentVo.setStatus(WebConstant.COMMENT_NO_AUDIT);
             commentVo.setActive(false);
         } else {
