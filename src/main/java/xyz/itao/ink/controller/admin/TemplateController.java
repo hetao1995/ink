@@ -1,6 +1,7 @@
 package xyz.itao.ink.controller.admin;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,9 +26,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/template")
 @Slf4j
 public class TemplateController {
+    @Autowired
+    Commons commons;
     @GetMapping("")
     public String templateIndex(HttpServletRequest request) {
-        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.siteTheme();
+        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + commons.siteTheme();
         try {
             List<String> files = Files.list(Paths.get(themePath))
                     .map(path -> path.getFileName().toString())
@@ -60,7 +63,7 @@ public class TemplateController {
     public String getContent(@RequestParam String fileName) {
         String content = null;
         try {
-            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.siteTheme();
+            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + commons.siteTheme();
             String filePath  = themePath + File.separatorChar + fileName;
             content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
         } catch (IOException e) {

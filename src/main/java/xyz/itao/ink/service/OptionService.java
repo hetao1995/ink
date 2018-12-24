@@ -1,5 +1,6 @@
 package xyz.itao.ink.service;
 
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.vo.UserVo;
 
 import java.util.Map;
@@ -15,20 +16,13 @@ public interface OptionService {
      */
     Map<String, String> loadAllOptions();
 
-    /**
-     * 保存配置
-     *
-     * @param key   配置key
-     * @param value 配置值
-     */
-    void saveOption(String key, String value);
 
     /**
      * 根据key删除配置项
      *
      * @param key 配置key
      */
-    void deleteOption(String key, UserVo userVo);
+    void deleteOption(String key, UserDomain userDomain);
 
     /**
      * 根据key获取value
@@ -37,5 +31,5 @@ public interface OptionService {
 
     Map<String, Object> loadOptions();
 
-    void deleteAllThemes(UserVo userVo);
+    void deleteAllThemes(UserDomain userDomain);
 }

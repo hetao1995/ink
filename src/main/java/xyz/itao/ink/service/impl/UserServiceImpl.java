@@ -118,7 +118,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
     }
 
     @Override
-    public UserVo registerPermanentUser(UserVo userVo) {
+    public UserDomain registerPermanentUser(UserVo userVo) {
         CommonValidator.valid(userVo, true);
 
         if(userRepository.loadUserDomainByUsername(userVo.getUsername()) != null){
@@ -134,7 +134,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
         userVo.setPermanent(true);
         userVo.setPassword(passwordEncoder.encode(userVo.getPassword()));
         userVo.setSalt(BCrypt.gensalt());
-        return save(userVo, 0L);
+        return assemble(save(userVo, 0L));
     }
 
     @Override

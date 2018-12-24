@@ -11,11 +11,13 @@ import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.bootstrap.InkLoader;
 import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.Commons;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.MetaDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.dto.ThemeDto;
 import xyz.itao.ink.domain.params.*;
 import xyz.itao.ink.domain.vo.*;
@@ -52,6 +54,10 @@ public class AdminApiController {
     CommentService commentService;
     @Autowired
     LinkService linkService;
+    @Autowired
+    Props props;
+    @Autowired
+    Commons commons;
     @GetMapping(value = "/logs")
     public RestResponse sysLogs( PageParam pageParam) {
         pageParam.setOderBy("create_time desc");
@@ -272,14 +278,14 @@ public class AdminApiController {
 
     @SysLog("保存系统配置")
     @PostMapping("/options")
-    public RestResponse<?> saveOptions(Map<String, List<String>> options) {
-        options.forEach((k, v) -> optionService.saveOption(k, v.get(0)));
+    public RestResponse<?> saveOptions(Map<String, List<String>> options, @RequestAttribute(WebConstant.LOGIN_USER)UserDomain userDomain) {
+        options.forEach((k, v) -> props.set(k, v.get(0), userDomain));
         return RestResponse.ok();
     }
 
     @SysLog("保存高级选项设置")
     @PostMapping("/advanced")
-    public RestResponse<?> saveAdvance(AdvanceParam advanceParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
+    public RestResponse<?> saveAdvance(AdvanceParam advanceParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         // 清除缓存
         if (StringUtils.isNotBlank(advanceParam.getCacheKey())) {
             if ("*".equals(advanceParam.getCacheKey())) {
@@ -290,10 +296,10 @@ public class AdminApiController {
         }
         // 要过过滤的黑名单列表
         if (StringUtils.isNotBlank(advanceParam.getBlockIps())) {
-            optionService.saveOption(TypeConst.BLOCK_IPS, advanceParam.getBlockIps());
+            props.set(TypeConst.BLOCK_IPS, advanceParam.getBlockIps(), userDomain);
             WebConstant.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
         } else {
-            optionService.saveOption(TypeConst.BLOCK_IPS, "");
+            props.set(TypeConst.BLOCK_IPS, "", userDomain);
             WebConstant.BLOCK_IPS.clear();
         }
         // 处理卸载插件
@@ -303,31 +309,31 @@ public class AdminApiController {
             if (!"*".equals(advanceParam.getPluginName())) {
                 key = "plugin_" + advanceParam.getPluginName();
             } else {
-                optionService.saveOption(TypeConst.ATTACH_URL, Commons.site_url());
+                props.set(TypeConst.ATTACH_URL, commons.site_url(), userDomain);
             }
-            optionService.deleteOption(key, userVo);
+            optionService.deleteOption(key, userDomain);
         }
 
         if (StringUtils.isNotBlank(advanceParam.getCdnURL())) {
-            optionService.saveOption(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
+            props.set(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL(), userDomain);
             WebConstant.OPTIONS.put(WebConstant.OPTION_CDN_URL, advanceParam.getCdnURL());
         }
 
         // 是否允许重新安装
         if (StringUtils.isNotBlank(advanceParam.getAllowInstall())) {
-            optionService.saveOption(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
+            props.set(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall(), userDomain);
             WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_INSTALL, advanceParam.getAllowInstall());
         }
 
         // 评论是否需要审核
         if (StringUtils.isNotBlank(advanceParam.getAllowCommentAudit())) {
-            optionService.saveOption(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
+            props.set(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit(), userDomain);
             WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, advanceParam.getAllowCommentAudit());
         }
 
         // 是否允许公共资源CDN
         if (StringUtils.isNotBlank(advanceParam.getAllowCloudCDN())) {
-            optionService.saveOption(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
+            props.set(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN(), userDomain);
             WebConstant.OPTIONS.put(WebConstant.OPTION_ALLOW_CLOUD_CDN, advanceParam.getAllowCloudCDN());
         }
         return RestResponse.ok();
@@ -357,17 +363,17 @@ public class AdminApiController {
 
     @SysLog("保存主题设置")
     @PostMapping("/themes")
-    public RestResponse<?> saveSetting(Map<String, String> query) {
+    public RestResponse<?> saveSetting(Map<String, String> query, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
 //        Map<String, List<String>> query = request.parameters();
 
         // theme_milk_options => {  }
-        String currentTheme = Commons.siteTheme();
+        String currentTheme = commons.siteTheme();
         String key          = "theme_" + currentTheme + "_options";
 
         Map<String, String> options = new HashMap<>();
         query.forEach(options::put);
 
-        optionService.saveOption(key, JSON.toJSONString(options));
+        props.set(key, JSON.toJSONString(options), userDomain);
 
         WebConstant.OPTIONS = optionService.loadOptions();
         return RestResponse.ok();
@@ -375,10 +381,10 @@ public class AdminApiController {
 
     @SysLog("激活主题")
     @PostMapping("/themes/active")
-    public RestResponse<?> activeTheme( ThemeParam themeParam, @RequestAttribute(WebConstant.LOGIN_USER) UserVo userVo) {
-        optionService.saveOption(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
-//        delete().from(Options.class).where(Options::getName).like("theme_option_%").execute();
-        optionService.deleteAllThemes(userVo);
+    public RestResponse<?> activeTheme( ThemeParam themeParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        props.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme(), userDomain);
+//        delete().from(Site.class).where(Site::getName).like("theme_option_%").execute();
+        optionService.deleteAllThemes(userDomain);
         WebConstant.OPTIONS.put(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme());
         BaseController.THEME = "themes/" + themeParam.getSiteTheme();
 
@@ -397,7 +403,7 @@ public class AdminApiController {
             return RestResponse.fail("缺少参数，请重试");
         }
         String content   = templateParam.getContent();
-        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + Commons.siteTheme();
+        String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + commons.siteTheme();
         String filePath  = themePath + File.separatorChar + templateParam.getFileName();
         if (Files.exists(Paths.get(filePath))) {
             byte[] rf_wiki_byte = content.getBytes("UTF-8");

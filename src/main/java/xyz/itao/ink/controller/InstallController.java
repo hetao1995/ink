@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import xyz.itao.ink.common.CommonValidator;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -36,6 +38,8 @@ public class InstallController extends BaseController {
 
     @Autowired
     private OptionService optionService;
+    @Autowired
+    private Props props;
 
 
     /**
@@ -56,11 +60,11 @@ public class InstallController extends BaseController {
         if (isRepeatInstall()) {
             return RestResponse.fail("请勿重复安装");
         }
-        UserVo userVo  = siteService.installSite(installParam);
+        UserDomain userDomain  = siteService.installSite(installParam);
 
 
-        optionService.saveOption("site_title", installParam.getSiteTitle());
-        optionService.saveOption("site_url", userVo.getHomeUrl());
+        props.set("site_title", installParam.getSiteTitle(), userDomain);
+        props.set("site_url", userDomain.getHomeUrl(), userDomain);
 
         WebConstant.OPTIONS  = optionService.loadOptions();
 

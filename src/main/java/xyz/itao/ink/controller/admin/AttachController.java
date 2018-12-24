@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.Commons;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -38,8 +39,8 @@ import java.util.List;
 @RequestMapping("admin/attach")
 @Slf4j
 public class AttachController extends BaseController {
-
-
+    @Autowired
+    Commons commons;
 
 //    public static final String CLASSPATH = FileUtils.getUploadFilePath();
 
@@ -59,7 +60,7 @@ public class AttachController extends BaseController {
     public String index(HttpServletRequest request, PageParam pageParam) {
         PageInfo<LinkVo> attachPaginator = linkService.loadAllActiveLinkVo(pageParam);
         request.setAttribute("attaches", attachPaginator);
-        request.setAttribute(TypeConst.ATTACH_URL, Commons.site_option(TypeConst.ATTACH_URL, Commons.site_url()));
+        request.setAttribute(TypeConst.ATTACH_URL, commons.site_option(TypeConst.ATTACH_URL, commons.site_url()));
         request.setAttribute("max_file_size", WebConstant.MAX_FILE_SIZE / 1024);
         return "admin/attaches";
     }

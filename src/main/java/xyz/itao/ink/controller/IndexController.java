@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ArchiveDomain;
@@ -35,6 +36,8 @@ public class IndexController extends BaseController{
     ContentService contentService;
     @Autowired
     SiteService siteService;
+    @Autowired
+    Commons commons;
 
     /**
      * 首页
@@ -142,7 +145,7 @@ public class IndexController extends BaseController{
         List<ContentVo> articles = contentService.selectAllFeedArticles();
         String xml = null;
         try {
-            xml = InkUtils.getRssXml(articles);
+            xml = InkUtils.getRssXml(articles, commons.site_url());
             response.setContentType("text/xml; charset=utf-8");
         } catch (Exception e) {
             log.error("生成 rss 失败", e);
@@ -160,7 +163,7 @@ public class IndexController extends BaseController{
         List<ContentVo> articles = contentService.selectAllFeedArticles();
         String xml = null;
         try {
-            xml = InkUtils.getSitemapXml(articles);
+            xml = InkUtils.getSitemapXml(articles, commons.site_url());
             response.setContentType("text/xml; charset=utf-8");
 
         } catch (Exception e) {

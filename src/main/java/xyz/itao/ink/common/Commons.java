@@ -40,6 +40,8 @@ public final class Commons {
      ContentService contentService;
     @Autowired
      CommentService commentService;
+    @Autowired
+    Props props;
 
     public  static String THEME = "themes/default";
 
@@ -58,7 +60,7 @@ public final class Commons {
      *
      * @return
      */
-    public static String site_url() {
+    public  String site_url() {
         return site_url("");
     }
 
@@ -68,7 +70,7 @@ public final class Commons {
      * @param sub 后面追加的地址
      * @return
      */
-    public static String site_url(String sub) {
+    public  String site_url(String sub) {
         return site_option("site_url") + sub;
     }
 
@@ -87,7 +89,7 @@ public final class Commons {
      * @param key
      * @return
      */
-    public static String site_option(String key) {
+    public  String site_option(String key) {
         return site_option(key, "");
     }
 
@@ -98,16 +100,11 @@ public final class Commons {
      * @param defalutValue 默认值
      * @return
      */
-    public static String site_option(String key, String defalutValue) {
+    public  String site_option(String key, String defalutValue) {
         if (StringUtils.isBlank(key)) {
             return "";
         }
-        String str = WebConstant.initConfig.get(key);
-        if (StringUtils.isNotBlank(str)) {
-            return str;
-        } else {
-            return defalutValue;
-        }
+        return props.get(key, defalutValue);
     }
 
     /**
@@ -324,7 +321,7 @@ public final class Commons {
         return EmojiParser.parseToUnicode(value);
     }
 
-    private static final Pattern SRC_PATTERN = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
+    private  final Pattern SRC_PATTERN = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
     /**
      * 获取文章第一张图片
      *
@@ -376,7 +373,7 @@ public final class Commons {
         return map;
     }
 
-    public static String siteTheme() {
+    public  String siteTheme() {
         return site_option("site_theme", "default");
     }
 

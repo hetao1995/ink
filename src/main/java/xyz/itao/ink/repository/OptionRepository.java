@@ -19,4 +19,6 @@ public interface OptionRepository {
     void saveNewOptionDomain(OptionDomain optionDomain) ;
 
     List<OptionDomain> loadAllOptionDomainNotDeleteLike(String pattern);
+
+    OptionDomain loadOptionDomainById(Long id);
 }

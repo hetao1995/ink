@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.domain.DomainFactory;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
@@ -29,6 +31,8 @@ public class SiteServiceImpl implements SiteService {
     ContentService contentService;
     @Autowired
     MetaService metaService;
+    @Autowired
+    DomainFactory domainFactory;
     @Override
     public void cleanCache(String key) {
 
@@ -69,7 +73,7 @@ public class SiteServiceImpl implements SiteService {
     }
 
     @Override
-    public UserVo installSite(InstallParam installParam) {
+    public UserDomain installSite(InstallParam installParam) {
         if(StringUtils.isBlank(installParam.getSiteTitle())){
             throw  new TipException(ExceptionEnum.SITE_TITLE_ILLEGAL);
         }
@@ -82,9 +86,9 @@ public class SiteServiceImpl implements SiteService {
                 .homeUrl(installParam.getSiteUrl())
                 .email(installParam.getAdminEmail())
                 .build();
-        userVo = userService.registerPermanentUser(userVo);
+        UserDomain userDomain = userService.registerPermanentUser(userVo);
         roleService.addRole("ADMIN", "管理员", 0L);
         roleService.addRoleToUser("ADMIN", userVo.getId(), 0L);
-        return userVo;
+        return userDomain;
     }
 }

@@ -91,7 +91,7 @@ public interface UserService {
      * 注册一个永久的用户
      * @param  userVo 注册用户信息
      */
-    UserVo registerPermanentUser(UserVo userVo);
+    UserDomain registerPermanentUser(UserVo userVo);
 
     /**
      * 更新昵称和邮箱

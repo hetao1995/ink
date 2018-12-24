@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import xyz.itao.ink.common.Commons;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.OptionService;
@@ -36,6 +37,8 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Autowired
     private Commons commons;
 
+    private Props props;
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
@@ -49,7 +52,7 @@ public class BaseInterceptor implements HandlerInterceptor {
 
         //请求拦截处理
         UserVo userVo = (UserVo) request.getAttribute(WebConstant.LOGIN_USER);
-
+        request.setAttribute("props", props);
         return true;
     }
 

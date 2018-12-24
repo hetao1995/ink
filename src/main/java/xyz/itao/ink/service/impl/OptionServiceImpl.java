@@ -4,7 +4,10 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.common.Props;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.OptionDomain;
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.OptionRepository;
 import xyz.itao.ink.service.AbstractBaseService;
@@ -24,6 +27,10 @@ public class OptionServiceImpl implements OptionService {
 
     @Autowired
     OptionRepository optionRepository;
+    @Autowired
+    DomainFactory domainFactory;
+    @Autowired
+    Props props;
 
     @Override
     public Map<String, String> loadAllOptions() {
@@ -35,31 +42,10 @@ public class OptionServiceImpl implements OptionService {
         return options;
     }
 
-    @Override
-    public void saveOption(String k, String v) {
-        if(StringUtils.isBlank(k) || StringUtils.isBlank(v)){
-            return;
-        }
-        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(k);
-        if(optionDomain != null){
-            optionDomain.setValue(v);
-            optionRepository.updateOptionDomain(optionDomain);
-        }else{
-            optionDomain = OptionDomain
-                    .builder()
-                    .name(k)
-                    .value(v)
-                    .active(true)
-                    .createBy(0L)
-                    .updateBy(0L)
-                    .build();
-            optionRepository.saveNewOptionDomain(optionDomain);
-        }
-    }
 
     @Override
-    public void deleteOption(String key, UserVo userVo) {
-        deleteByNameLike(key+"%", userVo);
+    public void deleteOption(String key, UserDomain userDomain) {
+        deleteByNameLike(key+"%", userDomain);
     }
 
     @Override
@@ -78,14 +64,14 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public void deleteAllThemes(UserVo userVo) {
-        deleteByNameLike("theme_option_%", userVo);
+    public void deleteAllThemes(UserDomain userDomain) {
+        deleteByNameLike("theme_option_%", userDomain);
     }
 
-    private void deleteByNameLike(String pattern, UserVo userVo){
+    private void deleteByNameLike(String pattern, UserDomain userDomain){
         List<OptionDomain> optionDomains = optionRepository.loadAllOptionDomainNotDeleteLike(pattern);
         optionDomains.forEach(optionDomain -> {
-            optionDomain.setUpdateBy(userVo.getId());
+            optionDomain.setUpdateBy(userDomain.getId());
             optionDomain.setDeleted(true);
             optionRepository.updateOptionDomain(optionDomain);
         });

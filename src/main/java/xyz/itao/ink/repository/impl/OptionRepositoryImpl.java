@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.OptionMapper;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.OptionDomain;
 import xyz.itao.ink.domain.entity.Option;
 import xyz.itao.ink.repository.AbstractBaseRepository;
@@ -22,11 +23,13 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
 
     @Autowired
     OptionMapper optionMapper;
+    @Autowired
+    DomainFactory domainFactory;
 
 
     @Override
     public List<OptionDomain> loadAllOptionDomain() {
-        return loadByNoNullPropertiesNotDelect(OptionDomain.builder().build());
+        return loadByNoNullPropertiesNotDelect(domainFactory.createOptionDomain());
     }
 
     @Override
@@ -50,6 +53,11 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
         return options.stream().map(e->assemble(e)).collect(Collectors.toList());
     }
 
+    @Override
+    public OptionDomain loadOptionDomainById(Long id) {
+        return domainFactory.createOptionDomain().assemble(optionMapper.selectByPrimaryKey(id));
+    }
+
 
     @Override
     protected boolean doSave(Option entity) {
@@ -68,35 +76,11 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
 
     @Override
     protected OptionDomain doAssemble(Option entity) {
-        return OptionDomain
-                .builder()
-                .id(entity.getId())
-                .deleted(entity.getDeleted())
-                .createTime(entity.getCreateTime())
-                .createBy(entity.getCreateBy())
-                .updateTime(entity.getUpdateTime())
-                .updateBy(entity.getUpdateBy())
-                .active(entity.getActive())
-                .name(entity.getName())
-                .detail(entity.getDetail())
-                .value(entity.getValue())
-                .build();
+        return domainFactory.createOptionDomain().assemble(entity);
     }
 
     @Override
     protected Option doExtract(OptionDomain domain) {
-        return Option
-                .builder()
-                .id(domain.getId())
-                .deleted(domain.getDeleted())
-                .createTime(domain.getCreateTime())
-                .createBy(domain.getCreateBy())
-                .updateTime(domain.getUpdateTime())
-                .updateBy(domain.getUpdateBy())
-                .active(domain.getActive())
-                .name(domain.getName())
-                .detail(domain.getDetail())
-                .value(domain.getValue())
-                .build();
+        return  domain.entity();
     }
 }

@@ -1,5 +1,6 @@
 package xyz.itao.ink.service;
 
+import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
@@ -24,5 +25,5 @@ public interface SiteService {
 
     StatisticsVo getStatistics();
 
-    UserVo installSite(InstallParam installParam);
+    UserDomain installSite(InstallParam installParam);
 }

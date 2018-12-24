@@ -27,6 +27,8 @@ import java.util.Map;
 public class ThemeCotroller extends BaseController {
     @Autowired
     OptionService optionService;
+    @Autowired
+    Commons commons;
 
     @GetMapping("")
     public String themeIndex(){
@@ -38,7 +40,7 @@ public class ThemeCotroller extends BaseController {
      */
     @GetMapping("/setting")
     public String setting(HttpServletRequest request) {
-        String currentTheme = Commons.siteTheme();
+        String currentTheme = commons.siteTheme();
         String key          = "theme_" + currentTheme + "_options";
 
         String              option = optionService.getOption(key);

@@ -154,10 +154,10 @@ public class InkUtils {
     /**
      * 获取RSS输出
      */
-    public static String getRssXml(java.util.List<ContentVo> articles) throws FeedException {
+    public static String getRssXml(java.util.List<ContentVo> articles, String siteUrl) throws FeedException {
         Channel channel = new Channel("rss_2.0");
         channel.setTitle((String) WebConstant.OPTIONS.get("site_title"));
-        channel.setLink(Commons.site_url());
+        channel.setLink(siteUrl);
         channel.setDescription((String) WebConstant.OPTIONS.get("site_description"));
         channel.setLanguage("zh-CN");
         java.util.List<Item> items = new ArrayList<>();
@@ -182,7 +182,7 @@ public class InkUtils {
 
             content.setValue(value);
             item.setContent(content);
-            item.setLink(permalink(post.getId(), post.getSlug()));
+            item.setLink(permalink(post.getId(), post.getSlug(), siteUrl));
             item.setPubDate(DateUtils.toDate(post.getCreated()));
             items.add(item);
         });
@@ -203,11 +203,11 @@ public class InkUtils {
         }
     }
 
-    public static String getSitemapXml(List<ContentVo> articles) {
+    public static String getSitemapXml(List<ContentVo> articles, String siteUrl) {
         List<Url> urls = articles.stream()
-                .map(InkUtils::parse)
+                .map(c->parse(c, siteUrl))
                 .collect(Collectors.toList());
-        urls.add(new Url(Commons.site_url() + "/archives"));
+        urls.add(new Url(siteUrl + "/archives"));
 
         String urlBody = urls.stream()
                 .map(url -> {
@@ -222,8 +222,8 @@ public class InkUtils {
         return SITEMAP_HEAD + urlBody + "</urlset>";
     }
 
-    private static Url parse(ContentVo contentVo) {
-        Url url = new Url(Commons.site_url() + "/article/" + contentVo.getId());
+    private static Url parse(ContentVo contentVo, String siteUrl) {
+        Url url = new Url(siteUrl + "/article/" + contentVo.getId());
         url.lastmod = DateUtils.dateFormat(DateUtils.toDate(contentVo.getModified()), "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
         return url;
     }
@@ -245,8 +245,8 @@ public class InkUtils {
      * @param slug 文章链接
      * @return 文章链接地址
      */
-    public static String permalink(Long id, String slug) {
-        return Commons.site_url("/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
+    public static String permalink(Long id, String slug, String siteUrl) {
+        return siteUrl+"/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString());
     }
 
     /**

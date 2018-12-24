@@ -53,6 +53,9 @@ public class DomainFactory {
     @Autowired
     @Lazy
     private LinkRepository linkRepository;
+    @Autowired
+    @Lazy
+    private OptionRepository optionRepository;
 
     /**
      * 生成ContentDoamin
@@ -100,5 +103,9 @@ public class DomainFactory {
      */
     public StatisticsDomain createStatisticsDomain(){
         return new StatisticsDomain(contentRepository,commentRepository, metaRepository, linkRepository);
+    }
+
+    public OptionDomain createOptionDomain(){
+        return new OptionDomain(optionRepository);
     }
 }
