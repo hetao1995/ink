@@ -182,6 +182,13 @@ public class ContentDomain extends BaseDomain{
      */
     private String categories;
 
+    public Integer getModified() {
+        if(this.getUpdateTime()==null){
+            return null;
+        }
+        return DateUtils.getUnixTimeByDate(this.getUpdateTime());
+    }
+
     /**
      * 获取所有激活状态的comment
      * @return

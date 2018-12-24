@@ -5,6 +5,7 @@ import xyz.itao.ink.controller.admin.AdminApiController;
 import xyz.itao.ink.domain.dto.PluginMenu;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +20,15 @@ public class WebConstant {
      * 用户domain域的key
      */
     public static final String LOGIN_USER = "login_user";
-    public static final String CLASSPATH = new File(AdminApiController.class.getResource("/").getPath()).getPath() + File.separatorChar;
+    public static  String CLASSPATH;
+
+    static {
+        try {
+            CLASSPATH = new File(AdminApiController.class.getResource("/").toURI().getPath()).getPath() + File.separatorChar;
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static final String      REMEMBER_IN_COOKIE = "remember_me";
     public static final String      LOGIN_ERROR_COUNT  = "login_error_count";

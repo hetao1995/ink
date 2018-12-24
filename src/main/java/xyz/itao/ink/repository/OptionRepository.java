@@ -12,7 +12,7 @@ import java.util.List;
 public interface OptionRepository {
     List<OptionDomain> loadAllOptionDomain() ;
 
-    OptionDomain loadOptionDomainByName(String k) ;
+    OptionDomain loadOptionDomainByName(String name) ;
 
     void updateOptionDomain(OptionDomain optionDomain) ;
 

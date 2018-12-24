@@ -3,6 +3,7 @@ package xyz.itao.ink.interceptor;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -59,16 +60,16 @@ public class BaseInterceptor implements HandlerInterceptor {
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
-//        OptionVo ov = optionService.getOptionByName("site_record");
-        request.setAttribute("commons", commons);//一些工具类和公共方法
+        //一些工具类和公共方法
+        request.setAttribute("commons", commons);
         String themJson = props.get("theme_default_options", "");
-        System.out.println("themJson"+themJson);
+        if(StringUtils.isBlank(themJson)){
+            return ;
+        }
         Map<String, String> map = JSON.parseObject(themJson, Map.class);
         for(Map.Entry<String, String> entry : map.entrySet()){
             request.setAttribute(entry.getKey(), entry.getValue());
         }
-//        httpServletRequest.setAttribute("option", ov);
-//        httpServletRequest.setAttribute("adminCommons", adminCommons);
     }
 
     @Override

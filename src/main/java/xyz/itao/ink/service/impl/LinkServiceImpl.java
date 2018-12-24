@@ -90,7 +90,7 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
                 }
                 res.add(save(linkVo, userDomain.getId()));
             } catch (IOException e) {
-                log.debug("上传文件失败！", e);
+                log.debug("上传文件失败:{}", e);
                 e.printStackTrace();
                 res.add(linkVo);
                 continue;

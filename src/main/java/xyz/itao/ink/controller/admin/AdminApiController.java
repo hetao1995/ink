@@ -279,8 +279,8 @@ public class AdminApiController {
 
     @SysLog("保存系统配置")
     @PostMapping("/options")
-    public RestResponse<?> saveOptions(Map<String, List<String>> options, @RequestAttribute(WebConstant.LOGIN_USER)UserDomain userDomain) {
-        options.forEach((k, v) -> props.set(k, v.get(0), userDomain));
+    public RestResponse<?> saveOptions(@RequestParam Map<String, String> options, @RequestAttribute(WebConstant.LOGIN_USER)UserDomain userDomain) {
+        options.forEach((k, v) -> props.set(k, v, userDomain));
         return RestResponse.ok();
     }
 
@@ -393,7 +393,7 @@ public class AdminApiController {
 
     @SysLog("保存模板")
     @PostMapping("/template")
-    public RestResponse<?> saveTpl(TemplateParam templateParam) throws IOException {
+    public RestResponse<?> saveTpl(@RequestBody TemplateParam templateParam) throws IOException {
         if (StringUtils.isBlank(templateParam.getFileName())) {
             return RestResponse.fail("缺少参数，请重试");
         }

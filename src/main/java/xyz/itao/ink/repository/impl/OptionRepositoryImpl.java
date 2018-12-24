@@ -33,8 +33,12 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
     }
 
     @Override
-    public OptionDomain loadOptionDomainByName(String k) {
-        return null;
+    public OptionDomain loadOptionDomainByName(String name) {
+        List<OptionDomain> optionDomains = loadByNoNullPropertiesActiveAndNotDelect(domainFactory.createOptionDomain().setName(name));
+        if(optionDomains.isEmpty()){
+            return null;
+        }
+        return optionDomains.get(0);
     }
 
     @Override

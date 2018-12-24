@@ -382,7 +382,11 @@ public final class Commons {
     }
 
     public  String attachURL(){
-        return site_option(TypeConst.ATTACH_URL, site_url()+"/upload/");
+        return attachURL("");
+    }
+
+    public String attachURL(String sub){
+        return site_option(TypeConst.ATTACH_URL, site_url()+"/upload/")+sub;
     }
 
     /**

@@ -36,7 +36,7 @@ public class OptionServiceImpl implements OptionService {
     public Map<String, String> loadAllOptions() {
         Map<String, String> options = Maps.newHashMap();
         List<OptionDomain> optionDomains = optionRepository.loadAllOptionDomain();
-        if (optionDomains.isEmpty()) {
+        if (!optionDomains.isEmpty()) {
             optionDomains.forEach(optionDomain -> options.put(optionDomain.getName(), optionDomain.getValue()));
         }
         return options;

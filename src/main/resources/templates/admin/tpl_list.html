@@ -17,9 +17,9 @@
                                 <div class="row">
                                     <select id="tplSelect" onchange="showContent(this)">
                                         <option selected value="">请选择模板文件</option>
-                                        #for(tpl : tpls)
-                                        <option value="${tpl}">${tpl}</option>
-                                        #end
+                                        <th:block th:each="tpl: ${tpls}">
+                                            <option th:value="${tpl}" th:text="${tpl}">${tpl}</option>
+                                        </th:block>
                                     </select>
 
                                     <button class="btn btn-primary waves-effect waves-light m-b-5" onclick="saveTpl()">保存修改</button>
@@ -90,7 +90,7 @@
         var fileName = $('#tplSelect').val();
         if (fileName && fileName != '') {
             tale.post({
-                url: '/admin/api/template/save',
+                url: '/admin/api/template/',
                 data: {
                     fileName: fileName,
                     content: $('#tpl-preview').val()

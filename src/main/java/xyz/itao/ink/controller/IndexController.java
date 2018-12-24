@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
@@ -23,6 +24,8 @@ import xyz.itao.ink.utils.InkUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -142,16 +145,16 @@ public class IndexController extends BaseController{
      * @return
      */
     @GetMapping(value = {"/feed", "/feed.xml", "/atom.xml"})
-    public String feed(HttpServletResponse response) {
+    public void feed(HttpServletResponse response) throws IOException {
         List<ContentVo> articles = contentService.selectAllFeedArticles();
-        String xml = null;
         try {
-            xml = InkUtils.getRssXml(articles, props.get(WebConstant.OPTION_SITE_URL,""),props.get(WebConstant.OPTION_SITE_TITLE, "ink"), props.get(WebConstant.OPTION_SITE_DESCRIPTION,""));
+            String xml = InkUtils.getRssXml(articles, props.get(WebConstant.OPTION_SITE_URL,""),props.get(WebConstant.OPTION_SITE_TITLE, "ink"), props.get(WebConstant.OPTION_SITE_DESCRIPTION,""));
             response.setContentType("text/xml; charset=utf-8");
+            response.getWriter().append(xml);
         } catch (Exception e) {
-            log.error("生成 rss 失败", e);
+            log.error("生成 rss 失败:{}", e);
+            e.printStackTrace();
         }
-        return xml;
     }
 
     /**
@@ -160,17 +163,16 @@ public class IndexController extends BaseController{
      * @return
      */
     @GetMapping(value = {"/sitemap", "/sitemap.xml"})
-    public String siteMap(HttpServletResponse response) {
+    public void siteMap(HttpServletResponse response) {
         List<ContentVo> articles = contentService.selectAllFeedArticles();
-        String xml = null;
         try {
-            xml = InkUtils.getSitemapXml(articles, props.get(WebConstant.OPTION_SITE_URL, ""));
+            String xml = InkUtils.getSitemapXml(articles, props.get(WebConstant.OPTION_SITE_URL, ""));
             response.setContentType("text/xml; charset=utf-8");
-
+            response.getWriter().append(xml);
         } catch (Exception e) {
-            log.error("生成 sitemap 失败", e);
+            log.error("生成 sitemap 失败:{}", e);
+            e.printStackTrace();
         }
-        return xml;
     }
 
     /**

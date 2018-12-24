@@ -207,7 +207,7 @@ public class InkUtils {
         List<Url> urls = articles.stream()
                 .map(c->parse(c, siteUrl))
                 .collect(Collectors.toList());
-        urls.add(new Url(siteUrl + "/archives"));
+        urls.add(new Url(siteUrl + "/archive"));
 
         String urlBody = urls.stream()
                 .map(url -> {

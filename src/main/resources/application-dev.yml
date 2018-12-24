@@ -13,7 +13,7 @@ spring:
           jdbc-url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
           driver-class-name: com.mysql.cj.jdbc.Driver
           username: root
-          password: root
+          password: 666
           #连接池大小名称等
           maximum-pool-size: 5
           connection-test-query: SELECT 1

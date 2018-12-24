@@ -11,6 +11,7 @@ import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.WebConstant;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,15 +62,16 @@ public class TemplateController {
     }
 
     @GetMapping("/content")
-    public String getContent(@RequestParam String fileName) {
-        String content = null;
+    public void getContent(@RequestParam String fileName, HttpServletResponse response) {
         try {
             String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default") ;
             String filePath  = themePath + File.separatorChar + fileName;
-            content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
+            String content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
+            response.getWriter().append(content);
         } catch (IOException e) {
             log.error("获取模板文件失败", e);
+            e.printStackTrace();
         }
-        return content;
     }
+
 }
