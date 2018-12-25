@@ -23,19 +23,19 @@
     <div class="clearfix">
         <ul class="pagination m-b-5 pull-right">
             <li th:if="${pageInfo.hasPreviousPage}">
-                <a th:href="@{'?page='+${pageInfo.prePage}}" aria-label="Previous">
+                <a th:href="@{'?pageNum='+${pageInfo.prePage}}" aria-label="Previous">
                     <i class="fa fa-angle-left"></i>&nbsp;上一页
                 </a>
             </li>
 
             <th:block th:each="nav : ${pageInfo.navigatepageNums}">
-                <li th:class="${nav==pageInfo.pageNum}?'active':''"><a th:href="@{'?page='+${nav}}" th:text="${nav}"></a>
+                <li th:class="${nav==pageInfo.pageNum}?'active':''"><a th:href="@{'?pageNum='+${nav}}" th:text="${nav}"></a>
                 </li>
             </th:block>
 
             <th:block th:if="${pageInfo.hasNextPage}">
                 <li>
-                    <a th:href="@{'?page='+${pageInfo.nextPage}}" aria-label="Next">
+                    <a th:href="@{'?pageNum='+${pageInfo.nextPage}}" aria-label="Next">
                         下一页&nbsp;<i class="fa fa-angle-right"></i>
                     </a>
                 </li>

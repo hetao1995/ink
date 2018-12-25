@@ -1,5 +1,6 @@
 package xyz.itao.ink.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -45,10 +46,12 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
 
     @Override
     public PageInfo<LinkVo> loadAllActiveLinkVo(PageParam pageParam) {
-        PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
         List<LinkDomain> linkDomains = linkRepository.loadAllActiveLinkDomain();
         List<LinkVo> linkVos = linkDomains.stream().map(d->extract(d)).collect(Collectors.toList());
-        return new PageInfo<>(linkVos);
+        PageInfo<LinkVo> pageInfo =  new PageInfo<>(page);
+        pageInfo.setList(linkVos);
+        return pageInfo;
     }
 
     @Override
