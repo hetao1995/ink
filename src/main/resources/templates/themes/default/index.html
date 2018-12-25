@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div th:replace="themes/default/partial/header::header(null,null)"></div>
+<div th:replace="themes/default/partial/header::header(null,null,null)"></div>
 <body>
 <div class="main-content index-page clearfix">
     <div class="post-lists">
         <div class="post-lists-body">
             <div class="post-list-item" th:each="article: ${articles.list}">
                 <div class="post-list-item-container">
-                    <div class="item-thumb bg-deepgrey" th:style="|background-image:url(${commons.show_thumb(article)});|"></div>
+                    <div class="item-thumb bg-deepgrey" th:style="|background-image:url(${commons.showThumb(article)});|"></div>
                     <a th:href="${commons.permalink(article)}" >
                         <div class="item-desc">
                             <p th:utext="${commons.intro(article.content, 75)}"></p>
@@ -20,9 +20,9 @@
                                                    th:text="${article.title}"></a>
                         </div>
                         <div class="item-meta clearfix">
-                            <div th:class="'item-meta-ico '+ ${commons.show_icon(article.id)}"
+                            <div th:class="'item-meta-ico '+ ${commons.showIcon(article.id)}"
                                  th:style="'background: url('+@{/user/img/bg-ico.png}+');no-repeat;background-size: 40px auto;' "></div>
-                            <div class="item-meta-cat" th:utext="${commons.show_categories(article.categories)}">
+                            <div class="item-meta-cat" th:utext="${commons.showCategories(article.categories)}">
                             </div>
                         </div>
                     </div>

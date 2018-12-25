@@ -1,18 +1,13 @@
 package xyz.itao.ink.controller.admin;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
-import com.google.common.collect.Lists;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.Commons;
-import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -20,15 +15,11 @@ import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.LinkService;
-import xyz.itao.ink.service.LogService;
-import xyz.itao.ink.utils.FileUtils;
 
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -58,7 +49,7 @@ public class AttachController extends BaseController {
     public String index(HttpServletRequest request, PageParam pageParam) {
         PageInfo<LinkVo> attachPaginator = linkService.loadAllActiveLinkVo(pageParam);
         request.setAttribute("attaches", attachPaginator);
-        request.setAttribute(TypeConst.ATTACH_URL, commons.site_option(TypeConst.ATTACH_URL, commons.site_url()));
+        request.setAttribute(TypeConst.ATTACH_URL, commons.siteOption(TypeConst.ATTACH_URL, commons.siteUrl()));
         request.setAttribute("max_file_size", WebConstant.MAX_FILE_SIZE / 1024);
         return "admin/attaches";
     }

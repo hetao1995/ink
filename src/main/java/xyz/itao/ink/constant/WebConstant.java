@@ -143,6 +143,7 @@ public class WebConstant {
     public static final String OPTION_SITE_TITLE = "site_title";
     public static final String OPTION_SITE_URL = "site_url";
     public static final String OPTION_SITE_DESCRIPTION  = "site_description";
+    public static final String OPTION_SITE_KEYWORDS = "site_keywords";
 
     public static final int REMEMBER_ME_INTERVAL = 60*60*24*30;
 

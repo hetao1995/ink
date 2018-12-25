@@ -68,6 +68,9 @@ public class BaseInterceptor implements HandlerInterceptor {
         }
         Map<String, String> map = JSON.parseObject(themJson, Map.class);
         for(Map.Entry<String, String> entry : map.entrySet()){
+            if(StringUtils.isBlank(entry.getValue()) || StringUtils.isBlank(entry.getKey())){
+                continue;
+            }
             request.setAttribute(entry.getKey(), entry.getValue());
         }
     }

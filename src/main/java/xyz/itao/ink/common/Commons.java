@@ -2,7 +2,6 @@ package xyz.itao.ink.common;
 
 import com.github.pagehelper.PageInfo;
 import com.vdurmont.emoji.EmojiParser;
-import lombok.experimental.Accessors;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +12,8 @@ import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.params.CommentParam;
-import xyz.itao.ink.domain.params.PageParam;
-import xyz.itao.ink.domain.vo.CommentVo;
-import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.ContentService;
-import xyz.itao.ink.service.SiteService;
 import xyz.itao.ink.utils.CryptoUtils;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.InkUtils;
@@ -43,7 +38,7 @@ public final class Commons {
     @Autowired
     Props props;
 
-    public  static String THEME = "themes/default";
+    public  static String THEME = "default";
 
     /**
      * 判断分页中是否有数据
@@ -51,7 +46,7 @@ public final class Commons {
      * @param paginator
      * @return
      */
-    public  boolean is_empty(PageInfo paginator) {
+    public  boolean isEmpty(PageInfo paginator) {
         return paginator == null || (paginator.getList() == null) || (paginator.getList().size() == 0);
     }
 
@@ -60,8 +55,8 @@ public final class Commons {
      *
      * @return
      */
-    public  String site_url() {
-        return site_url("");
+    public  String siteUrl() {
+        return siteUrl("");
     }
 
     /**
@@ -70,8 +65,12 @@ public final class Commons {
      * @param sub 后面追加的地址
      * @return
      */
-    public  String site_url(String sub) {
-        return site_option(WebConstant.OPTION_SITE_URL) + sub;
+    public  String siteUrl(String sub) {
+        String siteUrl = siteOption(WebConstant.OPTION_SITE_URL);
+        if(!siteUrl.startsWith("http")){
+            siteUrl = "http://"+siteUrl;
+        }
+        return  siteUrl+ sub;
     }
 
     /**
@@ -79,8 +78,16 @@ public final class Commons {
      *
      * @return
      */
-    public  String site_title() {
-        return site_option(WebConstant.OPTION_SITE_TITLE);
+    public  String siteTitle() {
+        return siteOption(WebConstant.OPTION_SITE_TITLE, "ink");
+    }
+
+    public String siteKeywords(){
+        return siteOption(WebConstant.OPTION_SITE_KEYWORDS, "ink, blog");
+    }
+
+    public String siteDescription(){
+        return siteOption(WebConstant.OPTION_SITE_DESCRIPTION, "a beautiful blog worth to try");
     }
 
     /**
@@ -89,8 +96,8 @@ public final class Commons {
      * @param key
      * @return
      */
-    public  String site_option(String key) {
-        return site_option(key, "");
+    public  String siteOption(String key) {
+        return siteOption(key, "");
     }
 
     /**
@@ -100,7 +107,7 @@ public final class Commons {
      * @param defalutValue 默认值
      * @return
      */
-    public  String site_option(String key, String defalutValue) {
+    public  String siteOption(String key, String defalutValue) {
         if (StringUtils.isBlank(key)) {
             return "";
         }
@@ -121,24 +128,7 @@ public final class Commons {
         return str;
     }
 
-    /**
-     * 返回主题URL
-     *
-     * @return
-     */
-    public  String theme_url() {
-        return site_url(Commons.THEME);
-    }
 
-    /**
-     * 返回主题下的文件路径
-     *
-     * @param sub
-     * @return
-     */
-    public  String theme_url(String sub) {
-        return site_url(Commons.THEME + sub);
-    }
 
     /**
      * 返回github头像地址
@@ -185,7 +175,7 @@ public final class Commons {
      * @return
      */
     public  String permalink(Long id, String slug) {
-        return site_url("/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
+        return siteUrl("/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
     }
 
     /**
@@ -194,15 +184,15 @@ public final class Commons {
      * @param unixTime
      * @return
      */
-    public  String fmtdate(Integer unixTime) {
-        return fmtdate(unixTime, "yyyy-MM-dd");
+    public  String fmtDate(Integer unixTime) {
+        return fmtDate(unixTime, "yyyy-MM-dd");
     }
 
-    public  String fmtdate(Date date){
+    public  String fmtDate(Date date){
         return DateUtils.dateFormat(date,"yyyy-MM-dd" );
     }
 
-    public String fmtdate(Date date, String format){
+    public String fmtDate(Date date, String format){
         return DateUtils.dateFormat(date, format);
     }
     /**
@@ -212,7 +202,7 @@ public final class Commons {
      * @param patten
      * @return
      */
-    public  String fmtdate(Integer unixTime, String patten) {
+    public  String fmtDate(Integer unixTime, String patten) {
         if (null != unixTime && StringUtils.isNotBlank(patten)) {
             return DateUtils.formatDateByUnixTime(unixTime, patten);
         }
@@ -225,7 +215,7 @@ public final class Commons {
      * @param categories
      * @return
      */
-    public  String show_categories(String categories) throws UnsupportedEncodingException {
+    public  String showCategories(String categories) throws UnsupportedEncodingException {
         if (StringUtils.isNotBlank(categories)) {
             String[] arr = categories.split(",");
             StringBuffer sbuf = new StringBuffer();
@@ -234,7 +224,7 @@ public final class Commons {
             }
             return sbuf.toString();
         }
-        return show_categories("默认分类");
+        return showCategories("默认分类");
     }
 
     /**
@@ -243,7 +233,7 @@ public final class Commons {
      * @param tags
      * @return
      */
-    public  String show_tags(String tags) throws UnsupportedEncodingException {
+    public  String showTags(String tags) throws UnsupportedEncodingException {
         if (StringUtils.isNotBlank(tags)) {
             String[] arr = tags.split(",");
             StringBuffer sbuf = new StringBuffer();
@@ -295,7 +285,7 @@ public final class Commons {
      *
      * @return
      */
-    public  String show_thumb(ContentDomain contentDomain) {
+    public  String showThumb(ContentDomain contentDomain) {
         if(null == contentDomain){
             return "";
         }
@@ -327,7 +317,7 @@ public final class Commons {
      *
      * @return
      */
-    public  String show_thumb(String content) {
+    public  String showThumb(String content) {
         content = InkUtils.mdToHtml(content);
         if (content.contains("<img")) {
             String img = "";
@@ -354,8 +344,8 @@ public final class Commons {
      * @param cid
      * @return
      */
-    public  String show_icon(long cid) {
-        return ICONS[(int) (cid % ICONS.length)];
+    public  String showIcon(long id) {
+        return ICONS[(int) (id % ICONS.length)];
     }
 
     /**
@@ -374,27 +364,49 @@ public final class Commons {
     }
 
     public  String siteTheme() {
-        return site_option("site_theme", "default");
+        return siteOption("site_theme", "default");
     }
 
-    public  String cdnURL(){
-        return site_option(TypeConst.CDN_URL, "/admin");
+    public  String cdnUrl(){
+        return siteOption(TypeConst.CDN_URL, "/admin");
     }
 
-    public  String attachURL(){
-        return attachURL("");
+    public boolean allowCloudCdn(){
+        return props.getBoolean(WebConstant.OPTION_ALLOW_CLOUD_CDN, false);
     }
 
-    public String attachURL(String sub){
-        return site_option(TypeConst.ATTACH_URL, site_url()+"/upload/")+sub;
+    public  String attachUrl(){
+        return attachUrl("");
     }
 
+    public String attachUrl(String sub){
+        return siteOption(TypeConst.ATTACH_URL, siteUrl()+"/upload/")+sub;
+    }
+
+    /**
+     * 返回主题URL
+     *
+     * @return
+     */
+    public  String themeUrl() {
+        return themeUrl("");
+    }
+
+    /**
+     * 返回主题下的文件路径
+     *
+     * @param sub
+     * @return
+     */
+    public  String themeUrl(String sub) {
+        return siteUrl("/themes/"+Commons.THEME + sub);
+    }
     /**
      * 最新文章
      * @param limit
      * @return
      */
-    public  List<ContentDomain> recent_articles(int limit) {
+    public  List<ContentDomain> recentArticles(int limit) {
         if (null == contentService) {
             return new ArrayList<>(0);
         }
@@ -410,7 +422,7 @@ public final class Commons {
      * @param limit 查找多少个
      * @return
      */
-    public  List<CommentDomain> recent_comments(int limit) {
+    public  List<CommentDomain> recentComments(int limit) {
         if (null == commentService) {
             return new ArrayList<>(0);
         }

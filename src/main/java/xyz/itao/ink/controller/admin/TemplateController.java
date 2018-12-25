@@ -67,6 +67,7 @@ public class TemplateController {
             String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default") ;
             String filePath  = themePath + File.separatorChar + fileName;
             String content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
+            response.setCharacterEncoding("utf-8");
             response.getWriter().append(content);
         } catch (IOException e) {
             log.error("获取模板文件失败", e);

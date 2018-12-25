@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<div th:replace="themes/default/partial/header::header(${article.title},${article.tags})"></div>
+<div th:replace="themes/default/partial/header::header(${article.title},${article.tags}, null)"></div>
 <body>
 <article class="main-content page-page" itemscope="" itemtype="http://schema.org/Article">
     <div class="post-header">
@@ -8,19 +8,19 @@
             <a th:href="${commons.permalink(article)}" th:text="${article.title}" ></a>
         </h1>
         <div class="post-data">
-            <time th:datetime="${commons.fmtdate(article.created)}" itemprop="datePublished" th:text="'发布于 '+ ${commons.fmtdate(article.created)}"></time>
-            / <th:block th:utext="${commons.show_categories(article.categories)}"/> / <a href="#comments" th:text="${article.commentsNum ?: 0}+' 条评论'"></a> /
+            <time th:datetime="${commons.fmtDate(article.created)}" itemprop="datePublished" th:text="'发布于 '+ ${commons.fmtDate(article.created)}"></time>
+            / <th:block th:utext="${commons.showCategories(article.categories)}"/> / <a href="#comments" th:text="${article.commentsNum ?: 0}+' 条评论'"></a> /
             <th:block th:text="${article.hits}"/>浏览
         </div>
     </div>
     <div id="post-content" class="post-content" itemprop="articleBody">
-        <p class="post-tags" th:utext="${commons.show_tags(article.tags)}"></p>
+        <p class="post-tags" th:utext="${commons.showTags(article.tags)}"></p>
         <th:block th:utext="${commons.article(article.content)}"/>
         <p class="post-info">
             本文由 <a th:href="${article.author.homeUrl}" th:text="${article.author.displayName}"></a> 创作，采用
             <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="external nofollow">知识共享署名4.0</a>
             国际许可协议进行许可<br/>本站文章除注明转载/出处外，均为本站原创或翻译，转载前请务必署名<br/>最后编辑时间为:
-            <th:block th:text="${commons.fmtdate(article.modified, 'yyyy/MM/dd HH:mm')}"/>
+            <th:block th:text="${commons.fmtDate(article.modified, 'yyyy/MM/dd HH:mm')}"/>
         </p>
     </div>
 </article>
