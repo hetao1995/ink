@@ -7,7 +7,6 @@ import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.User;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.repository.UserRoleRepository;
 
 import java.util.List;
 
@@ -17,98 +16,68 @@ import java.util.List;
  * @description
  */
 @Repository("userRepository")
-public class UserRepositoryImpl extends AbstractBaseRepository<UserDomain, User> implements UserRepository {
+public class UserRepositoryImpl  implements UserRepository {
     @Autowired
     UserMapper userMapper;
-    @Autowired
-    UserRoleRepository userRoleRepository;
     @Autowired
     DomainFactory domainFactory;
 
     @Override
     public UserDomain loadActiveUserDomainById(Long id) {
-        UserDomain userDomain = domainFactory.createUserDomain().setId(id);
-        List<UserDomain> userDomains = loadByNoNullPropertiesActiveAndNotDelect(userDomain);
-        return userDomains.isEmpty() ? null : userDomains.get(0);
+        UserDomain userDomain = domainFactory.createUserDomain().setId(id).setActive(true).setDeleted(false);
+        List<User> users = userMapper.selectByNoNulProperties(userDomain.entity());
+        return users.isEmpty() ? null : userDomain.assemble(users.get(0));
     }
 
     @Override
     public UserDomain loadUserDomainByUsername(String username) {
-        User user = User
-                .builder()
-                .username(username)
-                .deleted(false)
-                .permanent(true)
-                .active(true)
-                .build();
-        List<User> users = doLoadByNoNullProperties(user);
-        if(users.isEmpty()) return null;
-        return assemble(users.get(0));
+        UserDomain domain = domainFactory
+                .createUserDomain()
+                .setUsername(username)
+                .setDeleted(false)
+                .setPermanent(true)
+                .setActive(true);
+        List<User> users = userMapper.selectByNoNulProperties(domain.entity());
+        return users.isEmpty() ? null : domain.assemble(users.get(0));
     }
 
     @Override
     public UserDomain loadUserDomainByEmail(String email) {
-        User user = User
-                .builder()
-                .email(email)
-                .deleted(false)
-                .permanent(true)
-                .active(true)
-                .build();
-        List<User> users = doLoadByNoNullProperties(user);
-        if(users.isEmpty()) return null;
-        return assemble(users.get(0));
+        UserDomain domain = domainFactory
+                .createUserDomain()
+                .setEmail(email)
+                .setDeleted(false)
+                .setPermanent(true)
+                .setActive(true);
+
+        List<User> users = userMapper.selectByNoNulProperties(domain.entity());
+        return users.isEmpty() ? null : domain.assemble(users.get(0));
     }
 
     @Override
     public UserDomain loadUserDomainByHomeUrl(String homeUrl) {
-        User user = User
-                .builder()
-                .homeUrl(homeUrl)
-                .deleted(false)
-                .permanent(true)
-                .active(true)
-                .build();
-        List<User> users = doLoadByNoNullProperties(user);
-        if(users.isEmpty()) {
-            return null;
-        }
-        return assemble(users.get(0));
+        UserDomain domain = domainFactory
+                .createUserDomain()
+                .setHomeUrl(homeUrl)
+                .setDeleted(false)
+                .setPermanent(true)
+                .setActive(true);
+
+        List<User> users = userMapper.selectByNoNulProperties(domain.entity());
+        return users.isEmpty() ? null : domain.assemble(users.get(0));
     }
 
     @Override
     public UserDomain saveNewUserDomain(UserDomain userDomain) {
-        return save(userDomain);
+        userMapper.insertSelective(userDomain.entity());
+        return  userDomain;
     }
 
     @Override
     public UserDomain updateUserDomain(UserDomain domain) {
-        return update(domain);
-    }
-
-    @Override
-    protected UserDomain doAssemble(User entity) {
-        return domainFactory.createUserDomain().assemble(entity);
-    }
-
-    @Override
-    protected User doExtract(UserDomain domain) {
-        return domain.entity();
-    }
-
-    @Override
-    protected boolean doSave(User entity) {
-        return userMapper.insertSelective(entity);
-    }
-
-    @Override
-    protected List<User> doLoadByNoNullProperties(User entity) {
-        return userMapper.selectByNoNulProperties(entity);
+        userMapper.updateByPrimaryKeySelective(domain.entity());
+        return domain;
     }
 
 
-    @Override
-    protected boolean doUpdate(User entity) {
-        return userMapper.updateByPrimaryKeySelective(entity);
-    }
 }

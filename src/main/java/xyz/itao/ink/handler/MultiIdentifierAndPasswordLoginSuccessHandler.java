@@ -30,14 +30,13 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)  {
         String token = userService.getJwtLoginToken((UserDomain) authentication.getPrincipal(), ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe());
-//        response.setHeader("Authorization", token);
-        Cookie cookie = new Cookie("Authorization", token);
+        Cookie cookie = new Cookie(WebConstant.AUTHORIZATION, token);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(-1);
         if(((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe()){
             cookie.setMaxAge(WebConstant.REMEMBER_ME_INTERVAL);
         }
         response.addCookie(cookie);
-        request.setAttribute(WebConstant.LOGIN_USER, userService.extractVo((UserDomain) authentication.getPrincipal()));
+        request.setAttribute(WebConstant.LOGIN_USER, (UserDomain) authentication.getPrincipal());
     }
 }

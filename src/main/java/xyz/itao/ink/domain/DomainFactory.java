@@ -58,9 +58,6 @@ public class DomainFactory {
     private OptionRepository optionRepository;
     @Autowired
     @Lazy
-    private UserRoleRepository userRoleRepository;
-    @Autowired
-    @Lazy
     private RoleRepository roleRepository;
 
     /**

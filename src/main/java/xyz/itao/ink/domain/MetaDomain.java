@@ -190,6 +190,8 @@ public class MetaDomain {
     public MetaDomain save(){
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
+        this.id = IdUtils.nextId();
+        this.deleted = false;
         this.active = true;
         return metaRepository.saveNewMetaDomain(this);
     }

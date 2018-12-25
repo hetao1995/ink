@@ -151,9 +151,9 @@ public class AdminApiController {
         contentVo.setAllowPing(true);
         contentVo.setAuthorId(userDomain.getId());
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
-        contentService.publishNewContent(contentVo, userDomain);
+        Long id = contentService.publishNewContent(contentVo, userDomain).getId();
         siteService.cleanCache(TypeConst.SYS_STATISTICS);
-        return RestResponse.ok();
+        return RestResponse.ok(id);
     }
 
     @SysLog("修改页面")

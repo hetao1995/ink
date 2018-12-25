@@ -10,6 +10,8 @@ import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.repository.CommentRepository;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.UserRepository;
+import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
 
@@ -187,6 +189,10 @@ public class CommentDomain {
     }
 
     public CommentDomain save(){
+        this.createTime = DateUtils.getNow();
+        this.updateTime = DateUtils.getNow();
+        this.id = IdUtils.nextId();
+        this.deleted = false;
         return commentRepository.saveNewCommentDomain(this);
     }
 

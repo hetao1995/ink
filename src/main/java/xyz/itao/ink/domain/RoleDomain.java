@@ -102,4 +102,32 @@ public class RoleDomain{
         roleRepository.saveNewRole(this);
         return this;
     }
+
+    public RoleDomain assemble(Role entity){
+        return this
+                .setId(entity.getId())
+                .setDeleted(entity.getDeleted())
+                .setCreateTime(entity.getCreateTime())
+                .setCreateBy(entity.getCreateBy())
+                .setUpdateTime(entity.getUpdateTime())
+                .setUpdateBy(entity.getUpdateBy())
+                .setActive(entity.getActive())
+                .setRole(entity.getRole())
+                .setDetail(entity.getDetail());
+    }
+
+    public Role entity(){
+        return Role
+                .builder()
+                .id(this.getId())
+                .deleted(this.getDeleted())
+                .createTime(this.getCreateTime())
+                .createBy(this.getCreateBy())
+                .updateTime(this.getUpdateTime())
+                .updateBy(this.getUpdateBy())
+                .role(this.getRole())
+                .detail(this.getDetail())
+                .active(this.getActive())
+                .build();
+    }
 }

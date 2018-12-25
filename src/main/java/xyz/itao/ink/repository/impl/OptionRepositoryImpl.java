@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Repository("optionRepository")
-public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, Option> implements OptionRepository {
+public class OptionRepositoryImpl  implements OptionRepository {
 
     @Autowired
     OptionMapper optionMapper;
@@ -27,32 +27,38 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
 
     @Override
     public List<OptionDomain> loadAllOptionDomain() {
-        return loadByNoNullPropertiesNotDelect(domainFactory.createOptionDomain());
+        OptionDomain domain = domainFactory.createOptionDomain().setDeleted(false);
+        List<Option> options = optionMapper.selectByNoNulProperties(domain.entity());
+        return options
+                .stream()
+                .map(e->domainFactory.createOptionDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 
     @Override
     public OptionDomain loadOptionDomainByName(String name) {
-        List<OptionDomain> optionDomains = loadByNoNullPropertiesActiveAndNotDelect(domainFactory.createOptionDomain().setName(name));
-        if(optionDomains.isEmpty()){
+        OptionDomain domain = domainFactory.createOptionDomain().setDeleted(false).setName(name);
+        List<Option> options = optionMapper.selectByNoNulProperties(domain.entity());
+       if(options.isEmpty()){
             return null;
         }
-        return optionDomains.get(0);
+        return domain.assemble(options.get(0));
     }
 
     @Override
     public void updateOptionDomain(OptionDomain optionDomain) {
-        update(optionDomain);
+        optionMapper.updateByPrimaryKeySelective(optionDomain.entity());
     }
 
     @Override
     public void saveNewOptionDomain(OptionDomain optionDomain) {
-        save(optionDomain);
+        optionMapper.insertSelective(optionDomain.entity());
     }
 
     @Override
     public List<OptionDomain> loadAllOptionDomainNotDeleteLike(String pattern) {
         List<Option> options = optionMapper.selectNotDeleteByNamePattern(pattern);
-        return options.stream().map(e->assemble(e)).collect(Collectors.toList());
+        return options.stream().map(e->domainFactory.createOptionDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -60,29 +66,4 @@ public class OptionRepositoryImpl  extends AbstractBaseRepository<OptionDomain, 
         return domainFactory.createOptionDomain().assemble(optionMapper.selectByPrimaryKey(id));
     }
 
-
-    @Override
-    protected boolean doSave(Option entity) {
-        return optionMapper.insertSelective(entity);
-    }
-
-    @Override
-    protected List<Option> doLoadByNoNullProperties(Option entity) {
-        return optionMapper.selectByNoNulProperties(entity);
-    }
-
-    @Override
-    protected boolean doUpdate(Option entity) {
-        return optionMapper.updateByPrimaryKeySelective(entity);
-    }
-
-    @Override
-    protected OptionDomain doAssemble(Option entity) {
-        return domainFactory.createOptionDomain().assemble(entity);
-    }
-
-    @Override
-    protected Option doExtract(OptionDomain domain) {
-        return  domain.entity();
-    }
 }

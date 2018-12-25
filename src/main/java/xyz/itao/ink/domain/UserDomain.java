@@ -15,12 +15,10 @@ import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.RoleRepository;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.repository.UserRoleRepository;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author hetao

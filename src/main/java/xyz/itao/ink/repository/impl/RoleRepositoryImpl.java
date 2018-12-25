@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.RoleMapper;
 import xyz.itao.ink.dao.UserRoleMapper;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.RoleDomain;
 import xyz.itao.ink.domain.entity.Role;
 import xyz.itao.ink.domain.entity.UserRole;
@@ -20,40 +21,45 @@ import java.util.stream.Collectors;
  * @description
  */
 @Repository("roleRepository")
-public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role> implements RoleRepository {
+public class RoleRepositoryImpl  implements RoleRepository {
     @Autowired
     RoleMapper roleMapper;
     @Autowired
     UserRoleMapper userRoleMapper;
+    @Autowired
+    DomainFactory domainFactory;
 
 
     @Override
     public RoleDomain loadActiveRoleDomainById(Long id) {
-        RoleDomain roleDomain = RoleDomain
-                .builder()
-                .id(id)
-                .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain).get(0);
+        RoleDomain domain = domainFactory.createRoleDomain().setId(id).setActive(true).setDeleted(false);
+        List<Role> roles = roleMapper.selectByNoNulProperties(domain.entity());
+        if(roles.isEmpty()){
+            return null;
+        }
+        return domain.assemble(roles.get(0));
     }
 
     @Override
     public RoleDomain saveNewRole(RoleDomain roleDomain) {
-        return save(roleDomain);
+        roleMapper.insertSelective(roleDomain.entity());
+        return roleDomain;
     }
 
     @Override
     public RoleDomain loadActiveRoleDomainByRole(String role) {
-        RoleDomain roleDomain = RoleDomain
-                .builder()
-                .role(role)
-                .build();
-        return loadByNoNullPropertiesActiveAndNotDelect(roleDomain).get(0);
+        RoleDomain domain = domainFactory.createRoleDomain().setRole(role).setActive(true).setDeleted(false);
+        List<Role> roles = roleMapper.selectByNoNulProperties(domain.entity());
+        if(roles.isEmpty()){
+            return null;
+        }
+        return domain.assemble(roles.get(0));
     }
 
     @Override
     public List<RoleDomain> loadAllActiveRoleDomainByUserId(Long userId) {
         List<Role> roles = roleMapper.selectByUserId(userId);
-        return roles.stream().map(e->assemble(e)).collect(Collectors.toList());
+        return roles.stream().map(e->domainFactory.createRoleDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -71,50 +77,4 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
         return userRoleMapper.insertSelective(userRole);
     }
 
-    @Override
-    protected boolean doSave(Role entity) {
-        return roleMapper.insertSelective(entity);
-    }
-
-    @Override
-    protected List<Role> doLoadByNoNullProperties(Role entity) {
-        return roleMapper.selectByNoNulProperties(entity);
-    }
-
-    @Override
-    protected boolean doUpdate(Role entity) {
-        return roleMapper.updateByPrimaryKeySelective(entity);
-    }
-
-    @Override
-    protected RoleDomain doAssemble(Role entity) {
-        return RoleDomain
-                .builder()
-                .id(entity.getId())
-                .deleted(entity.getDeleted())
-                .createTime(entity.getCreateTime())
-                .createBy(entity.getCreateBy())
-                .updateTime(entity.getUpdateTime())
-                .updateBy(entity.getUpdateBy())
-                .role(entity.getRole())
-                .detail(entity.getDetail())
-                .active(entity.getActive())
-                .build();
-    }
-
-    @Override
-    protected Role doExtract(RoleDomain domain) {
-        return Role
-                .builder()
-                .id(domain.getId())
-                .deleted(domain.getDeleted())
-                .createTime(domain.getCreateTime())
-                .createBy(domain.getCreateBy())
-                .updateTime(domain.getUpdateTime())
-                .updateBy(domain.getUpdateBy())
-                .role(domain.getRole())
-                .detail(domain.getDetail())
-                .active(domain.getActive())
-                .build();
-    }
 }

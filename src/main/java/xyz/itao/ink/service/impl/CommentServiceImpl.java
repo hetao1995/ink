@@ -96,7 +96,7 @@ public class CommentServiceImpl  implements CommentService {
 
     @Override
     public PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain) {
-        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
         List<CommentDomain> commentDomains = contentDomain.getComments();
         PageInfo<CommentDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentDomains);
