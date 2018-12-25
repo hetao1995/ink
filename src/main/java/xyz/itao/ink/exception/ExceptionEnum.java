@@ -11,6 +11,7 @@ public enum ExceptionEnum {
     DELETE_NON_EXIST_ELEMENT("删除不存在的元素！",-3),
     ILLEGAL_ARGUMENT("非法的参数！", -4),
     ABSENT_ARGUMENT("缺少参数或者关键参数值为null！",-5),
+    SITE_INSTALL_FAILE("初始化站点失败！",-6),
 
     USERNAME_ILLEGAL("用户名无效，用户名必须是2-20位，字母开头，数字、字母、下划线组成！", 1),
     EMAIL_ILLEGAL("不是有效的邮箱地址，请再次确认！", 2),

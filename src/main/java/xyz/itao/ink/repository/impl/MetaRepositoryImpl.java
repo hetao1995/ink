@@ -12,10 +12,7 @@ import xyz.itao.ink.domain.entity.ContentMeta;
 import xyz.itao.ink.domain.entity.Meta;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
-import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.MetaRepository;
-import xyz.itao.ink.utils.DateUtils;
-import xyz.itao.ink.utils.IdUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +23,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Repository("metaRepository")
-public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta> implements MetaRepository {
+public class MetaRepositoryImpl  implements MetaRepository {
 
     @Autowired
     MetaMapper metaMapper;
@@ -39,25 +36,34 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Override
     public MetaDomain updateMetaDomain(MetaDomain domain) {
-        return update(domain);
+         metaMapper.updateByPrimaryKeySelective(domain.entity());
+         return domain;
     }
 
     @Override
     public MetaDomain saveNewMetaDomain(MetaDomain domain) {
-        return save(domain);
+        metaMapper.insertSelective(domain.entity());
+        return domain;
     }
 
     @Override
     public MetaDomain loadMetaDomainByTypeAndName(String type, String name) {
-        MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type).setName(name);
-        List<MetaDomain> metaDomains = loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
-        return metaDomains.isEmpty() ? null : metaDomains.get(0);
+        MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type).setName(name).setDeleted(false).setActive(true);
+        List<Meta> metas = metaMapper.selectByNoNulProperties(metaDomain.entity());
+        if(metas.isEmpty()){
+            return null;
+        }
+        return metaDomain.assemble(metas.get(0));
     }
 
     @Override
     public List<MetaDomain> loadMetaDomainsByType(String type) {
-        MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type);
-        return loadByNoNullPropertiesActiveAndNotDelect(metaDomain);
+        MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type).setDeleted(false).setActive(true);
+        List<Meta> metas = metaMapper.selectByNoNulProperties(metaDomain.entity());
+        return metas
+                .stream()
+                .map(e->domainFactory.createMetaDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -74,17 +80,18 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
 
     @Override
     public MetaDomain loadMetaDomainById(Long metaId) {
-        List<MetaDomain> metaDomains = loadByNoNullPropertiesNotDelect(domainFactory.createMetaDomain().setId(metaId));
-        if(metaDomains.isEmpty()){
+        MetaDomain metaDomain = domainFactory.createMetaDomain().setDeleted(false).setId(metaId);
+        List<Meta> metas = metaMapper.selectByNoNulProperties(metaDomain.entity());
+        if(metas.isEmpty()){
             return null;
         }
-        return metaDomains.get(0);
+        return metaDomain.assemble(metas.get(0));
     }
 
     @Override
     public List<MetaDomain> loadAllMetaDomainByContentIdAndType(Long contentId, String type) {
         List<Meta> metas = metaMapper.selectByContentIdAndType(contentId, type);
-        return metas.stream().map(e->assemble(e)).collect(Collectors.toList());
+        return metas.stream().map(e->domainFactory.createMetaDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -116,28 +123,4 @@ public class MetaRepositoryImpl extends AbstractBaseRepository<MetaDomain, Meta>
         return metaMapper.countMetaByType(type);
     }
 
-    @Override
-    protected boolean doSave(Meta entity) {
-        return metaMapper.insertSelective(entity);
-    }
-
-    @Override
-    protected List<Meta> doLoadByNoNullProperties(Meta entity) {
-        return metaMapper.selectByNoNulProperties(entity);
-    }
-
-    @Override
-    protected boolean doUpdate(Meta entity) {
-        return metaMapper.updateByPrimaryKeySelective(entity);
-    }
-
-    @Override
-    protected MetaDomain doAssemble(Meta entity) {
-        return domainFactory.createMetaDomain().assemble(entity);
-    }
-
-    @Override
-    protected Meta doExtract(MetaDomain domain) {
-        return domain.entity();
-    }
 }

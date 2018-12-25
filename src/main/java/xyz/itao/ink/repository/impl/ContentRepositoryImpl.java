@@ -7,10 +7,8 @@ import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.entity.Content;
-import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.service.AbstractBaseService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,41 +19,18 @@ import java.util.stream.Collectors;
  * @description
  */
 @Repository(value = "contentRepository")
-public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain, Content> implements ContentRepository {
+public class ContentRepositoryImpl implements ContentRepository {
     @Autowired
     ContentMapper contentMapper;
     @Autowired
     UserRepository userRepository;
     @Autowired
     DomainFactory domainFactory;
-    @Override
-    protected boolean doSave(Content entity) {
-        return contentMapper.insertSelective(entity);
-    }
-
-    @Override
-    protected List<Content> doLoadByNoNullProperties(Content entity) {
-        return contentMapper.selectByNoNulProperties(entity);
-    }
-
-    @Override
-    protected boolean doUpdate(Content entity) {
-        return contentMapper.updateByPrimaryKeySelective(entity);
-    }
-
-    @Override
-    protected ContentDomain doAssemble(Content entity) {
-        return domainFactory.createContentDomain().assemble(entity);
-    }
-
-    @Override
-    protected Content doExtract(ContentDomain domain) {
-        return domain.entity();
-    }
 
     @Override
     public ContentDomain updateContentDomain(ContentDomain domain) {
-        return update(domain);
+        contentMapper.updateByPrimaryKeySelective(domain.entity());
+        return domain;
     }
 
     @Override
@@ -66,19 +41,30 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
 
     @Override
     public ContentDomain loadActiveContentDomainById(Long id) {
-        ContentDomain domain = domainFactory.createContentDomain().setId(id);
-        return loadByNoNullPropertiesNotDelect(domain).get(0);
+        ContentDomain domain = domainFactory.createContentDomain().setId(id).setDeleted(false).setActive(true);
+        List<Content> contents = contentMapper.selectByNoNulProperties(domain.entity());
+        if(contents.isEmpty()){
+            return null;
+        }
+
+        return domain.assemble(contents.get(0));
     }
 
     @Override
     public List<ContentDomain> loadAllActiveContentDomain(ContentDomain contentDomain) {
-        return loadByNoNullPropertiesActiveAndNotDelect(contentDomain);
+        ContentDomain domain = domainFactory.createContentDomain().setDeleted(false).setActive(true);
+        List<Content> contents = contentMapper.selectByNoNulProperties(domain.entity());
+        return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
     public List<ContentDomain> loadAllFeedArticles() {
-        ContentDomain contentDomain = domainFactory.createContentDomain().setAllowFeed(true);
-        return loadByNoNullPropertiesActiveAndNotDelect(contentDomain);
+        ContentDomain contentDomain = domainFactory.createContentDomain().setAllowFeed(true).setDeleted(false).setActive(true);
+        return contentMapper
+                .selectByNoNulProperties(contentDomain.entity())
+                .stream()
+                .map(e->domainFactory.createContentDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -95,18 +81,28 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
 
     @Override
     public List<ContentDomain> loadAllNotActiveContentDomain(ContentDomain contentDomain) {
-        return loadByNoNullPropertiesNotActiveAndNotDelect(contentDomain);
+        contentDomain.setActive(false).setDeleted(false);
+        return contentMapper
+                .selectByNoNulProperties(contentDomain.entity())
+                .stream()
+                .map(e->domainFactory.createContentDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ContentDomain> loadAllContentDomain(ContentDomain contentDomain) {
-        return loadByNoNullPropertiesNotDelect(contentDomain);
+        contentDomain.setDeleted(false);
+        return contentMapper
+                .selectByNoNulProperties(contentDomain.entity())
+                .stream()
+                .map(e->domainFactory.createContentDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ContentDomain> loadAllActiveContentDomainByContentIdIn(List<Long> articleIds) {
         List<Content> contents = contentMapper.selectAllContentIn(articleIds, false, true);
-        return contents.stream().map(e->assemble(e)).collect(Collectors.toList());
+        return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -117,7 +113,7 @@ public class ContentRepositoryImpl extends AbstractBaseRepository<ContentDomain,
     @Override
     public List<ContentDomain> loadAllContentDomainCreatedBetween(String type, String status, Integer start, Integer end) {
         List<Content> contents = contentMapper.selectContentCreatedBetween(type,status,start,end);
-        return contents.stream().map(e->assemble(e)).collect(Collectors.toList());
+        return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override

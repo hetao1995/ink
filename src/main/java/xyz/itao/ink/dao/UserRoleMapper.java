@@ -36,4 +36,11 @@ public interface UserRoleMapper {
      */
     List<UserRole> selectByNoNulProperties(UserRole record);
 
+    /**
+     * 通过userid和roleid查找
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    UserRole selectByUserIdAndRoleId(Long userId, Long roleId);
 }

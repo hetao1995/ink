@@ -18,7 +18,7 @@ public class PatternUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isEmail(String email) {
-        String regex = "\\w+@\\w+\\.[a-z]+(\\.[a-z]+)?";
+        String regex = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
         return Pattern.matches(regex, email);
     }
 

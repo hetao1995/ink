@@ -1,5 +1,6 @@
 package xyz.itao.ink.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.Role;
 
@@ -37,4 +38,10 @@ public interface RoleMapper {
      */
     List<Role> selectByNoNulProperties(Role record);
 
+    /**
+     * 通过userId关联userrole查询role
+     * @param userId
+     * @return
+     */
+    List<Role> selectByUserId(@Param("userId") Long userId);
 }

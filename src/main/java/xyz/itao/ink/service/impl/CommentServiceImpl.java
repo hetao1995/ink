@@ -9,15 +9,12 @@ import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.UserDomain;
-import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.PageParam;
-import xyz.itao.ink.domain.params.UserParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.CommentRepository;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.DateUtils;
@@ -31,7 +28,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Service("commentService")
-public class CommentServiceImpl extends AbstractBaseService<CommentDomain, CommentVo> implements CommentService {
+public class CommentServiceImpl  implements CommentService {
     @Autowired
     UserService userService;
     @Autowired
@@ -40,31 +37,12 @@ public class CommentServiceImpl extends AbstractBaseService<CommentDomain, Comme
     UserRepository userRepository;
     @Autowired
     DomainFactory domainFactory;
-    @Override
-    protected CommentDomain doAssemble(CommentVo vo) {
-        return domainFactory.createCommentDomain().assemble(vo);
-    }
-
-    @Override
-    protected CommentVo doExtract(CommentDomain domain) {
-        return domain.vo();
-    }
-
-    @Override
-    protected CommentDomain doUpdate(CommentDomain domain) {
-        return commentRepository.updateCommentDomain(domain);
-    }
-
-    @Override
-    protected CommentDomain doSave(CommentDomain domain) {
-        return commentRepository.saveNewCommentDomain(domain);
-    }
 
     @Override
     public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllRootCommentDomain();
-        List<CommentVo> commentVos = commentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
+        List<CommentVo> commentVos = commentDomains.stream().map((d)->d.vo()).collect(Collectors.toList());
         PageInfo<CommentVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentVos);
         return pageInfo;

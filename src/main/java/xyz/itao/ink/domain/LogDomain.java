@@ -18,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class LogDomain extends BaseDomain {
+public class LogDomain  {
     
     LogDomain(LogRepository logRepository, UserRepository userRepository){
         this.logRepository = logRepository;

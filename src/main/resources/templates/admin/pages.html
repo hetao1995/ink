@@ -123,7 +123,7 @@
                 tale.alertConfirm({
                     title: '确定删除这个页面吗?', then: function () {
                         tale.post({
-                            url: '/admin/api/page/delete/' + id,
+                            url: '/admin/api/page/' + id,
                             success: function (result) {
                                 if (result && result.success) {
                                     tale.alertOk('页面删除成功');

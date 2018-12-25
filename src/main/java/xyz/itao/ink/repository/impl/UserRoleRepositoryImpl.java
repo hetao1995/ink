@@ -4,13 +4,10 @@ import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.UserRoleMapper;
-import xyz.itao.ink.domain.UserRoleDomain;
 import xyz.itao.ink.domain.entity.UserRole;
-import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.RoleRepository;
 import xyz.itao.ink.repository.UserRoleRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

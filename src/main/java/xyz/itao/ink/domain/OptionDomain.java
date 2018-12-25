@@ -19,7 +19,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class OptionDomain extends BaseDomain{
+public class OptionDomain {
 
     OptionDomain(OptionRepository optionRepository){
         this.optionRepository = optionRepository;

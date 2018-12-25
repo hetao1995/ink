@@ -13,12 +13,14 @@ import xyz.itao.ink.domain.entity.User;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
+import xyz.itao.ink.repository.RoleRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.repository.UserRoleRepository;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -27,17 +29,17 @@ import java.util.*;
  */
 @Data
 @Accessors(chain = true)
-public class UserDomain extends BaseDomain implements CredentialsContainer {
+public class UserDomain implements CredentialsContainer {
 
-    UserDomain(UserRepository userRepository, UserRoleRepository userRoleRepository){
-        this.userRoleRepository = userRoleRepository;
+    UserDomain(UserRepository userRepository, RoleRepository roleRepository){
+        this.roleRepository = roleRepository;
         this.userRepository = userRepository;
     }
     /**
      * 角色的repository，用于获取当前用户的角色
      */
-    private UserRoleRepository userRoleRepository;
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
     /**
      * id
      */
@@ -115,28 +117,40 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
 
 
 
+
     /**
      * 用户角色
      */
-    private List<String> roles;
+    private List<RoleDomain> roles;
 
     /**
      * 通过 RoleRepository 获取角色
      *
      * @return 所有角色数组
      */
-    private List<String> getRoles() {
-        // roles已经加载或者id未初始化，直接返回roles
-        if (roles != null || id == null || userRoleRepository == null) {
-            return roles;
+    public List<RoleDomain> getRoles() {
+        // id未初始化，直接返回空List
+        if (id == null) {
+            return Lists.newArrayList();
         }
-        List<UserRoleDomain> userRoleDomains = userRoleRepository.loadAllActiveUserRolesByUserId(id);
-        System.out.println("userroleDomain:"+userRoleDomains);
-        roles = Lists.newArrayList();
-        for (UserRoleDomain userRoleDomain : userRoleDomains) {
-            roles.add(userRoleDomain.getRole());
+        return roleRepository.loadAllActiveRoleDomainByUserId(id);
+    }
+    public UserDomain setRoles(List<RoleDomain> roles) {
+        this.roles = roles;
+        return this;
+    }
+    private UserDomain saveRoles(){
+        Set<RoleDomain> set = Sets.newHashSet(roles);
+        for(RoleDomain roleDomain : getRoles()){
+            if(set.remove(roleDomain)){
+                continue;
+            }
+            roleRepository.deleteUserRoleRelationshipByUserIdAndRoleId(id, roleDomain.getId());
         }
-        return roles;
+        for(RoleDomain roleDomain : set){
+            roleDomain.saveUserRole(id, this.updateBy);
+        }
+        return this;
     }
 
     /**
@@ -149,7 +163,8 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
 
     public Set<GrantedAuthority>  getAuthorities() {
         Set<GrantedAuthority> authorities = Sets.newHashSet();
-        for (String role : getRoles()) {
+        for (RoleDomain roleDomain : getRoles()) {
+            String role = roleDomain.getRole();
             Assert.isTrue(!role.startsWith("ROLE_"), () -> role
                     + " cannot start with ROLE_ (it is automatically added)");
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
@@ -236,6 +251,9 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
         }
         this.setUpdateTime(DateUtils.getNow());
         userRepository.updateUserDomain(this);
+        if(roles!=null){
+            this.saveRoles();
+        }
         return this;
     }
 
@@ -246,6 +264,9 @@ public class UserDomain extends BaseDomain implements CredentialsContainer {
         this.setDeleted(false);
         this.setSalt(BCrypt.gensalt());
         userRepository.saveNewUserDomain(this);
+        if(roles!=null){
+            this.saveRoles();
+        }
         return this;
     }
 }

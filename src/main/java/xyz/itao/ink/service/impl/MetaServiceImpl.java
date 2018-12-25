@@ -10,7 +10,6 @@ import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.UserDomain;
-import xyz.itao.ink.domain.entity.Meta;
 import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
@@ -18,7 +17,6 @@ import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.TipException;
 import xyz.itao.ink.repository.MetaRepository;
-import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.MetaService;
 
 import java.util.List;
@@ -32,31 +30,12 @@ import java.util.stream.Collectors;
  */
 @Service("metaService")
 //todo
-public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> implements MetaService {
+public class MetaServiceImpl implements MetaService {
 
     @Autowired
     MetaRepository metaRepository;
     @Autowired
     DomainFactory domainFactory;
-    @Override
-    protected MetaDomain doAssemble(MetaVo vo) {
-        return domainFactory.createMetaDomain().assemble(vo);
-    }
-
-    @Override
-    protected MetaVo doExtract(MetaDomain domain) {
-        return domain.vo();
-    }
-
-    @Override
-    protected MetaDomain doUpdate(MetaDomain domain) {
-        return metaRepository.updateMetaDomain(domain);
-    }
-
-    @Override
-    protected MetaDomain doSave(MetaDomain domain) {
-        return metaRepository.saveNewMetaDomain(domain);
-    }
 
     @Override
     public void saveMeta(String type, String name, Long mid, UserVo userVo) {
@@ -78,8 +57,7 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
                 .active(true)
                 .parentId(0L)
                 .build();
-        save(metaVo, userVo.getId());
-
+        domainFactory.createMetaDomain().assemble(metaVo).setCreateBy(userVo.getId()).setUpdateBy(userVo.getId()).save();
     }
 
     @Override
@@ -117,7 +95,7 @@ public class MetaServiceImpl extends AbstractBaseService<MetaDomain, MetaVo> imp
     @Override
     public List<MetaVo> getMetasByType(String type) {
         List<MetaDomain> metaDomains = metaRepository.loadMetaDomainsByType(type);
-        return metaDomains.stream().map(d->extract(d)).collect(Collectors.toList());
+        return metaDomains.stream().map(MetaDomain::vo).collect(Collectors.toList());
     }
 
     @Override

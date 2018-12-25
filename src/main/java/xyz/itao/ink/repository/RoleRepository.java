@@ -33,4 +33,25 @@ public interface RoleRepository {
      * @return 对应的RoleDomain对象
      */
     RoleDomain loadActiveRoleDomainByRole(String role);
+
+    /**
+     * 根据userid查找所有的RoleDomain
+     * @param id
+     * @return
+     */
+    List<RoleDomain> loadAllActiveRoleDomainByUserId(Long userId);
+
+    /**
+     * 通过userid和roleid删除userrole
+     * @param id
+     * @param id1
+     */
+    boolean deleteUserRoleRelationshipByUserIdAndRoleId(Long userId, Long roleId);
+
+    /**
+     * 存储userRole
+     * @param userRole
+     * @return
+     */
+    boolean saveNewUserRole(UserRole userRole);
 }

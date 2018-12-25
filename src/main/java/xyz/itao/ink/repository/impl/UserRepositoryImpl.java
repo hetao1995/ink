@@ -6,7 +6,6 @@ import xyz.itao.ink.dao.UserMapper;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.entity.User;
-import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.repository.UserRoleRepository;
 

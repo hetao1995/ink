@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
@@ -44,15 +45,14 @@ public class InstallController extends BaseController {
      */
     @GetMapping
     public String index(HttpServletRequest request) {
-        boolean existInstall   = Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"));
-        boolean allowReinstall = props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, false);
-        request.setAttribute("is_install", !allowReinstall && existInstall);
+        request.setAttribute("is_install", isRepeatInstall());
         return "install";
     }
 
 
     @ResponseBody
     @PostMapping
+    @SysLog("初始化站点")
     public RestResponse<?> doInstall(InstallParam installParam) {
         if (isRepeatInstall()) {
             return RestResponse.fail("请勿重复安装");
@@ -68,6 +68,6 @@ public class InstallController extends BaseController {
     }
 
     private boolean isRepeatInstall() {
-        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&&props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, true);
+        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&& !props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, false);
     }
 }

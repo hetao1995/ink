@@ -6,10 +6,13 @@ import xyz.itao.ink.dao.RoleMapper;
 import xyz.itao.ink.dao.UserRoleMapper;
 import xyz.itao.ink.domain.RoleDomain;
 import xyz.itao.ink.domain.entity.Role;
-import xyz.itao.ink.repository.AbstractBaseRepository;
+import xyz.itao.ink.domain.entity.UserRole;
+import xyz.itao.ink.exception.ExceptionEnum;
+import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.RoleRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author hetao
@@ -20,6 +23,8 @@ import java.util.List;
 public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role> implements RoleRepository {
     @Autowired
     RoleMapper roleMapper;
+    @Autowired
+    UserRoleMapper userRoleMapper;
 
 
     @Override
@@ -43,6 +48,27 @@ public class RoleRepositoryImpl extends AbstractBaseRepository<RoleDomain, Role>
                 .role(role)
                 .build();
         return loadByNoNullPropertiesActiveAndNotDelect(roleDomain).get(0);
+    }
+
+    @Override
+    public List<RoleDomain> loadAllActiveRoleDomainByUserId(Long userId) {
+        List<Role> roles = roleMapper.selectByUserId(userId);
+        return roles.stream().map(e->assemble(e)).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteUserRoleRelationshipByUserIdAndRoleId(Long userId, Long roleId) {
+        UserRole userRole = userRoleMapper.selectByUserIdAndRoleId(userId, roleId);
+        if(userRole == null){
+            throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
+        }
+        userRole.setDeleted(true);
+        return userRoleMapper.updateByPrimaryKeySelective(userRole);
+    }
+
+    @Override
+    public boolean saveNewUserRole(UserRole userRole) {
+        return userRoleMapper.insertSelective(userRole);
     }
 
     @Override

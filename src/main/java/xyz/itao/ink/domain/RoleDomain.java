@@ -2,9 +2,16 @@ package xyz.itao.ink.domain;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import xyz.itao.ink.domain.entity.Role;
+import xyz.itao.ink.domain.entity.UserRole;
+import xyz.itao.ink.repository.RoleRepository;
+import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author hetao
@@ -12,9 +19,14 @@ import java.util.Date;
  * @description
  */
 @Data
-@Builder
 @Accessors(chain = true)
-public class RoleDomain extends BaseDomain{
+public class RoleDomain{
+
+    RoleDomain(RoleRepository roleRepository){
+        this.roleRepository = roleRepository;
+    }
+
+    private RoleRepository roleRepository;
     /**
      * 角色id
      */
@@ -29,6 +41,7 @@ public class RoleDomain extends BaseDomain{
      * 是否处于激活状态
      */
     private Boolean active;
+
 
     /**
      * 角色名
@@ -59,4 +72,34 @@ public class RoleDomain extends BaseDomain{
      * 被谁创建
      */
     private Long createBy;
+
+    /**
+     * 根据userid插入userrole
+     * @param userId
+     * @param operator
+     */
+    public boolean saveUserRole(Long userId, Long operator) {
+        UserRole userRole = UserRole
+                .builder()
+                .id(IdUtils.nextId())
+                .createTime(DateUtils.getNow())
+                .updateTime(DateUtils.getNow())
+                .active(true)
+                .deleted(false)
+                .updateBy(operator)
+                .createBy(operator)
+                .userId(userId)
+                .roleId(this.id)
+                .build();
+        return roleRepository.saveNewUserRole(userRole);
+    }
+
+    public RoleDomain save() {
+        this.createTime = DateUtils.getNow();
+        this.updateTime = DateUtils.getNow();
+        this.deleted = false;
+        this.id = IdUtils.nextId();
+        roleRepository.saveNewRole(this);
+        return this;
+    }
 }

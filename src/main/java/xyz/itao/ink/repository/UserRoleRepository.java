@@ -1,9 +1,6 @@
 package xyz.itao.ink.repository;
 
 
-import xyz.itao.ink.domain.UserRoleDomain;
-import xyz.itao.ink.domain.entity.UserRole;
-
 import java.util.List;
 
 /**

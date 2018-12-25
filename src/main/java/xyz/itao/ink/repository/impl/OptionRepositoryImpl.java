@@ -1,13 +1,11 @@
 package xyz.itao.ink.repository.impl;
 
-import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.dao.OptionMapper;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.OptionDomain;
 import xyz.itao.ink.domain.entity.Option;
-import xyz.itao.ink.repository.AbstractBaseRepository;
 import xyz.itao.ink.repository.OptionRepository;
 
 import java.util.List;

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Data
 @Accessors(chain = true)
-public class ContentDomain extends BaseDomain{
+public class ContentDomain {
 
     ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory){
         this.userRepository = userRepository;
@@ -267,12 +267,12 @@ public class ContentDomain extends BaseDomain{
                         .setActive(true)
                         .setDeleted(false)
                         .setType(type)
-                        .setCreateBy(authorId)
-                        .setUpdateBy(authorId)
+                        .setCreateBy(this.updateBy)
+                        .setUpdateBy(this.updateBy)
                         .setParentId(0L);
                 metaDomain = metaDomain.save();
             }
-            metaDomain.saveContentMeta(id, authorId);
+            metaDomain.saveContentMeta(id, this.updateBy);
         }
     }
 

@@ -11,11 +11,9 @@ import xyz.itao.ink.domain.*;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.utils.PatternUtils;
 
@@ -29,7 +27,7 @@ import java.util.stream.Collectors;
  */
 @Service("contentService")
 @Slf4j
-public class ContentServiceImpl extends AbstractBaseService<ContentDomain, ContentVo> implements ContentService {
+public class ContentServiceImpl  implements ContentService {
     @Autowired
     private ContentRepository contentRepository;
     @Autowired
@@ -39,27 +37,6 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Autowired
     private MetaRepository metaRepository;
 
-    @Override
-    protected ContentDomain doAssemble(ContentVo vo) {
-        return domainFactory.createContentDomain().assemble(vo);
-
-    }
-
-    @Override
-    protected ContentVo doExtract(ContentDomain domain) {
-        return domain.vo();
-
-    }
-
-    @Override
-    protected ContentDomain doUpdate(ContentDomain domain) {
-        return domain.updateById();
-    }
-
-    @Override
-    protected ContentDomain doSave(ContentDomain domain) {
-        return domain.save();
-    }
 
     @Override
     public void deleteById(Long id, UserDomain userDomain) {
@@ -72,8 +49,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
 
     @Override
     public ContentVo loadContentVoById(Long id) {
-        ContentDomain contentDomain =  contentRepository.loadActiveContentDomainById(id);
-        return extract(contentDomain);
+        return contentRepository.loadActiveContentDomainById(id).vo();
     }
 
     @Override
@@ -97,7 +73,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
-        List<ContentVo> contentVos = contentDomains.stream().map(d->extract(d)).collect(Collectors.toList());
+        List<ContentVo> contentVos = contentDomains.stream().map(d->d.vo()).collect(Collectors.toList());
         PageInfo<ContentVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(contentVos);
         return pageInfo;
@@ -140,7 +116,7 @@ public class ContentServiceImpl extends AbstractBaseService<ContentDomain, Conte
     @Override
     public List<ContentVo> selectAllFeedArticles() {
         List<ContentDomain> contentDomains = contentRepository.loadAllFeedArticles();
-        return contentDomains.stream().map((d)->extract(d)).collect(Collectors.toList());
+        return contentDomains.stream().map(ContentDomain::vo).collect(Collectors.toList());
     }
 
     @Override

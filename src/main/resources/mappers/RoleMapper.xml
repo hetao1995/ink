@@ -41,7 +41,18 @@
       </if>
       </trim>
   </select>
-  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Role" >
+    <select id="selectByUserId" resultMap="BaseResultMap">
+      select
+      roles.*
+      from roles
+      join user_roles
+      on roles.id = user_roles.role_id
+      where user_roles.user_id = #{userId,jdbcType=BIGINT}
+      and user_roles.deleted = false
+      and roles.deleted = false
+      and roles.active = true
+    </select>
+    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Role" >
     insert into roles
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

@@ -20,7 +20,7 @@ import java.util.Date;
  */
 @Data
 @Accessors(chain = true)
-public class CommentDomain extends BaseDomain {
+public class CommentDomain {
 
     CommentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository){
         this.userRepository = userRepository;

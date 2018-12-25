@@ -10,25 +10,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.LinkDomain;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.LinkRepository;
-import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.LinkService;
 import xyz.itao.ink.utils.FileUtils;
 import xyz.itao.ink.utils.IdUtils;
 import xyz.itao.ink.utils.ImageUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,16 +36,18 @@ import java.util.stream.Collectors;
  */
 @Service("linkService")
 @Slf4j
-public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> implements LinkService {
+public class LinkServiceImpl implements LinkService {
 
     @Autowired
     LinkRepository linkRepository;
+    @Autowired
+    DomainFactory domainFactory;
 
     @Override
     public PageInfo<LinkVo> loadAllActiveLinkVo(PageParam pageParam) {
-        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize());
+        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
         List<LinkDomain> linkDomains = linkRepository.loadAllActiveLinkDomain();
-        List<LinkVo> linkVos = linkDomains.stream().map(d->extract(d)).collect(Collectors.toList());
+        List<LinkVo> linkVos = linkDomains.stream().map(LinkDomain::vo).collect(Collectors.toList());
         PageInfo<LinkVo> pageInfo =  new PageInfo<>(page);
         pageInfo.setList(linkVos);
         return pageInfo;
@@ -60,7 +59,7 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
         if(linkDomain==null){
             throw  new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
         }
-        delete(extract(linkDomain), userDomain.getId());
+        linkDomain.setUpdateBy(userDomain.getId()).deleteById();
     }
 
 
@@ -69,7 +68,6 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
         List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {
             String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
-            System.out.println("fname:"+fname);
             String fid = String.valueOf(IdUtils.nextId());
             String fkey = fid+"."+ FileUtils.fileExt(fname);
             LinkVo linkVo = LinkVo
@@ -91,7 +89,8 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
                     String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
                     ImageUtils.cutCenterImage(WebConstant.UP_DIR + fkey, WebConstant.UP_DIR +thumbnailFilePath, 270, 380);
                 }
-                res.add(save(linkVo, userDomain.getId()));
+                LinkDomain linkDomain = domainFactory.createLinkDomain().assemble(linkVo).setCreateBy(userDomain.getId()).setUpdateBy(userDomain.getId()).save();
+                res.add(linkDomain.vo());
             } catch (IOException e) {
                 log.debug("上传文件失败:{}", e);
                 e.printStackTrace();
@@ -103,39 +102,4 @@ public class LinkServiceImpl extends AbstractBaseService<LinkDomain, LinkVo> imp
         return res;
     }
 
-    @Override
-    protected LinkDomain doAssemble(LinkVo vo) {
-        return LinkDomain
-                .builder()
-                .id(vo.getId())
-                .active(vo.getActive())
-                .authorId(vo.getAuthorId())
-                .fileType(vo.getFileType())
-                .fileName(vo.getFileName())
-                .fileKey(vo.getFileKey())
-                .build();
-    }
-
-    @Override
-    protected LinkVo doExtract(LinkDomain domain) {
-        return LinkVo
-                .builder()
-                .id(domain.getId())
-                .active(domain.getActive())
-                .authorId(domain.getAuthorId())
-                .fileType(domain.getFileType())
-                .fileName(domain.getFileName())
-                .fileKey(domain.getFileKey())
-                .build();
-    }
-
-    @Override
-    protected LinkDomain doUpdate(LinkDomain domain) {
-        return linkRepository.updateLinkDomain(domain);
-    }
-
-    @Override
-    protected LinkDomain doSave(LinkDomain domain) {
-        return linkRepository.saveNewLinkDomain(domain);
-    }
 }

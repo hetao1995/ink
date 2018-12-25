@@ -100,6 +100,8 @@
       metas.deleted = false
         and
       metas.active = true
+        and
+      content_metas.deleted = false
     </select>
   <select id="selectContentByMeta" resultMap="ContentResultMap">
     select
@@ -110,7 +112,7 @@
     join metas
     on metas.id = content_metas.meta_id
     where
-    <trim  suffixOverrides="and" >
+    <trim >
       <if test="id != null" >
         metas.id = #{id,jdbcType=BIGINT} and
       </if>
@@ -139,6 +141,7 @@
         metas.sort = #{sort,jdbcType=INTEGER} and
       </if>
     </trim>
+        content_metas.deleted = false
   </select>
     <select id="countMetaByType" resultType="java.lang.Long">
       SELECT count(1)

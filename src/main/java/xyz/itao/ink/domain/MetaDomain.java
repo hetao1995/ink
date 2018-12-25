@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Data
 @Accessors(chain = true)
-public class MetaDomain extends BaseDomain {
+public class MetaDomain {
     
     MetaDomain(MetaRepository metaRepository){
         this.metaRepository = metaRepository;
@@ -199,7 +199,7 @@ public class MetaDomain extends BaseDomain {
         return metaRepository.updateMetaDomain(this);
     }
 
-    public boolean saveContentMeta(Long contentId, Long userId){
+    public boolean saveContentMeta(Long contentId, Long operator){
         ContentMeta contentMeta = ContentMeta
                 .builder()
                 .id(IdUtils.nextId())
@@ -207,8 +207,8 @@ public class MetaDomain extends BaseDomain {
                 .updateTime(DateUtils.getNow())
                 .active(true)
                 .deleted(false)
-                .updateBy(userId)
-                .createBy(userId)
+                .updateBy(operator)
+                .createBy(operator)
                 .contentId(contentId)
                 .metaId(id)
                 .build();

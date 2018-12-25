@@ -16,7 +16,7 @@
     <link th:href="${commons.themeUrl('/static/css/style.min.css')}" rel="stylesheet"/>
     
     <script th:if="${commons.allowCloudCdn()}" th:src="@{//cdn.bootcss.com/jquery/3.2.1/jquery.min.js}" ></script>
-    <script th:unless="${commons.allowCloudCdn()}" th:src="|${commons.cdnUrl()/plugins/jquery/3.2.1/jquery.min.js'|}" rel="stylesheet"></script>
+    <script th:unless="${commons.allowCloudCdn()}" th:src="|${commons.cdnUrl()}/plugins/jquery/3.2.1/jquery.min.js|" rel="stylesheet"></script>
     
     <script th:src="${commons.themeUrl('/static/js/highlight.min.js')}"></script>
     <script th:src="${commons.themeUrl('/static/js/instantclick.min.js')}"></script>

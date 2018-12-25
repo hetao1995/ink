@@ -174,8 +174,8 @@
                 tale.alertConfirm({
                     title: '确定删除该文章吗?',
                     then: function () {
-                        tale.post({
-                            url: '/admin/api/article/delete/' + id,
+                        tale.delete({
+                            url: '/admin/api/article/' + id,
                             success: function (result) {
                                 if (result && result.success) {
                                     tale.alertOk('文章删除成功');

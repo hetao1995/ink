@@ -86,9 +86,9 @@
                                              th:title="${attach.fileName}"/>
                                     </a>
                                     <div class="clearfix m-t-10">
-                <span class="attach-text" data-toggle="tooltip" data-placement="top"
-                      th:attr="data-original-title=${attach.fileName}"
-                      th:text="${commons.substr(attach.fileName, 12)}"></span>
+                                    <span class="attach-text" data-toggle="tooltip" data-placement="top"
+                                          th:attr="data-original-title=${attach.fileName}"
+                                          th:text="${commons.substr(attach.fileName, 12)}"></span>
                                     </div>
                                     <div class="clearfix">
                                         <button th:attr="url=${commons.attachUrl(attach.fileKey)}" type="button"
@@ -97,7 +97,7 @@
                                         </button>
                                         <button type="button"
                                                 class="btn btn-danger btn-sm waves-effect waves-light m-t-5"
-                                                th:onclick="'delAttach('+${attach.id}+');'">
+                                                th:onclick="|delAttach(`${attach.id}`);|">
                                             <i class="fa fa-trash-o"></i> <span>删除</span>
                                         </button>
                                     </div>
@@ -159,9 +159,8 @@
         tale.alertConfirm({
             title: '确定删除该附件吗?',
             then: function () {
-                tale.post({
-                    url: '/admin/attach/delete',
-                    data: {id: id},
+                tale.delete({
+                    url: '/admin/attach/'+id,
                     success: function (result) {
                         if (result && result.success) {
                             tale.alertOkAndReload('附件删除成功');

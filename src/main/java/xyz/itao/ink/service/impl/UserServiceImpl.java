@@ -2,9 +2,7 @@ package xyz.itao.ink.service.impl;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,11 +14,8 @@ import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.TipException;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.service.AbstractBaseService;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.DateUtils;
-import xyz.itao.ink.utils.IdUtils;
-import xyz.itao.ink.utils.PatternUtils;
 
 import java.util.Date;
 
@@ -30,7 +25,7 @@ import java.util.Date;
  * @description
  */
 @Service("userService")
-public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> implements UserService {
+public class UserServiceImpl  implements UserService {
     /**
      * 临时token，一个小时后过期
      */
@@ -76,7 +71,7 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
 
     @Override
     public String getJwtLoginToken(UserVo userVo, Boolean rememberMe) {
-        return getJwtLoginToken(assemble(userVo), rememberMe);
+        return getJwtLoginToken(domainFactory.createUserDomain().assemble(userVo), rememberMe);
     }
 
     @Override
@@ -86,22 +81,22 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
 
     @Override
     public UserVo loadUserVoById(Long id) {
-        return extract(userRepository.loadActiveUserDomainById(id));
+        return userRepository.loadActiveUserDomainById(id).vo();
     }
 
     @Override
     public UserVo loadUserVoByUsername(String username) {
-        return extract(userRepository.loadUserDomainByUsername(username));
+        return userRepository.loadUserDomainByUsername(username).vo();
     }
 
     @Override
     public UserVo loadUserVoByEmail(String email) {
-        return extract(userRepository.loadUserDomainByEmail(email));
+        return userRepository.loadUserDomainByEmail(email).vo();
     }
 
     @Override
     public UserVo loadUserVoByHomeUrl(String homeUrl) {
-        return extract(userRepository.loadUserDomainByHomeUrl(homeUrl));
+        return userRepository.loadUserDomainByHomeUrl(homeUrl).vo();
     }
 
     @Override
@@ -141,13 +136,13 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
         userVo.setPermanent(true);
         userVo.setPassword(passwordEncoder.encode(userVo.getPassword()));
         userVo.setSalt(BCrypt.gensalt());
-        return assemble(save(userVo, 0L));
+        return domainFactory.createUserDomain().assemble(userVo).setCreateBy(0L).setUpdateBy(0L).save();
     }
 
     @Override
     public void updateProfile(String screenName, String email, UserDomain userDomain) {
         UserVo userVo = UserVo.builder().displayName(screenName).email(email).build();
-        CommonValidator.valid(userVo, true);
+        CommonValidator.valid(userVo, false);
         if(screenName!=null) {
             userDomain.setDisplayName(screenName);
         }
@@ -172,29 +167,4 @@ public class UserServiceImpl extends AbstractBaseService<UserDomain, UserVo> imp
                 .updateById();
     }
 
-    @Override
-    public UserVo extractVo(UserDomain userDomain) {
-        return extract(userDomain);
-    }
-
-    @Override
-    protected UserDomain doAssemble(UserVo vo) {
-        return domainFactory.createUserDomain().assemble(vo);
-
-    }
-
-    @Override
-    protected UserVo doExtract(UserDomain domain) {
-        return domain.vo();
-    }
-
-    @Override
-    protected UserDomain doUpdate(UserDomain domain) {
-        return userRepository.updateUserDomain(domain);
-    }
-
-    @Override
-    protected UserDomain doSave(UserDomain domain) {
-        return userRepository.saveNewUserDomain(domain);
-    }
 }

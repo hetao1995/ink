@@ -59,6 +59,9 @@ public class DomainFactory {
     @Autowired
     @Lazy
     private UserRoleRepository userRoleRepository;
+    @Autowired
+    @Lazy
+    private RoleRepository roleRepository;
 
     /**
      * 生成ContentDoamin
@@ -113,6 +116,14 @@ public class DomainFactory {
     }
 
     public UserDomain createUserDomain(){
-        return new UserDomain(userRepository, userRoleRepository);
+        return new UserDomain(userRepository, roleRepository);
+    }
+
+    public RoleDomain createRoleDomain(){
+        return new RoleDomain(roleRepository);
+    }
+
+    public LinkDomain createLinkDomain(){
+        return new LinkDomain(linkRepository);
     }
 }
