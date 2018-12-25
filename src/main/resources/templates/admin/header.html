@@ -7,19 +7,33 @@
     <meta content="Tao" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <link rel="shortcut icon" th:href="@{/admin/images/favicon.png}"/>
-    <link th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
-    <link th:href="@{//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css}" rel="stylesheet"/>
-    <link th:href="@{//cdn.bootcss.com/limonte-sweetalert2/6.4.1/sweetalert2.min.css}" rel="stylesheet"/>
-    <link th:href="${commons.cdnURL()}+'/plugins/vue-loading/vue-loading.min.css'" rel="stylesheet"  type="text/css">
-    <link th:href="${commons.cdnURL()}+'/css/style.min.css'" rel="stylesheet" type="text/css"/>
 
-
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
-    <script src="https://cdn.bootcss.com/respond.js/1.4.0/respond.min.js"></script>
-    <![endif]-->
+    <th:block th:if="${commons.allowCloudCdn()}">
+        <link th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}" rel="stylesheet">
+        <link th:href="@{//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css}" rel="stylesheet">
+        <link th:href="@{//cdn.bootcss.com/limonte-sweetalert2/6.4.1/sweetalert2.min.css}" rel="stylesheet">
+        <link th:href="|${commons.cdnUrl()}/plugins/vue-loading/vue-loading.min.css|" rel="stylesheet">
+        <link th:href="|${commons.cdnUrl()}/css/style.min.css|" rel="stylesheet" >
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.min.js"></script>
+        <script src="https://cdn.bootcss.com/respond.js/1.4.0/respond.min.js"></script>
+        <![endif]-->
+    </th:block>
+    <th:block th:unless="${commons.allowCloudCdn()}">
+        <link th:href="|${commons.cdnUrl()}/plugins/bootstrap/3.3.7/css/bootstrap.min.css|" rel="stylesheet" />
+        <link th:href="|${commons.cdnUrl()}/plugins/font-awesome/4.7.0/css/font-awesome.min.css|" rel="stylesheet">
+        <link th:href="|${commons.cdnUrl()}/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.css|" rel="stylesheet">
+        <link th:href="|${commons.cdnUrl()}/plugins/vue-loading/vue-loading.min.css|" rel="stylesheet">
+        <link th:href="|${commons.cdnUrl()}/css/style.min.css|" rel="stylesheet" >
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script th:src="|${commons.cdnUrl()}/plugins/html5shiv/3.7.0/html5shiv.js|"></script>
+        <script th:src="|${commons.cdnUrl()}/plugins/respond.js/1.3.0/respond.min.js|"></script>
+        <![endif]-->
+    </th:block>
 </head>
 <div th:fragment="header-body">
     <div class="topbar">
@@ -51,7 +65,7 @@
                                aria-expanded="true"><img th:src="${commons.gravatar(login_user.email)}" alt="user-img"
                                                          class="img-circle"/> </a>
                             <ul class="dropdown-menu">
-                                <li><a th:href="@{${commons.site_url()}}" target="_blank"><i class="fa fa-eye" aria-hidden="true"></i> 预览站点</a></li>
+                                <li><a th:href="@{${commons.siteUrl()}}" target="_blank"><i class="fa fa-eye" aria-hidden="true"></i> 预览站点</a></li>
                                 <li><a th:href="@{/admin/profile}"><i class="fa fa-sun-o"></i> 个人设置</a></li>
                                 <li><a th:href="@{/logout}"><i class="fa fa-sign-out"></i> 注销</a></li>
                             </ul>

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='文件管理',active='attach', has_sub=''">
 <header th:replace="admin/header::headerFragment(${title},${active},${has_sub})"></header>
-<link href="//cdn.bootcss.com/dropzone/4.3.0/min/dropzone.min.css" rel="stylesheet"/>
+<link th:if="${commons.allowCloudCdn()}" th:href="@{//cdn.bootcss.com/dropzone/4.3.0/min/dropzone.min.css}" rel="stylesheet"/>
+<link th:unless="${commons.allowCloudCdn()}" th:href="|${commons.cdnUrl()}/plugins/dropzone/4.3.0/min/dropzone.min.css|" rel="stylesheet">
+
 <style>
     #dropzone {
         margin-bottom: 3rem;
@@ -66,7 +68,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 attach">
-                        <th:block th:if="${commons.is_empty(attaches)}">
+                        <th:block th:if="${commons.isEmpty(attaches)}">
                             <div class="row">
                                 <div class="col-md-4 text-center">
                                     <div class="alert alert-warning">
@@ -75,12 +77,12 @@
                                 </div>
                             </div>
                         </th:block>
-                        <th:block th:unless="${commons.is_empty(attaches)}">
+                        <th:block th:unless="${commons.isEmpty(attaches)}">
                             <th:block th:each="attach : ${attaches.list}">
                                 <div class="col-md-2 text-center m-t-10">
-                                    <a th:href="${commons.attachURL(attach.fileKey)}" target="_blank">
+                                    <a th:href="${commons.attachUrl(attach.fileKey)}" target="_blank">
                                         <img class="attach-img"
-                                             th:src="@{${attach.fileType == 'image'}?${commons.attachURL(attach.fileKey)}: '/admin/images/attach.png'}"
+                                             th:src="@{${attach.fileType == 'image'}?${commons.attachUrl(attach.fileKey)}: '/admin/images/attach.png'}"
                                              th:title="${attach.fileName}"/>
                                     </a>
                                     <div class="clearfix m-t-10">
@@ -89,7 +91,7 @@
                       th:text="${commons.substr(attach.fileName, 12)}"></span>
                                     </div>
                                     <div class="clearfix">
-                                        <button th:attr="url=${commons.attachURL(attach.fileKey)}" type="button"
+                                        <button th:attr="url=${commons.attachUrl(attach.fileKey)}" type="button"
                                                 class="btn btn-warning btn-sm waves-effect waves-light m-t-5 copy">
                                             <i class="fa fa-copy"></i> <span>复制</span>
                                         </button>
@@ -111,8 +113,15 @@
     </div>
 </div>
 <div th:replace="admin/footer :: footer"></div>
-<script src="//cdn.bootcss.com/dropzone/4.3.0/min/dropzone.min.js"></script>
-<script src="//cdn.bootcss.com/clipboard.js/1.6.0/clipboard.min.js"></script>
+<th:block th:if="${commons.allowCloudCdn()}">
+    <script src="//cdn.bootcss.com/dropzone/4.3.0/min/dropzone.min.js"></script>
+    <script src="//cdn.bootcss.com/clipboard.js/1.6.0/clipboard.min.js"></script>
+</th:block>
+<th:block th:unless="${commons.allowCloudCdn()}">
+    <script th:src="|${cdnURL()}/plugins/dropzone/4.3.0/min/dropzone.min.js|"></script>
+    <script th:src="|${cdnURL()}/plugins/clipboard.js/1.6.0/clipboard.min.js|"></script>
+</th:block>
+
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
     var tale = new $.tale();
