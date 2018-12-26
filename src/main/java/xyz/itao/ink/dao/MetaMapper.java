@@ -53,9 +53,10 @@ public interface MetaMapper {
     /**
      * 通过
      * @param meta
+     * @param status
      * @return
      */
-    List<Content> selectContentByMeta(Meta meta);
+    List<Content> selectContentByMetaAndStatus(@Param("meta") Meta meta, @Param("status") String status);
 
     /**
      * 统计所有该type的meta数目

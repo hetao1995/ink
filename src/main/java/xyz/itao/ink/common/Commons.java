@@ -413,6 +413,7 @@ public final class Commons {
         ArticleParam articleParam = ArticleParam.builder().orderBy("created desc").build();
         articleParam.setPageSize(limit);
         articleParam.setPageNum(1);
+        articleParam.setType(TypeConst.ARTICLE);
         return contentService.loadAllActivePublishContentDomain(articleParam).getList();
     }
 

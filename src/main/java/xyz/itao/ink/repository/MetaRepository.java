@@ -62,7 +62,7 @@ public interface MetaRepository {
      * @param id
      * @return
      */
-    List<ContentDomain> loadAllActiveContentDomainByMetaIdAndStatus(Long id, String type);
+    List<ContentDomain> loadAllActiveContentDomainByMetaIdAndStatus(Long id, String status);
 
     /**
      * 存储contentMeta对应关系

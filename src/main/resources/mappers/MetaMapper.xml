@@ -103,7 +103,7 @@
         and
       content_metas.deleted = false
     </select>
-  <select id="selectContentByMeta" resultMap="ContentResultMap">
+  <select id="selectContentByMetaAndStatus" resultMap="ContentResultMap">
     select
     contents.*
     from contents
@@ -113,33 +113,34 @@
     on metas.id = content_metas.meta_id
     where
     <trim >
-      <if test="id != null" >
-        metas.id = #{id,jdbcType=BIGINT} and
+      <if test="meta.id != null" >
+        metas.id = #{meta.id,jdbcType=BIGINT} and
       </if>
-      <if test="deleted != null" >
-        metas.deleted = #{deleted,jdbcType=BIT} and
+      <if test="meta.deleted != null" >
+        metas.deleted = #{meta.deleted,jdbcType=BIT} and
       </if>
-      <if test="active != null" >
-        metas.active = #{active,jdbcType=BIT} and
+      <if test="meta.active != null" >
+        metas.active = #{meta.active,jdbcType=BIT} and
       </if>
-      <if test="parentId != null" >
-        metas.parent_id = #{parentId,jdbcType=BIGINT} and
+      <if test="meta.parentId != null" >
+        metas.parent_id = #{meta.parentId,jdbcType=BIGINT} and
       </if>
-      <if test="name != null" >
-        metas.name = #{name,jdbcType=VARCHAR} and
+      <if test="meta.name != null" >
+        metas.name = #{meta.name,jdbcType=VARCHAR} and
       </if>
-      <if test="slug != null" >
-        metas.slug = #{slug,jdbcType=VARCHAR} and
+      <if test="meta.slug != null" >
+        metas.slug = #{meta.slug,jdbcType=VARCHAR} and
       </if>
-      <if test="type != null" >
-        metas.type = #{type,jdbcType=VARCHAR} and
+      <if test="meta.type != null" >
+        metas.type = #{meta.type,jdbcType=VARCHAR} and
       </if>
-      <if test="detail != null" >
-        metas.detail = #{detail,jdbcType=VARCHAR} and
+      <if test="meta.detail != null" >
+        metas.detail = #{meta.detail,jdbcType=VARCHAR} and
       </if>
-      <if test="sort != null" >
-        metas.sort = #{sort,jdbcType=INTEGER} and
+      <if test="meta.sort != null" >
+        metas.sort = #{meta.sort,jdbcType=INTEGER} and
       </if>
+        contents.status = #{status,jdbcType=INTEGER} and
     </trim>
         content_metas.deleted = false
   </select>

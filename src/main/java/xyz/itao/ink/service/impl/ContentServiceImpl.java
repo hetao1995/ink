@@ -54,11 +54,6 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     public ContentVo publishNewContent(ContentVo contentVo, UserDomain userDomain) {
-        if(TypeConst.PUBLISH.equals(contentVo.getStatus())){
-            contentVo.setActive(true);
-        }else{
-            contentVo.setActive(false);
-        }
         return domainFactory
                 .createContentDomain()
                 .assemble(contentVo)
@@ -101,11 +96,6 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     public void updateContentVo(ContentVo contentVo, UserDomain userDomain) {
-        if(TypeConst.PUBLISH.equals(contentVo.getStatus())){
-            contentVo.setActive(true);
-        }else{
-            contentVo.setActive(false);
-        }
         domainFactory
                 .createContentDomain()
                 .assemble(contentVo)

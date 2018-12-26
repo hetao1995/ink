@@ -290,6 +290,7 @@ public class ContentDomain {
         this.updateTime = DateUtils.getNow();
         this.id = IdUtils.nextId();
         this.deleted = false;
+        this.active = true;
         this.saveTags(this.tags);
         this.saveCategories(this.categories);
         contentRepository.saveNewContentDomain(this);
@@ -436,8 +437,8 @@ public class ContentDomain {
                 .modified(this.getModified())
                 .thumbImg(this.getThumbImg())
                 .fmtType(this.getFmtType())
-                .categories(this.getCategories())
-                .tags(this.getTags())
+                .categories(this.categories)
+                .tags(this.tags)
                 .build();
     }
 

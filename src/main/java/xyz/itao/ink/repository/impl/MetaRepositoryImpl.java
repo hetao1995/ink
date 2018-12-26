@@ -74,7 +74,6 @@ public class MetaRepositoryImpl  implements MetaRepository {
 
     @Override
     public List<Long> loadAllContentIdByMetaId(Long id) {
-        // todo 先从缓存中查找
         return contentMetaMapper.selectAllContentIdByMetaId(id);
     }
 
@@ -107,9 +106,9 @@ public class MetaRepositoryImpl  implements MetaRepository {
 
 
     @Override
-    public List<ContentDomain> loadAllActiveContentDomainByMetaIdAndStatus(Long id, String type) {
-        Meta meta = Meta.builder().id(id).active(true).deleted(false).type(type).build();
-        List<Content> contents = metaMapper.selectContentByMeta(meta);
+    public List<ContentDomain> loadAllActiveContentDomainByMetaIdAndStatus(Long id, String status) {
+        Meta meta = Meta.builder().id(id).active(true).deleted(false).build();
+        List<Content> contents = metaMapper.selectContentByMetaAndStatus(meta, status);
         return contents.stream().map(content -> domainFactory.createContentDomain().assemble(content)).collect(Collectors.toList());
     }
 

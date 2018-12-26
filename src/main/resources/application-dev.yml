@@ -40,6 +40,10 @@ spring:
     session:
       store-type: none
 
+    devtools:
+      restart:
+        enabled: true
+
 
 
 mybatis:
