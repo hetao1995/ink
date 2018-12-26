@@ -1,6 +1,8 @@
 package xyz.itao.ink.domain;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Queues;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -14,6 +16,8 @@ import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * @author hetao
@@ -203,5 +207,25 @@ public class CommentDomain {
     public CommentDomain deleteById() {
         this.deleted = true;
         return updateById();
+    }
+
+    public List<CommentDomain> getChildren(){
+        if(this.parentId != 0){
+            return Lists.newArrayList();
+        }
+        return dfs(id);
+    }
+    private List<CommentDomain> dfs(Long pid){
+        List<CommentDomain> children = commentRepository.loadAllActiveCommentDomainByParentId(pid);
+        List<CommentDomain> res = Lists.newArrayList();
+        for(CommentDomain child : children){
+            res.add(child);
+            res.addAll(dfs(child.id));
+        }
+        return res;
+    }
+
+    public CommentDomain getParent(){
+        return commentRepository.loadCommentDomainById(this.parentId);
     }
 }

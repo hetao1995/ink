@@ -41,7 +41,7 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
-        List<CommentDomain> commentDomains = commentRepository.loadAllRootCommentDomain();
+        List<CommentDomain> commentDomains = commentRepository.loadAllCommentDomain();
         List<CommentVo> commentVos = commentDomains.stream().map((d)->d.vo()).collect(Collectors.toList());
         PageInfo<CommentVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentVos);
@@ -97,7 +97,8 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     public PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain) {
         Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
-        List<CommentDomain> commentDomains = contentDomain.getComments();
+
+        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomainByContentId(contentDomain.getId());
         PageInfo<CommentDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentDomains);
         return pageInfo;

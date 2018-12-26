@@ -30,4 +30,8 @@ public interface CommentRepository {
     List<CommentDomain> loadAllRootCommentDomain();
 
     Long countCommentNum(boolean active);
+
+    List<CommentDomain> loadAllActiveCommentDomainByParentId(Long pid);
+
+    List<CommentDomain> loadAllCommentDomain();
 }

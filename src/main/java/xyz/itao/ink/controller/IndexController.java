@@ -14,6 +14,7 @@ import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ArchiveDomain;
+import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.PageParam;
@@ -84,21 +85,23 @@ public class IndexController extends BaseController{
      * @return
      */
     @GetMapping(value = {"/search/{keyword}", "/search/{keyword}.html"})
-    public String search(HttpServletRequest request, @PathVariable String keyword, @RequestParam(defaultValue = "12") int limit) {
-        return this.search(request, keyword, 1, limit);
+    public String search(HttpServletRequest request, @PathVariable String keyword, @RequestParam(defaultValue = "12") Integer pageSize) {
+        return this.search(request, keyword, 1, pageSize);
     }
 
     @GetMapping(value = {"/search", "/search.html"})
-    public String search(HttpServletRequest request, @RequestParam(defaultValue = "12") int limit) {
+    public String search(HttpServletRequest request, @RequestParam(defaultValue = "12") int pageSize) {
 //        String keyword = request.query("s").orElse("");
-        return this.search(request, "", 1, limit);
+        return this.search(request, "", 1, pageSize);
     }
 
-    @GetMapping(value = {"/search/{keyword}/{page}", "search/{keyword}/{page}.html"})
-    public String search(HttpServletRequest request,  @PathVariable String keyword,  @PathVariable int page, @RequestParam(defaultValue = "12") int limit) {
+    @GetMapping(value = {"/search/{keyword}/{pageNum}", "search/{keyword}/{pageNum}.html"})
+    public String search(HttpServletRequest request,  @PathVariable String keyword,  @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
 
-        page = page < 0 || page > WebConstant.MAX_PAGE ? 1 : page;
-        PageInfo<ContentVo> contentVoPageInfo = contentService.searchArticles(keyword, page, limit);
+        ArticleParam articleParam = ArticleParam.builder().type(TypeConst.ARTICLE).build();
+        articleParam.setPageSize(pageSize);
+        articleParam.setPageNum(pageNum);
+        PageInfo<ContentDomain> contentDomainPageInfo = contentService.searchArticles(keyword, articleParam);
 //        Page<Contents> articles = select().from(Contents.class)
 //                .where(Contents::getType, Types.ARTICLE)
 //                .and(Contents::getStatus, Types.PUBLISH)
@@ -106,7 +109,7 @@ public class IndexController extends BaseController{
 //                .order(Contents::getCreated, OrderBy.DESC)
 //                .page(page, limit);
 
-        request.setAttribute("articles", contentVoPageInfo);
+        request.setAttribute("articles", contentDomainPageInfo);
         request.setAttribute("type", "搜索");
         request.setAttribute("keyword", keyword);
         request.setAttribute("page_prefix", "/search/" + keyword);

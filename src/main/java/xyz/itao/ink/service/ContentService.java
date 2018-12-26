@@ -95,4 +95,11 @@ public interface ContentService {
      */
     PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam);
 
+    /**
+     * 搜索所有的文章
+     * @param keyword 关键词
+     * @param articleParam 文章param
+     * @return
+     */
+    PageInfo<ContentDomain> searchArticles(String keyword, ArticleParam articleParam);
 }

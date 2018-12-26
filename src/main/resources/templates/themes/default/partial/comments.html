@@ -15,7 +15,7 @@
                 </span>
                         <form method="post" id="comment-form" class="comment-form" role="form"
                               onsubmit="return TaleComment.subComment();">
-                            <input type="hidden" name="id" id="id"/>
+                            <input type="hidden" name="parentId" id="parentId"/>
                             <input type="hidden" name="contentId" id="contentId" th:value="${article.id}"/>
                             <!--<input type="hidden" name="_csrf_token" th:value="${_csrf_token}"/>-->
                             <th:block th:unless="${login_user}">
@@ -30,7 +30,7 @@
                                        placeholder="网址 (http://)"
                                 />
                             </th:block>
-                            <textarea name="content" id="textarea" class="form-control" placeholder="以上信息可以为空,评论不能为空哦!"
+                            <textarea name="content" id="textarea" class="form-control" placeholder="基佬，留下你的评论!"
                                       required="required" minlength="5"
                                       maxlength="2000"></textarea>
                             <button type="submit" class="submit" id="misubmit">提交</button>
@@ -53,9 +53,9 @@
                                                      th:title="${comment.author.displayName}"
                                                      width="80" height="80"/>
                                                 <span class="comment-author">
-                                    <a href="##" rel="external nofollow"
-                                       th:text="${comment.author.displayName}"></a>
-                                </span>
+                                                    <a th:href="${comment.author.homeUrl}" rel="external nofollow"
+                                                       th:text="${comment.author.displayName}"></a>
+                                                </span>
                                             </div>
                                             <div class="comment-content">
                                                 <span class="comment-author-at"></span>
@@ -64,10 +64,44 @@
                                             <div class="comment-meta">
                                                 <time class="comment-time" th:text="${commons.fmtDate(comment.createTime)}"></time>
                                                 <span class="comment-reply">
-                                </span>
+                                                    <a rel="nofollow" th:onclick="|TaleComment.reply(`${comment.id}`);|">回复</a>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
+                                    <th:block th:unless="${comment.children.isEmpty()}">
+                                        <div class="comment-children">
+                                            <ol class="comment-list">
+                                                <th:block th:each="child: ${comment.children}">
+                                                    <li th:id="|li-comment-${child.id}|"
+                                                        class="comment-body comment-child comment-level-odd comment-odd">
+                                                        <div th:id="|comment-${child.id}|">
+                                                            <div class="comment-view">
+                                                                <div class="comment-header">
+                                                                    <img class="avatar" th:src="|${commons.gravatar(child.author.email)}?s=80&r=G&d=|" th:title="${child.author.displayName}" width="80" height="80">
+                                                                    <span class="comment-author comment-by-author">
+                                                                        <a th:href="${child.author.homeUrl}" target="_blank" rel="external nofollow" th:text="${child.author.displayName}"></a>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="comment-content">
+                                                                    <span class="comment-author-at" >
+                                                                        <a th:href="|#comment-${child.parentId}|" th:text="|@ ${child.parent.author.displayName}|"></a>
+                                                                    </span>
+                                                                    <p th:utext="${commons.article(child.content)}"></p>
+                                                                </div>
+                                                                <div class="comment-meta">
+                                                                    <time class="comment-time" th:text="${commons.fmtDate(child.createTime)}"></time>
+                                                                    <span class="comment-reply">
+                                                                        <a rel="nofollow" th:onclick="|TaleComment.reply(`${child.id}`);|">回复</a>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </th:block>
+                                            </ol>
+                                        </div>
+                                    </th:block>
                                 </li>
                             </th:block>
                         </ol>

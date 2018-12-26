@@ -183,4 +183,13 @@ public class ContentServiceImpl  implements ContentService {
         pageInfo.setList(archiveDomains);
         return pageInfo;
     }
+
+    @Override
+    public PageInfo<ContentDomain> searchArticles(String keyword, ArticleParam articleParam) {
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
+        List<ContentDomain> contentDomains = searchContentDomain(keyword, articleParam.getType());
+        PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
+        pageInfo.setList(contentDomains);
+        return pageInfo;
+    }
 }

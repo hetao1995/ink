@@ -40,7 +40,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
 
     @Override
     public List<CommentDomain> loadAllActiveRootCommentDomain(CommentDomain domain) {
-        Comment comment = domainFactory.createCommentDomain().setParentId(0L).setActive(true).entity();
+        Comment comment = domain.setParentId(0L).setActive(true).setDeleted(false).entity();
         List<Comment> comments = commentMapper.selectByNoNulProperties(comment);
         return comments.stream().map(e->domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
     }
@@ -76,7 +76,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
 
     @Override
     public CommentDomain loadCommentDomainById(Long id) {
-        CommentDomain domain = domainFactory.createCommentDomain().setDeleted(false);
+        CommentDomain domain = domainFactory.createCommentDomain().setDeleted(false).setId(id);
         List<Comment> comments = commentMapper.selectByNoNulProperties(domain.entity());
         if(comments.isEmpty()){
             return null;
@@ -95,6 +95,26 @@ public class CommentRepositoryImpl  implements CommentRepository {
     @Override
     public Long countCommentNum(boolean active) {
         return commentMapper.countCommentByActive(active);
+    }
+
+    @Override
+    public List<CommentDomain> loadAllActiveCommentDomainByParentId(Long pid) {
+        CommentDomain domain = domainFactory.createCommentDomain().setParentId(pid).setDeleted(false).setActive(true);
+        return commentMapper
+                .selectByNoNulProperties(domain.entity())
+                .stream()
+                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<CommentDomain> loadAllCommentDomain() {
+        return commentMapper
+                .selectByNoNulProperties(domainFactory.createCommentDomain().setDeleted(false).entity())
+                .stream()
+                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 
 }
