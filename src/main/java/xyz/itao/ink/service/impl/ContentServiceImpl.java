@@ -90,8 +90,8 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    public PageInfo<ContentDomain> loadAllActiveContentDomain(ArticleParam articleParam) {
-        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true);
+    public PageInfo<ContentDomain> loadAllActivePublishContentDomain(ArticleParam articleParam) {
+        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true).setStatus(TypeConst.PUBLISH);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
@@ -125,9 +125,9 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    public PageInfo<ContentDomain> getArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize) {
+    public PageInfo<ContentDomain> getPublishArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize) {
         Page page = PageHelper.startPage(pageNum, pageSize);
-        List<ContentDomain> contentDomains = metaDomain.getActiveArticles();
+        List<ContentDomain> contentDomains = metaDomain.getActivePublishArticles();
         PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(contentDomains);
         return pageInfo;
@@ -135,14 +135,8 @@ public class ContentServiceImpl  implements ContentService {
 
 
     @Override
-    public PageInfo<ContentVo> searchArticles(String keyword, int page, int limit) {
-        //todo 通过elasticsearch搜索文章
-        return null;
-    }
-
-    @Override
-    public ContentDomain loadActiveContentDomainByIdOrSlug(String idOrSlug) {
-        ContentDomain contentDomain = domainFactory.createContentDomain();
+    public ContentDomain loadActivePublishContentDomainByIdOrSlug(String idOrSlug) {
+        ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(TypeConst.PUBLISH);
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));
         }else{
@@ -163,7 +157,7 @@ public class ContentServiceImpl  implements ContentService {
         }else{
             contentDomain.setSlug(idOrSlug);
         }
-        List<ContentDomain> contentDomains = contentRepository.loadAllNotActiveContentDomain(contentDomain);
+        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain(contentDomain);
         if(contentDomains.isEmpty()){
             return null;
         }
@@ -187,9 +181,10 @@ public class ContentServiceImpl  implements ContentService {
     @Override
     public PageInfo<ContentDomain> searchArticles(String keyword, ArticleParam articleParam) {
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
-        List<ContentDomain> contentDomains = searchContentDomain(keyword, articleParam.getType());
+        List<ContentDomain> contentDomains = contentRepository.searchContentDomain(keyword, articleParam.getType());
         PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(contentDomains);
         return pageInfo;
     }
+
 }

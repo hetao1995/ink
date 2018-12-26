@@ -101,7 +101,7 @@ public class MetaServiceImpl implements MetaService {
     @Override
     public PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaId(id);
+        List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaIdAndStatus(id, TypeConst.PUBLISH);
         return new PageInfo<>(contentDomains);
     }
 

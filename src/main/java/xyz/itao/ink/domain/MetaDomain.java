@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.entity.ContentMeta;
 import xyz.itao.ink.domain.entity.Meta;
 import xyz.itao.ink.domain.params.MetaParam;
@@ -103,8 +104,8 @@ public class MetaDomain {
         return metaRepository.countArticlesByMetaId(id);
     }
 
-    public List<ContentDomain> getActiveArticles(){
-        return metaRepository.loadAllActiveContentDomainByMetaId(id);
+    public List<ContentDomain> getActivePublishArticles(){
+        return metaRepository.loadAllActiveContentDomainByMetaIdAndStatus(id, TypeConst.PUBLISH);
     }
 
     public  MetaDomain assemble(Meta entity){

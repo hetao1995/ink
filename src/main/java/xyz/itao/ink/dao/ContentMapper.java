@@ -72,4 +72,13 @@ public interface ContentMapper {
      * @return
      */
     Long countContentByTypeAndActive(@Param("type") String type, @Param("active") boolean active);
+
+    /**
+     * 全文索引搜索contents
+     * @param keyword
+     * @param type
+     * @param active
+     * @return
+     */
+    List<Content> searchContents(@Param("keyword") String keyword, @Param("type") String type, @Param("active") boolean active);
 }

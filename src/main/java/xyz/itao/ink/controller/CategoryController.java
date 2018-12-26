@@ -11,7 +11,6 @@ import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.vo.ContentVo;
-import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.MetaService;
 
@@ -67,7 +66,7 @@ public class CategoryController extends BaseController {
             return this.render_404();
         }
 
-        PageInfo<ContentDomain> contentsPage = contentService.getArticlesByMeta(metaDomain, pageNum, pageSize);
+        PageInfo<ContentDomain> contentsPage = contentService.getPublishArticlesByMeta(metaDomain, pageNum, pageSize);
 
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaDomain);
@@ -114,7 +113,7 @@ public class CategoryController extends BaseController {
             return this.render_404();
         }
 
-        PageInfo<ContentDomain> contentsPage = contentService.getArticlesByMeta(metaDomain, pageNum, pageSize);
+        PageInfo<ContentDomain> contentsPage = contentService.getPublishArticlesByMeta(metaDomain, pageNum, pageSize);
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaDomain);
         request.setAttribute("type", "标签");

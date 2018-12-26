@@ -57,7 +57,7 @@ public interface ContentService {
      * @param articleParam
      * @return
      */
-    PageInfo<ContentDomain> loadAllActiveContentDomain(ArticleParam articleParam);
+    PageInfo<ContentDomain> loadAllActivePublishContentDomain(ArticleParam articleParam);
 
     /**
      * 修改文章
@@ -74,11 +74,10 @@ public interface ContentService {
 
     void hit(ContentDomain contentDomain);
 
-    PageInfo<ContentDomain> getArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize);
+    PageInfo<ContentDomain> getPublishArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize);
 
-    PageInfo<ContentVo> searchArticles(String keyword, int page, int limit);
 
-    ContentDomain loadActiveContentDomainByIdOrSlug(String idOrSlug);
+    ContentDomain loadActivePublishContentDomainByIdOrSlug(String idOrSlug);
 
     /**
      * 通过id或者slug查找草稿

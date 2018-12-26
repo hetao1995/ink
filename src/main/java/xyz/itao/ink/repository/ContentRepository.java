@@ -99,4 +99,12 @@ public interface ContentRepository {
      * @return
      */
     ContentDomain loadContentDomainById(Long id);
+
+    /**
+     * 采用搜索关键字
+     * @param keyword
+     * @param type
+     * @return
+     */
+    List<ContentDomain> searchContentDomain(String keyword, String type);
 }

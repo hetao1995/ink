@@ -57,6 +57,21 @@ public class CommentRepositoryImpl  implements CommentRepository {
         return loadAllActiveRootCommentDomain(domainFactory.createCommentDomain().setContentId(contentId));
     }
 
+    @Override
+    public List<CommentDomain> loadAllRootCommentDomainByContentId(Long contentId) {
+        return loadAllRootCommentDomain(domainFactory.createCommentDomain().setContentId(contentId));
+    }
+
+    @Override
+    public List<CommentDomain> loadAllCommentDomainByContentId(Long contentId) {
+        CommentDomain domain = domainFactory.createCommentDomain().setContentId(contentId).setDeleted(false);
+        return commentMapper
+                .selectByNoNulProperties(domain.entity())
+                .stream()
+                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public boolean deleteCommentDomainById(Long id, Long userId) {
@@ -112,6 +127,15 @@ public class CommentRepositoryImpl  implements CommentRepository {
     public List<CommentDomain> loadAllCommentDomain() {
         return commentMapper
                 .selectByNoNulProperties(domainFactory.createCommentDomain().setDeleted(false).entity())
+                .stream()
+                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentDomain> loadAllActiveCommentDomain() {
+        return commentMapper
+                .selectByNoNulProperties(domainFactory.createCommentDomain().setDeleted(false).setActive(true).entity())
                 .stream()
                 .map(e->domainFactory.createCommentDomain().assemble(e))
                 .collect(Collectors.toList());

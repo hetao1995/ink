@@ -14,15 +14,10 @@ import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.UserDomain;
-import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.params.CommentParam;
-import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.CommentVo;
-import xyz.itao.ink.domain.vo.ContentVo;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.ContentService;
-import xyz.itao.ink.service.SiteService;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.InkUtils;
 
@@ -55,7 +50,7 @@ public class ArticleController extends BaseController {
      */
     @GetMapping(value = {"/{idOrSlug}", "/{idOrSlug}.html"})
     public String page(@PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize, HttpServletRequest request) {
-        ContentDomain contentDomain = contentService.loadActiveContentDomainByIdOrSlug(idOrSlug);
+        ContentDomain contentDomain = contentService.loadActivePublishContentDomainByIdOrSlug(idOrSlug);
         if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus())) {
             return this.render_404();
         }
@@ -70,7 +65,7 @@ public class ArticleController extends BaseController {
     @GetMapping(value = {"/article/{idOrSlug}", "/article/{idOrSlug}.html"})
     public String post(HttpServletRequest request, @PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize) {
 
-        ContentDomain contentDomain = contentService.loadActiveContentDomainByIdOrSlug(idOrSlug);
+        ContentDomain contentDomain = contentService.loadActivePublishContentDomainByIdOrSlug(idOrSlug);
         if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus()) || !TypeConst.ARTICLE.equals(contentDomain.getType())) {
             return this.render_404();
         }
@@ -151,11 +146,13 @@ public class ArticleController extends BaseController {
      */
     private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentDomain contentDomain) {
         request.setAttribute("article", contentDomain);
-        ArticleParam articleParam = ArticleParam.builder().build();
-        articleParam.setPageNum(pageNum);
-        articleParam.setPageSize(pageSize);
-        articleParam.setOrderBy("create_time desc");
-        PageInfo<CommentDomain> commentPage = commentService.loadAllActiveCommentDomain(articleParam, contentDomain);
+        CommentParam commentParam = CommentParam.builder().build();
+        commentParam.setPageSize(pageNum);
+        commentParam.setPageSize(pageSize);
+        commentParam.setContentId(contentDomain.getId());
+        commentParam.setOrderBy("create_time desc");
+
+        PageInfo<CommentDomain> commentPage = commentService.loadAllActiveApprovedCommentDomain(commentParam);
         request.setAttribute("cp", pageNum);
         request.setAttribute("comments", commentPage);
     }

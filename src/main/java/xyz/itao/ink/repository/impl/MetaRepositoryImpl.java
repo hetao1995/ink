@@ -107,8 +107,8 @@ public class MetaRepositoryImpl  implements MetaRepository {
 
 
     @Override
-    public List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id) {
-        Meta meta = Meta.builder().id(id).active(true).deleted(false).build();
+    public List<ContentDomain> loadAllActiveContentDomainByMetaIdAndStatus(Long id, String type) {
+        Meta meta = Meta.builder().id(id).active(true).deleted(false).type(type).build();
         List<Content> contents = metaMapper.selectContentByMeta(meta);
         return contents.stream().map(content -> domainFactory.createContentDomain().assemble(content)).collect(Collectors.toList());
     }

@@ -215,9 +215,6 @@ public class AdminApiController {
     @SysLog("修改评论状态")
     @PutMapping("/comment/{id}")
     public RestResponse<?> updateStatus( @RequestBody CommentVo commentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
-        if(WebConstant.COMMENT_APPROVED.equals(commentVo.getStatus())){
-            commentVo.setActive(true);
-        }
         commentVo.setId(id);
         commentService.updateCommentVo(commentVo, userDomain);
         siteService.cleanCache(TypeConst.SYS_STATISTICS);

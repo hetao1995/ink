@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
@@ -41,7 +42,7 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
-        List<CommentDomain> commentDomains = commentRepository.loadAllCommentDomain();
+        List<CommentDomain> commentDomains = commentRepository.loadAllActiveCommentDomain();
         List<CommentVo> commentVos = commentDomains.stream().map((d)->d.vo()).collect(Collectors.toList());
         PageInfo<CommentVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentVos);
@@ -105,11 +106,12 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
-    public PageInfo<CommentDomain> loadAllActiveCommentDomain(CommentParam commentParam) {
+    public PageInfo<CommentDomain> loadAllActiveApprovedCommentDomain(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
-        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain(domainFactory.createCommentDomain().assemble(commentParam));
+        List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain(domainFactory.createCommentDomain().assemble(commentParam).setStatus(WebConstant.COMMENT_APPROVED));
         PageInfo<CommentDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentDomains);
         return pageInfo;
     }
+
 }

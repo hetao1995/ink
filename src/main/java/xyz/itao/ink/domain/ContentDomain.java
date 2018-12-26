@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.util.set.Sets;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.domain.params.ArticleParam;
@@ -277,6 +278,9 @@ public class ContentDomain {
     }
 
     private String getMetas(String type){
+        if(id==null){
+            return null;
+        }
         List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
         return StringUtils.join(metaDomains.stream().map(MetaDomain::getName).collect(Collectors.toList()), ",");
     }
@@ -286,10 +290,11 @@ public class ContentDomain {
         this.updateTime = DateUtils.getNow();
         this.id = IdUtils.nextId();
         this.deleted = false;
-        ContentDomain contentDomain = contentRepository.saveNewContentDomain(this);
-        contentDomain.saveTags(this.tags);
-        contentDomain.saveCategories(this.categories);
-        return contentDomain;
+        this.saveTags(this.tags);
+        this.saveCategories(this.categories);
+        contentRepository.saveNewContentDomain(this);
+
+        return this;
     }
 
     public ContentDomain updateById(){
@@ -297,17 +302,33 @@ public class ContentDomain {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         this.updateTime = DateUtils.getNow();
-        ContentDomain contentDomain = contentRepository.updateContentDomain(this);
-        contentDomain.saveTags(this.tags);
-        contentDomain.saveCategories(this.categories);
-        return contentDomain;
+        this.saveTags(this.tags);
+        this.saveCategories(this.categories);
+        // 根据status修改commentzhuangt
+        if(TypeConst.DRAFT.equals(this.getStatus())){
+            for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
+                commentDomain.setActive(false).updateById();
+            }
+        }else if (TypeConst.PUBLISH.equals(this.getStatus())){
+            for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
+                commentDomain.setActive(true).updateById();
+            }
+        }
+        contentRepository.updateContentDomain(this);
+
+        return this;
     }
+
 
     public ContentDomain deleteById(){
         if(id==null){
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         this.setDeleted(true);
+        // 将删除的文章所有comment都设置为false
+        for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
+            commentDomain.setActive(false).updateById();
+        }
         return this.updateById();
     }
 
@@ -415,6 +436,8 @@ public class ContentDomain {
                 .modified(this.getModified())
                 .thumbImg(this.getThumbImg())
                 .fmtType(this.getFmtType())
+                .categories(this.getCategories())
+                .tags(this.getTags())
                 .build();
     }
 

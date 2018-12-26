@@ -134,8 +134,27 @@
       and
             deleted = false
     </select>
+  <select id="searchContents" resultType="xyz.itao.ink.domain.entity.Content">
+    select
+    <include refid="Base_Column_List"/>,
+           match(title) against (#{keyword}) as title_score,
+           match(categories) against(#{keyword}) as categories_score,
+           match(tags) against(#{keyword}) as tags_score,
+           match(content) against(#{keyword}) as content_score
+    from contents
+    where
+          type = #{type,jdbcType=VARCHAR}
+    and
+          deleted = false
+    and
+          active = #{active,jdbcType=BIT}
+    and
+          match(title, categories, tags, content) against(#{keyword} IN NATURAL LANGUAGE MODE )
+    order by
+          title_score desc, categories_score desc, tags_score desc, content_score desc
+  </select>
 
-    <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
+  <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
     insert into contents
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

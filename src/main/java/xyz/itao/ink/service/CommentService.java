@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.params.UserParam;
@@ -60,5 +61,5 @@ public interface CommentService {
      * @param commentParam
      * @return
      */
-    PageInfo<CommentDomain> loadAllActiveCommentDomain(CommentParam commentParam);
+    PageInfo<CommentDomain> loadAllActiveApprovedCommentDomain(CommentParam commentParam);
 }

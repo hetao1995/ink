@@ -1,5 +1,6 @@
 package xyz.itao.ink.repository;
 
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.entity.ContentMeta;
@@ -61,7 +62,7 @@ public interface MetaRepository {
      * @param id
      * @return
      */
-    List<ContentDomain> loadAllActiveContentDomainByMetaId(Long id);
+    List<ContentDomain> loadAllActiveContentDomainByMetaIdAndStatus(Long id, String type);
 
     /**
      * 存储contentMeta对应关系

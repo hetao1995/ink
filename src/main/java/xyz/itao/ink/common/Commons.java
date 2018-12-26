@@ -413,7 +413,7 @@ public final class Commons {
         ArticleParam articleParam = ArticleParam.builder().orderBy("created desc").build();
         articleParam.setPageSize(limit);
         articleParam.setPageNum(1);
-        return contentService.loadAllActiveContentDomain(articleParam).getList();
+        return contentService.loadAllActivePublishContentDomain(articleParam).getList();
     }
 
     /**
@@ -429,7 +429,7 @@ public final class Commons {
         CommentParam commentParam = CommentParam.builder().orderBy("create_time desc").build();
         commentParam.setPageNum(1);
         commentParam.setPageSize(limit);
-        return commentService.loadAllActiveCommentDomain(commentParam).getList();
+        return commentService.loadAllActiveApprovedCommentDomain(commentParam).getList();
     }
 
 

@@ -1,23 +1,18 @@
 package xyz.itao.ink.controller;
 
 import com.github.pagehelper.PageInfo;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ArchiveDomain;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.params.ArticleParam;
-import xyz.itao.ink.domain.entity.Archive;
-import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.SiteService;
@@ -26,7 +21,6 @@ import xyz.itao.ink.utils.InkUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 /**
@@ -74,7 +68,7 @@ public class IndexController extends BaseController{
         articleParam.setType(TypeConst.ARTICLE);
         articleParam.setStatus(TypeConst.PUBLISH);
         articleParam.setOrderBy("created desc");
-        request.setAttribute("articles", contentService.loadAllActiveContentDomain(articleParam));
+        request.setAttribute("articles", contentService.loadAllActivePublishContentDomain(articleParam));
         request.setAttribute("is_home", true);
         return this.render("index");
     }

@@ -196,6 +196,7 @@ public class CommentDomain {
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
         this.id = IdUtils.nextId();
+        this.active = true;
         this.deleted = false;
         return commentRepository.saveNewCommentDomain(this);
     }

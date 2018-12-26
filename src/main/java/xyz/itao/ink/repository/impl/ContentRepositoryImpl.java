@@ -2,6 +2,7 @@ package xyz.itao.ink.repository.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.dao.ContentMapper;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
@@ -52,14 +53,14 @@ public class ContentRepositoryImpl implements ContentRepository {
 
     @Override
     public List<ContentDomain> loadAllActiveContentDomain(ContentDomain contentDomain) {
-        ContentDomain domain = domainFactory.createContentDomain().setDeleted(false).setActive(true);
-        List<Content> contents = contentMapper.selectByNoNulProperties(domain.entity());
+        contentDomain.setDeleted(false).setActive(true);
+        List<Content> contents = contentMapper.selectByNoNulProperties(contentDomain.entity());
         return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
     public List<ContentDomain> loadAllFeedArticles() {
-        ContentDomain contentDomain = domainFactory.createContentDomain().setAllowFeed(true).setDeleted(false).setActive(true);
+        ContentDomain contentDomain = domainFactory.createContentDomain().setAllowFeed(true).setDeleted(false).setActive(true).setStatus(TypeConst.PUBLISH);
         return contentMapper
                 .selectByNoNulProperties(contentDomain.entity())
                 .stream()
@@ -124,5 +125,14 @@ public class ContentRepositoryImpl implements ContentRepository {
     @Override
     public ContentDomain loadContentDomainById(Long id) {
         return domainFactory.createContentDomain().assemble(contentMapper.selectByPrimaryKey(id));
+    }
+
+    @Override
+    public List<ContentDomain> searchContentDomain(String keyword, String type) {
+        List<Content> contents = contentMapper.searchContents(keyword, type, true);
+        return contents
+                .stream()
+                .map(e->domainFactory.createContentDomain().assemble(e))
+                .collect(Collectors.toList());
     }
 }

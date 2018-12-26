@@ -19,7 +19,11 @@ public interface CommentRepository {
 
     List<CommentDomain> loadAllRootCommentDomain(CommentDomain domain);
 
-    List<CommentDomain> loadAllActiveRootCommentDomainByContentId(Long id);
+    List<CommentDomain> loadAllActiveRootCommentDomainByContentId(Long contentId);
+
+    List<CommentDomain> loadAllRootCommentDomainByContentId(Long contentId);
+
+    List<CommentDomain> loadAllCommentDomainByContentId(Long id);
 
     boolean deleteCommentDomainById(Long id, Long userId);
 
@@ -34,4 +38,6 @@ public interface CommentRepository {
     List<CommentDomain> loadAllActiveCommentDomainByParentId(Long pid);
 
     List<CommentDomain> loadAllCommentDomain();
+
+    List<CommentDomain> loadAllActiveCommentDomain();
 }
