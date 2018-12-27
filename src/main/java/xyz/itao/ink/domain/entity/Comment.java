@@ -33,7 +33,7 @@ public class Comment {
     private Boolean active;
 
     /**
-     * 品论所属内容
+     * 评论所属内容
      */
     private Long contentId;
 
