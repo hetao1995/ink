@@ -73,7 +73,7 @@ public class CommentServiceImpl  implements CommentService {
         if(userDomain == null){
             UserVo userVo = UserVo
                     .builder()
-                    .username(commentVo.getAuthor())
+                    .username(null)
                     .email(commentVo.getMail())
                     .homeUrl(commentVo.getUrl())
                     .displayName(commentVo.getAuthor())
