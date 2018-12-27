@@ -7,22 +7,22 @@
         <div class="post-lists-body">
             <div class="post-list-item" th:each="article: ${articles.list}">
                 <div class="post-list-item-container">
-                    <div class="item-thumb bg-deepgrey" th:style="|background-image:url(${commons.showThumb(article)});|"></div>
-                    <a th:href="${commons.permalink(article)}" >
+                    <div class="item-thumb bg-deepgrey" th:style="|background-image:url(${article.thumbUrl});|"></div>
+                    <a th:href="${article.permalink}" >
                         <div class="item-desc">
-                            <p th:utext="${commons.intro(article.content, 75)}"></p>
+                            <p th:utext="${article.introHtml}"></p>
                         </div>
                     </a>
                     <div class="item-slant reverse-slant &lt; bg-deepgrey"></div>
                     <div class="item-slant"></div>
                     <div class="item-label">
-                        <div class="item-title"><a th:href="${commons.permalink(article)}"
+                        <div class="item-title"><a th:href="${article.permalink}"
                                                    th:text="${article.title}"></a>
                         </div>
                         <div class="item-meta clearfix">
-                            <div th:class="'item-meta-ico '+ ${commons.showIcon(article.id)}"
-                                 th:style="'background: url('+@{/user/img/bg-ico.png}+');no-repeat;background-size: 40px auto;' "></div>
-                            <div class="item-meta-cat" th:utext="${commons.showCategories(article.categories)}">
+                            <div th:class="'item-meta-ico '+ ${article.icon}"
+                                 th:style="'background: url('+@{/themes/default/static/img/bg-ico.png}+');no-repeat;background-size: 40px auto;' "></div>
+                            <div class="item-meta-cat" th:utext="${article.categoriesHtml}">
                             </div>
                         </div>
                     </div>

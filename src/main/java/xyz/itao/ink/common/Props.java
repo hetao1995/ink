@@ -1,23 +1,26 @@
 package xyz.itao.ink.common;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import xyz.itao.ink.domain.DomainFactory;
-import xyz.itao.ink.domain.OptionDomain;
-import xyz.itao.ink.domain.UserDomain;
+import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
+import xyz.itao.ink.domain.*;
+import xyz.itao.ink.domain.params.ArticleParam;
+import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.OptionRepository;
+import xyz.itao.ink.service.CommentService;
+import xyz.itao.ink.service.ContentService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @author hetao
@@ -32,6 +35,10 @@ public class Props {
     OptionRepository optionRepository;
     @Autowired
     DomainFactory domainFactory;
+    @Autowired
+    ContentService contentService;
+    @Autowired
+    CommentService commentService;
 
     @CachePut(key = "#name")
     public String  set(String name, Object value, UserDomain userDomain){
@@ -82,7 +89,9 @@ public class Props {
             }
         }
     }
-    // 把一个字符串的第一个字母大写
+    /**
+     * 把一个字符串的第一个字母大写
+     */
     private String getMethodName(String fildeName){
         byte[] items = fildeName.getBytes();
         items[0] = (byte) ((char) items[0] - 'a' + 'A');
@@ -131,4 +140,85 @@ public class Props {
     public Optional<Double> getDouble(String name){
         return this.get(name).map(Double::parseDouble);
     }
+
+    /**
+     * 拼接网站url
+     * @param sub
+     * @return
+     */
+    public String getSiteUrl(String sub){
+        final String prefix = "http";
+        String siteUrl = this.get(WebConstant.OPTION_SITE_URL, null);
+        String protocol = this.get(WebConstant.OPTION_DEFAULT_PROTOCOL, "http://");
+        if(StringUtils.isNotBlank(siteUrl) && !siteUrl.startsWith(prefix)){
+            siteUrl = protocol+siteUrl;
+        }
+        return  siteUrl+ sub;
+    }
+
+    public String getSiteUrl(){
+        return this.getSiteUrl("");
+    }
+
+    /**
+     * 网站标题
+     */
+    public  String getSiteTitle() {
+        return this.get(WebConstant.OPTION_SITE_TITLE, "ink");
+    }
+
+    public String getSiteKeywords(){
+        return this.get(WebConstant.OPTION_SITE_KEYWORDS, "ink, blog");
+    }
+
+    public String getSiteDescription(){
+        return this.get(WebConstant.OPTION_SITE_DESCRIPTION, "a beautiful blog worth to try");
+    }
+
+    public String getCdnUrl(String sub){
+        return this.get(WebConstant.OPTION_CDN_URL, "/admin") + sub;
+    }
+
+    public  String getCdnUrl(){
+        return this.getCdnUrl("");
+    }
+
+    public Boolean getAllowCloudCdn(){
+        return this.getBoolean(WebConstant.OPTION_ALLOW_CLOUD_CDN, false);
+    }
+
+    public String getTheme(){
+        return this.get(WebConstant.OPTION_SITE_THEME, "default");
+    }
+
+    public String getThemeUrl(String sub){
+        return this.getSiteUrl(WebConstant.THEME_URI+"/"+this.getTheme() + sub);
+    }
+
+    /**
+     * 最新文章
+     * @return
+     */
+    public List<ContentDomain> getRecentArticles() {
+        int limit = this.getInt(WebConstant.OPTION_RECENT_ARTICLE_LEN, 8);
+        ArticleParam articleParam = ArticleParam.builder().orderBy("created desc").build();
+        articleParam.setPageSize(limit);
+        articleParam.setPageNum(1);
+        articleParam.setType(TypeConst.ARTICLE);
+        return contentService.loadAllActivePublishContentDomain(articleParam).getList();
+    }
+
+    /**
+     * 最新评论
+     *
+     * @return
+     */
+    public  List<CommentDomain> getRecentComments() {
+        int limit = this.getInt(WebConstant.OPTION_RECENT_COMMENT_LEN, 8);
+        CommentParam commentParam = CommentParam.builder().orderBy("create_time desc").build();
+        commentParam.setPageNum(1);
+        commentParam.setPageSize(limit);
+        return commentService.loadAllActiveApprovedCommentDomain(commentParam).getList();
+    }
+
 }

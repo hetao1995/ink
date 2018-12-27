@@ -15,6 +15,7 @@ import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.RoleRepository;
 import xyz.itao.ink.repository.UserRepository;
+import xyz.itao.ink.utils.CryptoUtils;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 
@@ -266,5 +267,18 @@ public class UserDomain implements CredentialsContainer {
             this.saveRoles();
         }
         return this;
+    }
+
+    /**
+     * @return 返回github头像地址
+     */
+    public String getGravatar(){
+        final String avatarUrl = "https://github.com/identicons/";
+        String email = this.getEmail();
+        if(email==null){
+            email = "default";
+        }
+        String hash = CryptoUtils.MD5encode(email.trim().toLowerCase());
+        return avatarUrl + hash + ".png";
     }
 }

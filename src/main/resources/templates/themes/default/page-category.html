@@ -7,12 +7,12 @@
         <div class="common-title">
             <th:block th:text="${type}"/> : <th:block th:text="${keyword}"/>
         </div>
-        <th:block th:if="${commons.isEmpty(articles)}">
+        <th:block th:if="${articles.size==0}">
             <div>
                 <p>抱歉，还没有相关文章.</p>
             </div>
         </th:block>
-        <th:block th:unless="${commons.isEmpty(articles)}">
+        <th:block th:unless="${articles.size==0}">
             <div class="post-lists">
                 <div class="post-lists-body">
                     <th:block th:each="article : ${articles.list}">
@@ -20,12 +20,12 @@
                             <div class="post-list-item-container ">
                                 <div class="item-label ">
                                     <div class="item-title">
-                                        <a th:href="${commons.permalink(article)}" th:text="${article.title}"></a>
+                                        <a th:href="${article.permalink}" th:text="${article.title}"></a>
                                     </div>
                                     <div class="item-meta clearfix">
-                                        <div th:class="'item-meta-ico '+${commons.showIcon(article.id)} "
-                                             th:style="'background: url('+@{/user/img/bg-ico.png}+') no-repeat;background-size: 40px auto;'"></div>
-                                        <div class="item-meta-date">发布于 <th:block th:text="${commons.fmtDate(article.created)}"/></div>
+                                        <div th:class="'item-meta-ico '+${article.icon} "
+                                             th:style="'background: url('+@{/themes/default/static/img/bg-ico.png}+') no-repeat;background-size: 40px auto;'"></div>
+                                        <div class="item-meta-date">发布于 <th:block th:text="${article.createdFmt}"/></div>
                                     </div>
                                 </div>
                             </div>

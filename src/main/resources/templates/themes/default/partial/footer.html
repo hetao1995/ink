@@ -12,8 +12,8 @@
             <div class="meta-item meta-copyright">
                 <div class="meta-copyright-info">
                     <div class="info-text">
-                        <a th:href="${commons.siteUrl()}"  class="info-logo">
-                            <img th:src="@{/user/img/logo.png}" th:alt="${commons.siteTitle()}"/>
+                        <a th:href="${props.siteUrl}"  class="info-logo">
+                            <img th:src="@{/themes/default/static/img/logo.png}" th:alt="${props.siteTitle}"/>
                         </a>
                         <div class="info-text">
                             <p>一生有所追求.</p>
@@ -26,17 +26,17 @@
             </div>
             <div class="meta-item meta-posts">
                 <h3 class="meta-title">最新文章</h3>
-                <th:block th:each="article : ${commons.recentArticles(8)}">
+                <th:block th:each="article : ${props.recentArticles}">
                     <li>
-                        <a th:href="${commons.permalink(article)}" th:text="${article.title}"></a>
+                        <a th:href="${article.permalink}" th:text="${article.title}"></a>
                     </li>
                 </th:block>
             </div>
             <div class="meta-item meta-comments">
                 <h3 class="meta-title">最新评论</h3>
-                <th:block th:each="comm: ${commons.recentComments(8)}">
+                <th:block th:each="comm: ${props.recentComments}">
                     <li>
-                        <a th:href="|${commons.siteUrl('/article/')}${comm.contentId}#comment-${comm.id}|" th:text="|${comm.author.displayName}：${comm.content}|"></a>
+                        <a th:href="|${props.getSiteUrl('/article/')}${comm.contentId}#comment-${comm.id}|" th:text="|${comm.author.displayName}：${comm.content}|"></a>
                     </li>
                 </th:block>
 
@@ -142,15 +142,15 @@
         /*]]>*/
     </script>
 </th:block>
-<th:block th:if="${commons.allowCloudCdn()}">
+<th:block th:if="${props.allowCloudCdn}">
     <script th:src="@{//cdn.bootcss.com/headroom/0.9.1/headroom.min.js}"></script>
     <script th:src="@{//cdn.bootcss.com/highlight.js/9.9.0/highlight.min.js}"></script>
     <script th:src="@{//cdn.bootcss.com/instantclick/3.0.1/instantclick.min.js}"></script>
 </th:block>
-<th:block th:unless="${commons.allowCloudCdn()}">
-    <script th:src="${commons.themeUrl('/static/js/headroom.min.js')}"></script>
-    <script th:src="${commons.themeUrl('/static/js/instantclick.min.js')}"></script>
-    <script th:src="${commons.themeUrl('/static/js/highlight.min.js')}"></script>
+<th:block th:unless="${props.allowCloudCdn}">
+    <script th:src="${props.getThemeUrl('/static/js/headroom.min.js')}"></script>
+    <script th:src="${props.getThemeUrl('/static/js/instantclick.min.js')}"></script>
+    <script th:src="${props.getThemeUrl('/static/js/highlight.min.js')}"></script>
 </th:block>
 
 <script th:inline="javascript">

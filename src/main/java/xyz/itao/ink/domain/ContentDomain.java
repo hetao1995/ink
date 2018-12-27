@@ -1,14 +1,12 @@
 package xyz.itao.ink.domain;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.common.util.set.Sets;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.entity.Content;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
@@ -18,13 +16,18 @@ import xyz.itao.ink.repository.CommentRepository;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
+import xyz.itao.ink.utils.CryptoUtils;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
+import xyz.itao.ink.utils.InkUtils;
 
-import java.util.Arrays;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -36,12 +39,13 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 public class ContentDomain {
 
-    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory){
+    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory, Props props){
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
         this.metaRepository =  metaRepository;
         this.domainFactory = domainFactory;
+        this.props = props;
     }
     /**
      * UserRepository 对象
@@ -61,6 +65,8 @@ public class ContentDomain {
     private DomainFactory domainFactory;
 
     private ContentRepository contentRepository;
+
+    private Props props;
     /**
      * 内容的id
      */
@@ -465,5 +471,118 @@ public class ContentDomain {
                 .tags(this.getTags())
                 .categories(this.getCategories())
                 .build();
+    }
+
+    /**
+     * 获取content转化后的html
+     * @return html文本
+     */
+    public String getContentHtml(){
+        String content = StringUtils.replaceFirst(this.getContent(),WebConstant.INTRODUCTION_SPLITTER, "\n");
+        if(WebConstant.FMT_HTML.equals(this.getFmtType())){
+            return content;
+        }else if(WebConstant.FMT_MARK_DOWN.equals(this.getFmtType())){
+            return InkUtils.mdToHtml(content);
+        }
+        return content;
+    }
+
+    /**
+     * 获取摘要html
+     * @return introduction
+     */
+    public String getIntroHtml(){
+        String intro = StringUtils.substring(this.getContent(), 0, props.getInt(WebConstant.OPTION_INTRO_MAX_LEN, 75));
+        int pos = StringUtils.indexOf(intro, WebConstant.INTRODUCTION_SPLITTER);
+        intro =  pos<0 ? intro : StringUtils.substring(intro, 0, pos);
+        if(WebConstant.FMT_HTML.equals(this.getFmtType())){
+            return intro;
+        }else if(WebConstant.FMT_MARK_DOWN.equals(this.getFmtType())){
+            return InkUtils.mdToHtml(intro);
+        }
+        return intro;
+    }
+
+    /**
+     * @return 返回文章永久链接
+     */
+    public String getPermalink(){
+        return props.getSiteUrl(WebConstant.ARTICLE_URI + "/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
+    }
+
+
+    private  final Pattern SRC_PATTERN = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
+    /**
+     * @return 显示文章缩略图，顺序为：thumbImag -> 文章图 -> 随机获取
+     */
+    public String getThumbUrl(){
+        final String imgPrefix = "<img";
+        if(StringUtils.isNotBlank(this.getThumbImg())){
+            return  "/upload/thumbnail_"+this.getThumbImg().trim();
+        }else if (this.getContentHtml().contains(imgPrefix)){
+            String img = "";
+            final String regExImg = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
+            Pattern pImage = Pattern.compile(regExImg, Pattern.CASE_INSENSITIVE);
+            Matcher mImage = pImage.matcher(content);
+            if (mImage.find()) {
+                img = img + "," + mImage.group();
+                // 匹配src
+                Matcher m = SRC_PATTERN.matcher(img);
+                if (m.find()) {
+                    return m.group(1);
+                }
+            }
+        }
+        Long size = this.getId() % props.getInt(WebConstant.OPTION_RAND_THUMB_LEN, 20) + 1;
+        return "/themes/"+props.get(WebConstant.OPTION_SITE_THEME, "default")+"/static/img/rand/" + size + ".jpg";
+    }
+
+    private final static String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
+
+    /**
+     * @return 文章图标
+     */
+    public String getIcon(){
+        return ICONS[(int) (this.id % ICONS.length)];
+    }
+
+    /**
+     * @return 显示分类
+     */
+    public String getCategoriesHtml() throws UnsupportedEncodingException {
+        String categories = this.getCategories();
+        if(StringUtils.isBlank(categories)){
+            categories = "默认分类";
+        }
+        String[] arr = categories.split(",");
+        StringBuffer sbuf = new StringBuffer();
+        for (String c : arr) {
+            sbuf.append("<a href=\""+WebConstant.CATEGORY_URI+"/" + URLEncoder.encode(c, "UTF-8") + "\">" + c + "</a>");
+        }
+        return sbuf.toString();
+    }
+
+    /**
+     * @return 显示tags
+     */
+    public String getTagsHtml() throws UnsupportedEncodingException {
+        String tags = this.getTags();
+        if(StringUtils.isBlank(tags)){
+            return "";
+        }
+        String[] arr = tags.split(",");
+        StringBuffer sbuf = new StringBuffer();
+        for (String c : arr) {
+            sbuf.append("<a href=\""+WebConstant.TAG_URI+"/" + URLEncoder.encode(c, "UTF-8") + "\">" + c + "</a>");
+        }
+        return sbuf.toString();
+    }
+
+    public String getCreatedFmt(){
+        return DateUtils.formatDateByUnixTime(this.getCreated(), "yyyy-MM-dd");
+    }
+
+    public String getModifiedFmt(){
+        return DateUtils.dateFormat(this.getUpdateTime(),"yyyy/MM/dd HH:mm" );
     }
 }
