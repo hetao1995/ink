@@ -36,31 +36,19 @@ public class MetaServiceImpl implements MetaService {
     @Autowired
     DomainFactory domainFactory;
 
-    @Override
-    public void saveMeta(String type, String name, Long mid, UserVo userVo) {
-        if(StringUtils.isBlank(type)){
-            throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
-        }
-        if(StringUtils.isBlank(name)){
-            throw new TipException(ExceptionEnum.META_NAME_ILLEGAL);
-        }
-        MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, name);
-        if(metaDomain != null){
-            throw new TipException(ExceptionEnum.META_HAS_SAVED);
-        }
-        MetaVo metaVo = MetaVo
-                .builder()
-                .name(name)
-                .id(mid)
-                .type(type)
-                .active(true)
-                .parentId(0L)
-                .build();
-        domainFactory.createMetaDomain().assemble(metaVo).setCreateBy(userVo.getId()).setUpdateBy(userVo.getId()).save();
-    }
 
     @Override
     public void saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
+        if(StringUtils.isBlank(type)){
+            throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
+        }
+        if(StringUtils.isBlank(metaParam.getName())){
+            throw new TipException(ExceptionEnum.META_NAME_ILLEGAL);
+        }
+        MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, metaParam.getName());
+        if(metaDomain != null){
+            throw new TipException(ExceptionEnum.META_HAS_SAVED);
+        }
         metaParam.setId(null);
         domainFactory
                 .createMetaDomain()
@@ -81,10 +69,6 @@ public class MetaServiceImpl implements MetaService {
                 .deleteById();
     }
 
-    @Override
-    public Map<String, List<ContentVo>> getMetaMapping(String type) {
-        return null;
-    }
 
     @Override
     public MetaDomain getMetaDomainByTypeAndName(String type, String name) {
@@ -119,6 +103,11 @@ public class MetaServiceImpl implements MetaService {
         }
         metaDomain.setName(metaParam.getName()).setUpdateBy(userDomain.getId());
         return metaDomain.updateById();
+    }
+
+    @Override
+    public Map<String, List<ContentDomain>> getMetaMapping(String type) {
+        return null;
     }
 
 

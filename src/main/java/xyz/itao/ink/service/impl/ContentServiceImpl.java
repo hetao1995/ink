@@ -31,11 +31,7 @@ public class ContentServiceImpl  implements ContentService {
     @Autowired
     private ContentRepository contentRepository;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     private DomainFactory domainFactory;
-    @Autowired
-    private MetaRepository metaRepository;
 
 
     @Override
@@ -126,7 +122,21 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     public ContentDomain loadActivePublishContentDomainByIdOrSlug(String idOrSlug) {
-        ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(TypeConst.PUBLISH);
+        return loadContentDoaminByIdOrSlug(idOrSlug, TypeConst.PUBLISH);
+    }
+
+    @Override
+    public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain) {
+
+        ContentDomain contentDomain = loadContentDoaminByIdOrSlug(idOrSlug, TypeConst.DRAFT);
+        if(contentDomain==null || !contentDomain.getAuthorId().equals( userDomain.getId())){
+            return null;
+        }
+        return contentDomain;
+    }
+
+    private ContentDomain loadContentDoaminByIdOrSlug(String idOrSlug, String status){
+        ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(status);
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));
         }else{
@@ -137,25 +147,6 @@ public class ContentServiceImpl  implements ContentService {
             return null;
         }
         return contentDomains.get(0);
-    }
-
-    @Override
-    public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain) {
-        ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(TypeConst.DRAFT);
-        if(PatternUtils.isNumber(idOrSlug)){
-            contentDomain.setId(Long.parseLong(idOrSlug));
-        }else{
-            contentDomain.setSlug(idOrSlug);
-        }
-        List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain(contentDomain);
-        if(contentDomains.isEmpty()){
-            return null;
-        }
-        contentDomain = contentDomains.get(0);
-        if(!contentDomain.getAuthorId().equals( userDomain.getId())){
-            return null;
-        }
-        return contentDomain;
     }
 
     @Override

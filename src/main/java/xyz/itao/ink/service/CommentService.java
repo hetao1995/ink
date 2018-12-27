@@ -19,47 +19,46 @@ import xyz.itao.ink.domain.vo.UserVo;
 public interface CommentService {
     /**
      * 加载所有的commnet
-     * @param commentParam
-     * @return
+     * @param commentParam param
+     * @return 分页的commentVo
      */
-    PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam);
+    PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam);
 
 
     /**
      * 通过id删除commentg
      * @param id 删除的commnet id
-     * @param userVo 操作的用户
+     * @param userDomain 操作的用户
      * @return
      */
     void deleteCommentById(Long id, UserDomain userDomain);
 
     /**
      * 修改commnet
-     * @param commentVo
-     * @param userVo
+     * @param commentVo comment
+     * @param userDomain 操作的用户
      */
     void updateCommentVo(CommentVo commentVo, UserDomain userDomain);
 
     /**
      * 发布一条新的评论
      * @param commentVo 评论
-     * @param userParam 如果是匿名发布，此param有效
-     * @param userVo 如果是登录用户，此uservo有效
+     * @param userDomain 登录用户
      */
     UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain);
 
     /**
      * 加载所有conentDoamin中所有审核通过的评论
-     * @param pageParam
-     * @param contentDomain
-     * @return
+     * @param pageParam param
+     * @param contentDomain contents
+     * @return 分页
      */
     PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain);
 
     /**
      * 根据commentParam加载所有的CommentDomain
-     * @param commentParam
-     * @return
+     * @param commentParam param
+     * @return 分页
      */
     PageInfo<CommentDomain> loadAllActiveApprovedCommentDomain(CommentParam commentParam);
 }

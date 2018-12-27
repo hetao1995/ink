@@ -25,13 +25,6 @@ public interface UserService {
     String getJwtLoginToken(UserVo userVo, Boolean rememberMe);
 
     /**
-     * 清除JwtToken
-     * @param userDomain 用户domain
-     * @return 是否清除成功
-     */
-    boolean clearJwtLoginToken(UserDomain userDomain);
-
-    /**
      * 通过id加载UserDomain
      * @param id 主键
      * @return 加载的结果
@@ -97,7 +90,7 @@ public interface UserService {
      * 更新昵称和邮箱
      * @param screenName 昵称
      * @param email 邮箱
-     * @param userVo 更新谁的
+     * @param userDomain 更新谁的
      */
     void updateProfile(String screenName, String email, UserDomain userDomain);
 
@@ -105,7 +98,7 @@ public interface UserService {
      * 修改密码
      * @param old_password 旧密码
      * @param password 新密码
-     * @param userVo 修改谁的
+     * @param userDomain 修改谁的
      */
     void updatePassword(String old_password, String password, UserDomain userDomain);
 

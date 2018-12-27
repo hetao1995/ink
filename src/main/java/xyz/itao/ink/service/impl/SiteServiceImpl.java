@@ -38,44 +38,7 @@ public class SiteServiceImpl implements SiteService {
     MetaService metaService;
     @Autowired
     DomainFactory domainFactory;
-    @Override
-    public void cleanCache(String key) {
 
-    }
-
-    @Override
-    public List<MetaVo> getMetaVo(String searchType, String type, int limit) {
-        return null;
-    }
-
-    @Override
-    public List<Archive> getArchives() {
-        return null;
-    }
-
-    @Override
-    public List<CommentVo> recentComments(int i) {
-        // TODO 获取最近的评论
-        return Lists.newArrayList();
-    }
-
-    @Override
-    public List<ContentVo> getContens(String recentArticle, int i) {
-        return null;
-    }
-
-    @Override
-    public StatisticsVo getStatistics() {
-        // todo 从数据库和缓存获取统计数据
-        StatisticsVo statisticsVo = StatisticsVo
-                .builder()
-                .articles(0L)
-                .comments(0L)
-                .attaches(0L)
-                .build();
-        return statisticsVo;
-
-    }
 
     @Override
     public UserDomain installSite(InstallParam installParam) {
@@ -86,7 +49,11 @@ public class SiteServiceImpl implements SiteService {
         UserDomain admin = initAdmin(installParam);
         File lock = new File(WebConstant.CLASSPATH+"install.lock");
         try {
-            lock.createNewFile();
+            boolean res = lock.createNewFile();
+            if(!res){
+                log.error("Ink初始化站点失败, file创建结果为false");
+                throw  new InnerException(ExceptionEnum.SITE_INSTALL_FAILE);
+            }
             log.debug("Ink初始化了站点");
         } catch (IOException e) {
             e.printStackTrace();

@@ -38,7 +38,7 @@ public final class Commons {
     @Autowired
     Props props;
 
-    public  static String THEME = "default";
+    public static String THEME = "default";
 
     /**
      * 判断分页中是否有数据

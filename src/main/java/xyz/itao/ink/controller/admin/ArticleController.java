@@ -27,16 +27,14 @@ import java.util.List;
 public class ArticleController {
     @Autowired
     private MetaService metaService;
-    @Autowired
-    private ContentService contentService;
 
     @GetMapping(value = "")
     public String index() {
         return "admin/articles";
     }
 
-    @GetMapping("/edit/{cid}")
-    public String editArticle(@PathVariable String cid) {
+    @GetMapping("/edit/{id}")
+    public String editArticle(@PathVariable String id) {
         return "admin/article/edit.html";
     }
 

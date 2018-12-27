@@ -13,17 +13,10 @@ import java.util.List;
  * @description
  */
 public interface SiteService {
-    void cleanCache(String key);
-
-    List<MetaVo> getMetaVo(String searchType, String type, int limit);
-
-    List<Archive> getArchives();
-
-    List<CommentVo> recentComments(int i);
-
-    List<ContentVo> getContens(String recentArticle, int i);
-
-    StatisticsVo getStatistics();
-
+    /**
+     * 安装
+     * @param installParam param
+     * @return admin
+     */
     UserDomain installSite(InstallParam installParam);
 }

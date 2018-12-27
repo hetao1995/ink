@@ -21,7 +21,6 @@ public interface ContentService {
     /**
      * 通过id删除文章
      * @param id content的id
-     * @return 是否删除成功
      */
     void deleteById(Long id, UserDomain userDomain);
 
@@ -41,34 +40,34 @@ public interface ContentService {
 
     /**
      * 分页加载所有的contentvo
-     * @return
+     * @return 分页
      */
     PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam);
 
     /**
      * 分页加载所有的contentDomain
      * @param articleParam
-     * @return
+     * @return 分页
      */
     PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam);
 
     /**
      * 分页加载所有的active contentDomain
-     * @param articleParam
-     * @return
+     * @param articleParam param
+     * @return 分页
      */
     PageInfo<ContentDomain> loadAllActivePublishContentDomain(ArticleParam articleParam);
 
     /**
      * 修改文章
-     * @param contentVo
-     * @param userVo
+     * @param contentVo 需要修改的文章
+     * @param userDomain 修改人
      */
     void updateContentVo(ContentVo contentVo, UserDomain userDomain);
 
     /**
      * 获取所有的feed页
-     * @return
+     * @return contentvo
      */
     List<ContentVo> selectAllFeedArticles();
 
@@ -81,16 +80,16 @@ public interface ContentService {
 
     /**
      * 通过id或者slug查找草稿
-     * @param idOrSlug
-     * @param userVo
-     * @return
+     * @param idOrSlug id或者slug
+     * @param userDomain userDomain
+     * @return content
      */
     ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain);
 
     /**
      * 加载所有content的归档
-     * @param articleParam
-     * @return
+     * @param articleParam param
+     * @return page
      */
     PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam);
 
@@ -98,7 +97,7 @@ public interface ContentService {
      * 搜索所有的文章
      * @param keyword 关键词
      * @param articleParam 文章param
-     * @return
+     * @return page
      */
     PageInfo<ContentDomain> searchArticles(String keyword, ArticleParam articleParam);
 }

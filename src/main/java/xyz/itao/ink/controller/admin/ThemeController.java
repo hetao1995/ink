@@ -26,7 +26,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/theme")
 @Slf4j
-public class ThemeCotroller extends BaseController {
+public class ThemeController extends BaseController {
     @Autowired
     OptionService optionService;
     @Autowired

@@ -18,21 +18,21 @@ public interface LinkService {
     /**
      * 加载所有的文件元信息
      * @param pageParam 翻页的param
-     * @return
+     * @return 分页
      */
     PageInfo<LinkVo> loadAllActiveLinkVo(PageParam pageParam);
 
     /**
      * 删除文件
      * @param id 文件id
-     * @param userVo 删除的人
+     * @param userDomain 删除的人
      */
     void deleteAttachesById(Long id, UserDomain userDomain);
 
     /**
      * 保存上传的文件
      * @param multipartFiles 上传的文件数据
-     * @param userVo 上传者
+     * @param userDomain 上传者
      * @return 没有上传成功的文件名称
      */
     List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain);

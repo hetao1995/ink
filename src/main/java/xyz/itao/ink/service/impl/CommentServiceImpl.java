@@ -40,7 +40,7 @@ public class CommentServiceImpl  implements CommentService {
     DomainFactory domainFactory;
 
     @Override
-    public PageInfo<CommentVo> loadAllCommentVo(CommentParam commentParam) {
+    public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllActiveCommentDomain();
         List<CommentVo> commentVos = commentDomains.stream().map((d)->d.vo()).collect(Collectors.toList());

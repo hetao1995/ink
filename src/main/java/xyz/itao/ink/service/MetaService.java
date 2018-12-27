@@ -21,11 +21,9 @@ public interface MetaService {
     /**
      * 设置meta数据
      * @param type 类型
-     * @param name
-     * @param mid
-     * @param userVo 操作人
+     * @param metaParam param
+     * @param userDomain 操作人
      */
-    void saveMeta(String type, String name, Long mid, UserVo userVo);
 
     void saveMeta(String type, MetaParam metaParam, UserDomain userDomain);
 
@@ -36,44 +34,36 @@ public interface MetaService {
      */
     void deleteMetaById(Long id, UserDomain userVo);
 
-    /**
-     * 获取meta数据的映射
-     * @param type
-     * @return
-     */
-    Map<String, List<ContentVo>> getMetaMapping(String type);
 
     /**
      * 通过type和name获取meta数据
-     * @param type
-     * @param name
+     * @param type type
+     * @param name name
      * @return
      */
     MetaDomain getMetaDomainByTypeAndName(String type, String name);
 
     /**
      * 根据type获取meta
-     * @param type
-     * @return
+     * @param type type
+     * @return metavo
      */
     List<MetaVo> getMetasByType(String type);
 
     /**
-     * 更加metaId获取articles
-     * @param id
-     * @param page
-     * @param limit
-     * @return
+     * 根据metaId获取articles
      */
-    PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize);
+    PageInfo<ContentDomain> getArticlesByMetaId(Long metaId, int pageNum, int pageSize);
 
     /**
      * 跟新category
-     * @param id
-     * @param metaParam
-     * @param userVo
      */
     MetaDomain updateCategory(Long id, MetaParam metaParam, UserDomain userDomain);
 
-
+    /**
+     * 获取meta、content映射
+     * @param type type
+     * @return 映射
+     */
+    Map<String, List<ContentDomain>> getMetaMapping(String type);
 }

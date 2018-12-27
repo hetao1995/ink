@@ -79,8 +79,6 @@ public class ArticleController extends BaseController {
 
     /**
      * 预览页
-     * @param request
-     * @return
      */
     @GetMapping(value = {"/preview/{idOrSlug}", "/preview/{idOrSlug}.html"})
     public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserDomain userDomain){
@@ -99,7 +97,7 @@ public class ArticleController extends BaseController {
     @StopRepeatSubmit(key = "comment")
     @PostMapping(value = "comment")
     @ResponseBody
-    public RestResponse<?> comment(HttpServletRequest request, HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserDomain userDomain) {
+    public RestResponse<?> comment(HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserDomain userDomain) {
 
         CommonValidator.valid(commentVo);
 
@@ -122,9 +120,6 @@ public class ArticleController extends BaseController {
 
     /**
      * 根据type返回视图
-     * @param request
-     * @param contentDomain
-     * @return
      */
     private String renderContent(HttpServletRequest request, ContentDomain contentDomain) {
         if (TypeConst.ARTICLE.equals(contentDomain.getType())) {
@@ -139,10 +134,6 @@ public class ArticleController extends BaseController {
 
     /**
      * 设置article和comments到attribute
-     * @param request
-     * @param pageNum
-     * @param pageSize
-     * @param contentDomain
      */
     private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentDomain contentDomain) {
         request.setAttribute("article", contentDomain);

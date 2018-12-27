@@ -2,6 +2,7 @@ package xyz.itao.ink.controller.admin;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.dto.ThemeDto;
@@ -27,6 +27,7 @@ import xyz.itao.ink.utils.DateUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
@@ -43,8 +44,6 @@ import java.util.*;
 public class AdminApiController {
     @Autowired
     ContentService contentService;
-    @Autowired
-    SiteService siteService;
     @Autowired
     MetaService metaService;
     @Autowired
@@ -70,7 +69,6 @@ public class AdminApiController {
     @DeleteMapping(value = "/page/{id}")
     public RestResponse<?> deletePage(@PathVariable Long id,@RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         contentService.deleteById(id, userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -101,14 +99,12 @@ public class AdminApiController {
             contentVo.setCategories("默认分类");
         }
         Long id = contentService.publishNewContent(contentVo, userDomain).getId();
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok(id);
     }
 
     @DeleteMapping(value = "/article/{id}")
     public RestResponse<?> deleteArticle(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         contentService.deleteById(id, userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -152,7 +148,6 @@ public class AdminApiController {
         contentVo.setAuthorId(userDomain.getId());
         contentVo.setModified(DateUtils.getUnixTimeByDate(DateUtils.getNow()));
         Long id = contentService.publishNewContent(contentVo, userDomain).getId();
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok(id);
     }
 
@@ -175,7 +170,6 @@ public class AdminApiController {
     @PostMapping("/category")
     public RestResponse<?> saveCategory(@RequestBody MetaParam metaParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         metaService.saveMeta(TypeConst.CATEGORY, metaParam, userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -190,7 +184,6 @@ public class AdminApiController {
     @DeleteMapping("/meta/{id}")
     public RestResponse<?> deleteMeta(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         metaService.deleteMetaById(id, userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -199,7 +192,7 @@ public class AdminApiController {
     @GetMapping("/comments")
     public RestResponse commentList(CommentParam commentParam) {
         commentParam.setOrderBy("create_time desc");
-        PageInfo<CommentVo> commentsPage = commentService.loadAllCommentVo(commentParam);
+        PageInfo<CommentVo> commentsPage = commentService.loadAllActiveCommentVo(commentParam);
         return RestResponse.ok(commentsPage);
     }
 
@@ -208,7 +201,6 @@ public class AdminApiController {
     public RestResponse<?> deleteComment(@PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
 
         commentService.deleteCommentById(id, userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -217,7 +209,6 @@ public class AdminApiController {
     public RestResponse<?> updateStatus( @RequestBody CommentVo commentVo, @PathVariable Long id, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         commentVo.setId(id);
         commentService.updateCommentVo(commentVo, userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -226,7 +217,6 @@ public class AdminApiController {
     public RestResponse<?> postComment(CommentVo commentVo, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         CommonValidator.valid(commentVo);
         commentService.postNewComment(commentVo,userDomain);
-        siteService.cleanCache(TypeConst.SYS_STATISTICS);
         return RestResponse.ok();
     }
 
@@ -284,14 +274,7 @@ public class AdminApiController {
     @SysLog("保存高级选项设置")
     @PostMapping("/advanced")
     public RestResponse<?> saveAdvance(AdvanceParam advanceParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
-        // 清除缓存
-        if (StringUtils.isNotBlank(advanceParam.getCacheKey())) {
-            if ("*".equals(advanceParam.getCacheKey())) {
-//                cache.clean();
-            } else {
-//                cache.del(advanceParam.getCacheKey());
-            }
-        }
+
         // 要过过滤的黑名单列表
         if (StringUtils.isNotBlank(advanceParam.getBlockIps())) {
             props.set(TypeConst.BLOCK_IPS, advanceParam.getBlockIps(), userDomain);
@@ -338,7 +321,8 @@ public class AdminApiController {
         // 读取主题
         String         themesDir  = WebConstant.CLASSPATH + "templates"+File.separator+"themes";
         File[]         themesFile = new File(themesDir).listFiles();
-        List<ThemeDto> themes     = new ArrayList<>(themesFile.length);
+        List<ThemeDto> themes     = Lists.newArrayList();
+        assert themesFile != null;
         for (File f : themesFile) {
             if (f.isDirectory()) {
                 ThemeDto themeDto = new ThemeDto(f.getName());
@@ -346,10 +330,6 @@ public class AdminApiController {
                     themeDto.setHasSetting(true);
                 }
                 themes.add(themeDto);
-                try {
-//                    WebContext.blade().addStatics("/templates/themes/" + f.getName() + "/screenshot.png");
-                } catch (Exception e) {
-                }
             }
         }
         return RestResponse.ok(themes);
@@ -358,9 +338,7 @@ public class AdminApiController {
     @SysLog("保存主题设置")
     @PostMapping("/themes")
     public RestResponse<?> saveSetting(@RequestParam Map<String, String> query, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
-//        Map<String, List<String>> query = request.parameters();
 
-        // theme_milk_options => {  }
         String currentTheme = props.get(WebConstant.OPTION_SITE_THEME, "default");
         String key          = "theme_" + currentTheme + "_options";
 
@@ -376,14 +354,14 @@ public class AdminApiController {
     @PostMapping("/themes/active")
     public RestResponse<?> activeTheme( ThemeParam themeParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         props.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme(), userDomain);
-//        delete().from(Site.class).where(Site::getName).like("theme_option_%").execute();
         optionService.deleteAllThemes(userDomain);
-        BaseController.THEME = "themes/" + themeParam.getSiteTheme();
+        Commons.THEME = themeParam.getSiteTheme();
 
         String themePath = "/templates/themes/" + themeParam.getSiteTheme();
         try {
             InkLoader.loadTheme(themePath);
         } catch (Exception e) {
+            log.error("加载主题失败！{}",e);
         }
         return RestResponse.ok();
     }
@@ -398,11 +376,11 @@ public class AdminApiController {
         String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default");
         String filePath  = themePath + File.separatorChar + templateParam.getFileName();
         if (Files.exists(Paths.get(filePath))) {
-            byte[] rf_wiki_byte = content.getBytes("UTF-8");
+            byte[] rf_wiki_byte = content.getBytes(StandardCharsets.UTF_8);
             Files.write(Paths.get(filePath), rf_wiki_byte);
         } else {
             Files.createFile(Paths.get(filePath));
-            byte[] rf_wiki_byte = content.getBytes("UTF-8");
+            byte[] rf_wiki_byte = content.getBytes(StandardCharsets.UTF_8);
             Files.write(Paths.get(filePath), rf_wiki_byte);
         }
         return RestResponse.ok();

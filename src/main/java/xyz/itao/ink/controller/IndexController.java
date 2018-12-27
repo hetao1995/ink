@@ -40,9 +40,6 @@ public class IndexController extends BaseController{
 
     /**
      * 首页
-     * @param request
-     * @param limit
-     * @return
      */
     @GetMapping(value = "/")
     public String index(HttpServletRequest request, @RequestParam(value = "limit", defaultValue = "12") int limit) {
@@ -54,13 +51,12 @@ public class IndexController extends BaseController{
      * @param request request
      * @param pageNum 第几页
      * @param pageSize 每页大小
-     * @return
      */
     @GetMapping(value = {"/page/{pageNum}","/page/{pageNum}.html"})
     public String index(HttpServletRequest request, @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
 
         if (pageNum > 1) {
-            this.title(request, "第" + pageNum + "页");
+            request.setAttribute("title", "第" + pageNum + "页");
         }
         ArticleParam articleParam = ArticleParam.builder().build();
         articleParam.setPageNum(pageNum);
@@ -74,9 +70,6 @@ public class IndexController extends BaseController{
     }
     /**
      * 搜索页
-     *
-     * @param keyword
-     * @return
      */
     @GetMapping(value = {"/search/{keyword}", "/search/{keyword}.html"})
     public String search(HttpServletRequest request, @PathVariable String keyword, @RequestParam(defaultValue = "12") Integer pageSize) {
@@ -85,7 +78,6 @@ public class IndexController extends BaseController{
 
     @GetMapping(value = {"/search", "/search.html"})
     public String search(HttpServletRequest request, @RequestParam(defaultValue = "12") int pageSize) {
-//        String keyword = request.query("s").orElse("");
         return this.search(request, "", 1, pageSize);
     }
 
@@ -96,12 +88,6 @@ public class IndexController extends BaseController{
         articleParam.setPageSize(pageSize);
         articleParam.setPageNum(pageNum);
         PageInfo<ContentDomain> contentDomainPageInfo = contentService.searchArticles(keyword, articleParam);
-//        Page<Contents> articles = select().from(Contents.class)
-//                .where(Contents::getType, Types.ARTICLE)
-//                .and(Contents::getStatus, Types.PUBLISH)
-//                .like(Contents::getTitle, "%" + keyword + "%")
-//                .order(Contents::getCreated, OrderBy.DESC)
-//                .page(page, limit);
 
         request.setAttribute("articles", contentDomainPageInfo);
         request.setAttribute("type", "搜索");
@@ -112,8 +98,6 @@ public class IndexController extends BaseController{
 
     /**
      * 归档页
-     *
-     * @return
      */
     @GetMapping(value = {"/archive", "/archive.html"})
     public String archives(HttpServletRequest request,  @RequestParam(defaultValue = "12") Integer pageSize) {
@@ -138,11 +122,9 @@ public class IndexController extends BaseController{
 
     /**
      * feed页
-     *
-     * @return
      */
     @GetMapping(value = {"/feed", "/feed.xml", "/atom.xml"})
-    public void feed(HttpServletResponse response) throws IOException {
+    public void feed(HttpServletResponse response) {
         List<ContentVo> articles = contentService.selectAllFeedArticles();
         try {
             String xml = InkUtils.getRssXml(articles, props.get(WebConstant.OPTION_SITE_URL,""),props.get(WebConstant.OPTION_SITE_TITLE, "ink"), props.get(WebConstant.OPTION_SITE_DESCRIPTION,""));
@@ -156,8 +138,6 @@ public class IndexController extends BaseController{
 
     /**
      * sitemap 站点地图
-     *
-     * @return
      */
     @GetMapping(value = {"/sitemap", "/sitemap.xml"})
     public void siteMap(HttpServletResponse response) {
@@ -174,10 +154,24 @@ public class IndexController extends BaseController{
 
     /**
      * 登录视图
-     * @return
      */
     @GetMapping(value = "/login")
     public String login(){
         return "admin/login";
+    }
+
+    @GetMapping(value = "error_404")
+    public String error404(){
+        return "comm/error_404";
+    }
+
+    @GetMapping(value = "error_500")
+    public String error500(){
+        return "comm/error_500";
+    }
+
+    @GetMapping(value = "error_tip")
+    public String errorTip(String message){
+        return "comm/error_tip";
     }
 }

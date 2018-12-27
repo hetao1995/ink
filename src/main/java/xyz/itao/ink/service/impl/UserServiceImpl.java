@@ -33,7 +33,7 @@ public class UserServiceImpl  implements UserService {
     /**
      * 长期token，一个月后过期
      */
-    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = Long.valueOf(WebConstant.REMEMBER_ME_INTERVAL)*1000;
+    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = (long) WebConstant.REMEMBER_ME_INTERVAL *1000;
 
     @Autowired
     UserRepository userRepository;
@@ -74,10 +74,6 @@ public class UserServiceImpl  implements UserService {
         return getJwtLoginToken(domainFactory.createUserDomain().assemble(userVo), rememberMe);
     }
 
-    @Override
-    public boolean clearJwtLoginToken(UserDomain userDomain) {
-        return false;
-    }
 
     @Override
     public UserVo loadUserVoById(Long id) {

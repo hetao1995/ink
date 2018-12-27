@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Controller("adminIndex")
 @RequestMapping("/admin")
 @Slf4j
-public class IndexController extends BaseController {
+public class IndexController {
 
 
     @Autowired
@@ -80,7 +80,7 @@ public class IndexController extends BaseController {
     }
 
     @GetMapping("/comments")
-    public String commentIndex(HttpServletRequest request){
+    public String commentIndex(){
         return "admin/comments";
     }
 

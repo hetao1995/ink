@@ -30,7 +30,7 @@ import java.util.List;
 @Controller
 @RequestMapping("admin/attach")
 @Slf4j
-public class AttachController extends BaseController {
+public class AttachController {
     @Autowired
     Commons commons;
 
@@ -42,8 +42,7 @@ public class AttachController extends BaseController {
     /**
      * 附件页面
      *
-     * @param request
-     * @return
+     * @param request request
      */
     @GetMapping(value = "")
     public String index(HttpServletRequest request, PageParam pageParam) {
@@ -57,8 +56,8 @@ public class AttachController extends BaseController {
     /**
      * 上传文件接口
      *
-     * @param
-     * @return
+     * @param multipartFiles 上传的文件
+     * @return 所有linkvo，包括上传成功和不成功的
      */
     @PostMapping(value = "upload")
     @ResponseBody

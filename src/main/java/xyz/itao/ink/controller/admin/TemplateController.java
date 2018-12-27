@@ -53,7 +53,6 @@ public class TemplateController {
 
             files.addAll(partial);
             files.addAll(statics);
-
             request.setAttribute("tpls", files);
         } catch (IOException e) {
             log.error("找不到模板路径");
@@ -66,8 +65,8 @@ public class TemplateController {
         try {
             String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default") ;
             String filePath  = themePath + File.separatorChar + fileName;
-            String content  = Files.readAllLines(Paths.get(filePath)).stream().collect(Collectors.joining("\n"));
-            response.setCharacterEncoding("utf-8");
+            String content  = String.join("\n", Files.readAllLines(Paths.get(filePath)));
+            response.setCharacterEncoding("UTF-8");
             response.getWriter().append(content);
         } catch (IOException e) {
             log.error("获取模板文件失败", e);

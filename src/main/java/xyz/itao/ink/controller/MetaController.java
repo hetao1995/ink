@@ -25,7 +25,7 @@ import java.util.Set;
  * @description
  */
 @Controller
-public class CategoryController extends BaseController {
+public class MetaController extends BaseController {
 
     @Autowired
     private ContentService contentService;
@@ -38,7 +38,7 @@ public class CategoryController extends BaseController {
      */
     @GetMapping(value = {"/categories", "/categories.html"})
     public String categories(HttpServletRequest request) {
-        Map<String, List<ContentVo>> mapping    = metaService.getMetaMapping(TypeConst.CATEGORY);
+        Map<String, List<ContentDomain>> mapping    = metaService.getMetaMapping(TypeConst.CATEGORY);
         Set<String> categories = mapping.keySet();
         request.setAttribute("categories", categories);
         request.setAttribute("mapping", mapping);
@@ -56,26 +56,10 @@ public class CategoryController extends BaseController {
     /**
      * 某个分类详情页分页
      */
-    @GetMapping(value = {"/category/{keyword}/{pageNum}", "/category/{keyword}/{pageNum}.html"})
-    public String categories(HttpServletRequest request, @PathVariable String keyword,
+    @GetMapping(value = {"/category/{name}/{pageNum}", "/category/{name}/{pageNum}.html"})
+    public String categories(HttpServletRequest request, @PathVariable String name,
                              @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
-
-        pageNum = pageNum < 0 || pageNum > WebConstant.MAX_PAGE ? 1 : pageNum;
-        MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(TypeConst.CATEGORY, keyword);
-        if (null == metaDomain) {
-            return this.render_404();
-        }
-
-        PageInfo<ContentDomain> contentsPage = contentService.getPublishArticlesByMeta(metaDomain, pageNum, pageSize);
-
-        request.setAttribute("articles", contentsPage);
-        request.setAttribute("meta", metaDomain);
-        request.setAttribute("type", "分类");
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("is_category", true);
-        request.setAttribute("page_prefix", "/category/" + keyword);
-
-        return this.render("page-category");
+        return metas(request,name,pageNum,pageSize,TypeConst.CATEGORY);
     }
 
     /**
@@ -85,7 +69,7 @@ public class CategoryController extends BaseController {
      */
     @GetMapping(value = {"/tags", "/tags.html"})
     public String tags(HttpServletRequest request) {
-        Map<String, List<ContentVo>> mapping = metaService.getMetaMapping(TypeConst.TAG);
+        Map<String, List<ContentDomain>> mapping = metaService.getMetaMapping(TypeConst.TAG);
         Set<String> tags    = mapping.keySet();
         request.setAttribute("tags", tags);
         request.setAttribute("mapping", mapping);
@@ -98,8 +82,8 @@ public class CategoryController extends BaseController {
      * @param name 标签名
      */
     @GetMapping(value = {"tag/{name}", "tag/{name}.html"})
-    public String tagPage(HttpServletRequest request, @PathVariable String name, @RequestParam(defaultValue = "12") int limit) {
-        return this.tags(request, name, 1, limit);
+    public String tagPage(HttpServletRequest request, @PathVariable String name, @RequestParam(defaultValue = "12") int pageSize) {
+        return this.tags(request, name, 1, pageSize);
     }
 
     /**
@@ -107,8 +91,13 @@ public class CategoryController extends BaseController {
      */
     @GetMapping(value = {"tag/{name}/{pageNum}", "tag/{name}/{pageNum}.html"})
     public String tags(HttpServletRequest request, @PathVariable String name, @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
+        return this.metas(request, name, pageNum, pageSize, TypeConst.TAG);
+    }
+
+
+    private String metas(HttpServletRequest request, String name, int pageNum, int pageSize, String type){
         pageNum = pageNum < 0 || pageNum > WebConstant.MAX_PAGE ? 1 : pageNum;
-        MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(TypeConst.TAG, name);
+        MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(type, name);
         if (null == metaDomain) {
             return this.render_404();
         }
@@ -116,10 +105,17 @@ public class CategoryController extends BaseController {
         PageInfo<ContentDomain> contentsPage = contentService.getPublishArticlesByMeta(metaDomain, pageNum, pageSize);
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaDomain);
-        request.setAttribute("type", "标签");
         request.setAttribute("keyword", name);
-        request.setAttribute("is_tag", true);
-        request.setAttribute("page_prefix", "/tag/" + name);
+        if(TypeConst.TAG.equals(type)){
+            request.setAttribute("type", "标签");
+            request.setAttribute("is_tag", true);
+            request.setAttribute("page_prefix", "/tag/" + name);
+        }else if(TypeConst.CATEGORY.equals(type)){
+            request.setAttribute("type", "分类");
+            request.setAttribute("is_category", true);
+            request.setAttribute("page_prefix", "/category/" + name);
+        }
+
 
         return this.render("page-category");
     }
