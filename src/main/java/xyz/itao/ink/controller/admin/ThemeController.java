@@ -45,7 +45,7 @@ public class ThemeController extends BaseController {
         String currentTheme = props.get(WebConstant.OPTION_SITE_THEME, "default");
         String key          = "theme_" + currentTheme + "_options";
 
-        String              option = optionService.getOption(key);
+        String              option = props.get(key, "");
         Map<String, Object> map    = new HashMap<>();
         try {
             if (StringUtils.isNotBlank(option)) {

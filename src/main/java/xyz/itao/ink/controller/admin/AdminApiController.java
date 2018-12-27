@@ -74,14 +74,14 @@ public class AdminApiController {
 
     @GetMapping(value = "/article/{id}")
     public RestResponse article(@PathVariable Long id) {
-        ContentVo contentVo = contentService.loadContentVoById(id);
+        ContentVo contentVo = contentService.loadContentDomainById(id).vo();
         contentVo.setContent("");
         return RestResponse.ok(contentVo);
     }
 
     @GetMapping(value = "/article/content/{id}")
     public String articleContent(@PathVariable Long id) {
-        ContentVo contentVo = contentService.loadContentVoById(id);
+        ContentVo contentVo = contentService.loadContentDomainById(id).vo();
         return contentVo.getContent();
     }
 

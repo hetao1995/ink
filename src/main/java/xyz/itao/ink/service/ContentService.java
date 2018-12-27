@@ -29,14 +29,14 @@ public interface ContentService {
      * @param id content的主键
      * @return 加载的结果
      */
-    ContentVo loadContentVoById(Long id);
+    ContentDomain loadContentDomainById(Long id);
 
     /**
      * 发布一个新的内容
      * @param contentVo 发布的内容
-     * @return  发布后的vo
+     * @return  发布后的domain
      */
-    ContentVo publishNewContent(ContentVo contentVo, UserDomain userVo);
+    ContentDomain publishNewContent(ContentVo contentVo, UserDomain userVo);
 
     /**
      * 分页加载所有的contentvo
@@ -63,7 +63,7 @@ public interface ContentService {
      * @param contentVo 需要修改的文章
      * @param userDomain 修改人
      */
-    void updateContentVo(ContentVo contentVo, UserDomain userDomain);
+    ContentDomain updateContentVo(ContentVo contentVo, UserDomain userDomain);
 
     /**
      * 获取所有的feed页

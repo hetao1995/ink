@@ -22,35 +22,6 @@ public interface UserService {
      */
     String getJwtLoginToken(UserDomain userDomain, Boolean rememberMe);
 
-    String getJwtLoginToken(UserVo userVo, Boolean rememberMe);
-
-    /**
-     * 通过id加载UserDomain
-     * @param id 主键
-     * @return 加载的结果
-     */
-    UserVo loadUserVoById(Long id);
-
-    /**
-     * 通过username获取UserVo
-     * @param username 用户名
-     * @return 这个username对应的UserDomain
-     */
-    UserVo loadUserVoByUsername(String username);
-
-    /**
-     * 通过email加载UserDomain
-     * @param email 邮箱
-     * @return 邮箱对应的UserDomain
-     */
-    UserVo loadUserVoByEmail(String email);
-
-    /**
-     * 通过主页加载UserDomain
-     * @param homeUrl 主页地址
-     * @return 主页地址对应的UserDomain
-     */
-    UserVo loadUserVoByHomeUrl(String homeUrl);
 
     /**
      * 通过id加载UserDomain

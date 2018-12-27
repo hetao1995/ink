@@ -25,7 +25,7 @@ public interface MetaService {
      * @param userDomain 操作人
      */
 
-    void saveMeta(String type, MetaParam metaParam, UserDomain userDomain);
+    MetaDomain saveMeta(String type, MetaParam metaParam, UserDomain userDomain);
 
     /**
      * 通过id删除meta

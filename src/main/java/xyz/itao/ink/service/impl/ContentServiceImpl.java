@@ -5,6 +5,10 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.*;
@@ -12,8 +16,6 @@ import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.repository.ContentRepository;
-import xyz.itao.ink.repository.MetaRepository;
-import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.utils.PatternUtils;
 
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
  */
 @Service("contentService")
 @Slf4j
+@CacheConfig(cacheNames = "content")
 public class ContentServiceImpl  implements ContentService {
     @Autowired
     private ContentRepository contentRepository;
@@ -35,6 +38,7 @@ public class ContentServiceImpl  implements ContentService {
 
 
     @Override
+    @CacheEvict(key = "#id")
     public void deleteById(Long id, UserDomain userDomain) {
         domainFactory
                 .createContentDomain()
@@ -44,19 +48,20 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    public ContentVo loadContentVoById(Long id) {
-        return contentRepository.loadActiveContentDomainById(id).vo();
+    @Cacheable(key="#id")
+    public ContentDomain loadContentDomainById(Long id) {
+        return contentRepository.loadActiveContentDomainById(id);
     }
 
     @Override
-    public ContentVo publishNewContent(ContentVo contentVo, UserDomain userDomain) {
+    @CachePut(key="#result.id")
+    public ContentDomain publishNewContent(ContentVo contentVo, UserDomain userDomain) {
         return domainFactory
                 .createContentDomain()
                 .assemble(contentVo)
                 .setUpdateBy(userDomain.getId())
                 .setCreateBy(userDomain.getId())
-                .save()
-                .vo();
+                .save();
     }
 
     @Override
@@ -91,8 +96,9 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    public void updateContentVo(ContentVo contentVo, UserDomain userDomain) {
-        domainFactory
+    @CachePut(key = "#contentVo.id")
+    public ContentDomain updateContentVo(ContentVo contentVo, UserDomain userDomain) {
+        return domainFactory
                 .createContentDomain()
                 .assemble(contentVo)
                 .setUpdateBy(userDomain.getId())
@@ -121,21 +127,24 @@ public class ContentServiceImpl  implements ContentService {
 
 
     @Override
+    @Cacheable(key = "#idOrSlug")
     public ContentDomain loadActivePublishContentDomainByIdOrSlug(String idOrSlug) {
-        return loadContentDoaminByIdOrSlug(idOrSlug, TypeConst.PUBLISH);
+        return loadContentDomainByIdOrSlug(idOrSlug, TypeConst.PUBLISH);
     }
 
     @Override
+    @Cacheable(key = "#idOrSlug")
     public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain) {
 
-        ContentDomain contentDomain = loadContentDoaminByIdOrSlug(idOrSlug, TypeConst.DRAFT);
+        ContentDomain contentDomain = loadContentDomainByIdOrSlug(idOrSlug, TypeConst.DRAFT);
         if(contentDomain==null || !contentDomain.getAuthorId().equals( userDomain.getId())){
             return null;
         }
         return contentDomain;
     }
 
-    private ContentDomain loadContentDoaminByIdOrSlug(String idOrSlug, String status){
+
+    private ContentDomain loadContentDomainByIdOrSlug(String idOrSlug, String status){
         ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(status);
         if(PatternUtils.isNumber(idOrSlug)){
             contentDomain.setId(Long.parseLong(idOrSlug));

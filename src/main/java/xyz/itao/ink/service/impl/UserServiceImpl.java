@@ -3,6 +3,10 @@ package xyz.itao.ink.service.impl;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import java.util.Date;
  * @description
  */
 @Service("userService")
+@CacheConfig(cacheNames = "user")
 public class UserServiceImpl  implements UserService {
     /**
      * 临时token，一个小时后过期
@@ -42,6 +47,7 @@ public class UserServiceImpl  implements UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Override
+    @CachePut(key = "#result.id")
     public UserDomain registerTemporaryUser(UserVo userVo) {
         CommonValidator.valid(userVo, false);
         userVo.setActive(true);
@@ -69,33 +75,9 @@ public class UserServiceImpl  implements UserService {
                 .sign(algorithm);
     }
 
-    @Override
-    public String getJwtLoginToken(UserVo userVo, Boolean rememberMe) {
-        return getJwtLoginToken(domainFactory.createUserDomain().assemble(userVo), rememberMe);
-    }
-
 
     @Override
-    public UserVo loadUserVoById(Long id) {
-        return userRepository.loadActiveUserDomainById(id).vo();
-    }
-
-    @Override
-    public UserVo loadUserVoByUsername(String username) {
-        return userRepository.loadUserDomainByUsername(username).vo();
-    }
-
-    @Override
-    public UserVo loadUserVoByEmail(String email) {
-        return userRepository.loadUserDomainByEmail(email).vo();
-    }
-
-    @Override
-    public UserVo loadUserVoByHomeUrl(String homeUrl) {
-        return userRepository.loadUserDomainByHomeUrl(homeUrl).vo();
-    }
-
-    @Override
+    @Cacheable(key="#id")
     public UserDomain loadUserDomainById(Long id) {
         return userRepository.loadActiveUserDomainById(id);
     }
@@ -116,6 +98,7 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @CachePut(key = "result.id")
     public UserDomain registerPermanentUser(UserVo userVo) {
         CommonValidator.valid(userVo, true);
 
@@ -136,6 +119,7 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @CacheEvict(key = "#userDomain.id")
     public void updateProfile(String screenName, String email, UserDomain userDomain) {
         UserVo userVo = UserVo.builder().displayName(screenName).email(email).build();
         CommonValidator.valid(userVo, false);
@@ -151,6 +135,7 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
+    @CacheEvict(key = "#userDomain.id")
     public void updatePassword(String old_password, String password, UserDomain userDomain) {
         if(!passwordEncoder.matches(old_password, userDomain.getPassword())){
             throw  new TipException(ExceptionEnum.WRONG_OLD_PASSWORD);

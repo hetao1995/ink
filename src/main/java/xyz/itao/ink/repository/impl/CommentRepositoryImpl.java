@@ -2,6 +2,7 @@ package xyz.itao.ink.repository.impl;
 
 import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;

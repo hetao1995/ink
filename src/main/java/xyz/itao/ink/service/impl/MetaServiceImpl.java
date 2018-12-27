@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.domain.ContentDomain;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Service("metaService")
+@CacheConfig(cacheNames = "meta")
 public class MetaServiceImpl implements MetaService {
 
     @Autowired
@@ -38,7 +41,8 @@ public class MetaServiceImpl implements MetaService {
 
 
     @Override
-    public void saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
+    @CachePut(key = "")
+    public MetaDomain saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
         if(StringUtils.isBlank(type)){
             throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
         }
@@ -50,7 +54,7 @@ public class MetaServiceImpl implements MetaService {
             throw new TipException(ExceptionEnum.META_HAS_SAVED);
         }
         metaParam.setId(null);
-        domainFactory
+        return domainFactory
                 .createMetaDomain()
                 .assemble(metaParam)
                 .setType(type)

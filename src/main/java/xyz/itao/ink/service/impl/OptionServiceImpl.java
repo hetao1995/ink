@@ -2,6 +2,9 @@ package xyz.itao.ink.service.impl;
 
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.domain.DomainFactory;
@@ -19,6 +22,7 @@ import java.util.Map;
  * @description
  */
 @Service("optionService")
+@Cacheable("option")
 public class OptionServiceImpl implements OptionService {
 
     @Autowired
@@ -40,6 +44,7 @@ public class OptionServiceImpl implements OptionService {
 
 
     @Override
+    @CacheEvict(allEntries = true)
     public void deleteOption(String key, UserDomain userDomain) {
         deleteByNameLike(key+"%", userDomain);
     }
@@ -60,6 +65,7 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
+    @CacheEvict(allEntries = true)
     public void deleteAllThemes(UserDomain userDomain) {
         deleteByNameLike("theme_option_%", userDomain);
     }

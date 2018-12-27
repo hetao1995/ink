@@ -2,6 +2,9 @@ package xyz.itao.ink.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.OptionDomain;
@@ -23,12 +26,15 @@ import java.util.Properties;
  */
 @Component
 @Slf4j
+@CacheConfig(cacheNames = "props")
 public class Props {
     @Autowired
     OptionRepository optionRepository;
     @Autowired
     DomainFactory domainFactory;
-    public void set(String name, Object value, UserDomain userDomain){
+
+    @CachePut(key = "#name")
+    public String  set(String name, Object value, UserDomain userDomain){
         OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
         if(optionDomain == null){
             domainFactory
@@ -42,6 +48,7 @@ public class Props {
         }else{
             optionDomain.setName(name).setValue(value.toString()).setUpdateBy(userDomain.getId()).updateById();
         }
+        return optionDomain.getValue();
     }
 
     public void setAll(Map<String, String> map, UserDomain userDomain){
@@ -90,16 +97,14 @@ public class Props {
         return Optional.ofNullable(optionDomain.getValue());
     }
 
+    @Cacheable(key = "#name")
     public String get(String name, String defaultValue){
         return get(name).orElse(defaultValue);
     }
 
     public Optional<Integer> getInt(String name){
-        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
-        if(optionDomain==null){
-            return Optional.empty();
-        }
-        return Optional.of(Integer.parseInt(optionDomain.getValue()));
+        Optional<String> optional = this.get(name);
+        return optional.map(Integer::parseInt);
     }
 
     public Integer getInt(String name, Integer defaultValue){
@@ -107,11 +112,8 @@ public class Props {
     }
 
     public Optional<Long> getLong(String name){
-        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
-        if(optionDomain==null){
-            return Optional.empty();
-        }
-        return Optional.of(Long.parseLong(optionDomain.getValue()));
+        Optional<String> optional = this.get(name);
+        return optional.map(Long::parseLong);
     }
 
     public Long getLong(String name, Long defaultValue){
@@ -119,11 +121,7 @@ public class Props {
     }
 
     public Optional<Boolean> getBoolean(String name){
-        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
-        if(optionDomain==null){
-            return Optional.empty();
-        }
-        return Optional.of(Boolean.parseBoolean(optionDomain.getValue()));
+        return this.get(name).map(Boolean::parseBoolean);
     }
 
     public Boolean getBoolean(String name, Boolean defaultValue){
@@ -131,10 +129,6 @@ public class Props {
     }
 
     public Optional<Double> getDouble(String name){
-        OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
-        if(optionDomain==null){
-            return Optional.empty();
-        }
-        return Optional.of(Double.parseDouble(optionDomain.getValue()));
+        return this.get(name).map(Double::parseDouble);
     }
 }
