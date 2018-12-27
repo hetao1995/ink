@@ -67,7 +67,7 @@ public final class Commons {
      */
     public  String siteUrl(String sub) {
         String siteUrl = siteOption(WebConstant.OPTION_SITE_URL);
-        if(!siteUrl.startsWith("http")){
+        if(StringUtils.isNotBlank(siteUrl) && !siteUrl.startsWith("http")){
             siteUrl = "http://"+siteUrl;
         }
         return  siteUrl+ sub;

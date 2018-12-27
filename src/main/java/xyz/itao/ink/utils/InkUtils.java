@@ -285,8 +285,10 @@ public class InkUtils {
      * @param name
      * @param value
      */
-    public static void setCookie(HttpServletResponse response, String name, String value){
+    public static void setCookie(HttpServletResponse response, String name, String value, Integer expire){
         Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(expire);
+        cookie.setHttpOnly(true);
         response.addCookie(cookie);
     }
 }

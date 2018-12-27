@@ -1,9 +1,6 @@
 package xyz.itao.ink.domain;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import xyz.itao.ink.domain.entity.Comment;
@@ -17,7 +14,6 @@ import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Queue;
 
 /**
  * @author hetao
@@ -217,7 +213,7 @@ public class CommentDomain {
         return dfs(id);
     }
     private List<CommentDomain> dfs(Long pid){
-        List<CommentDomain> children = commentRepository.loadAllActiveCommentDomainByParentId(pid);
+        List<CommentDomain> children = commentRepository.loadAllActiveApprovedCommentDomainByParentId(pid);
         List<CommentDomain> res = Lists.newArrayList();
         for(CommentDomain child : children){
             res.add(child);

@@ -43,7 +43,7 @@ public class InstallController extends BaseController {
     /**
      * 安装页
      */
-    @GetMapping
+    @GetMapping(value = "")
     public String index(HttpServletRequest request) {
         request.setAttribute("is_install", isRepeatInstall());
         return "install";
@@ -51,7 +51,7 @@ public class InstallController extends BaseController {
 
 
     @ResponseBody
-    @PostMapping
+    @PostMapping(value = "")
     @SysLog("初始化站点")
     public RestResponse<?> doInstall(InstallParam installParam) {
         if (isRepeatInstall()) {

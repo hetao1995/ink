@@ -103,17 +103,15 @@ public class ArticleController extends BaseController {
 
         if (props.getBoolean(WebConstant.OPTION_ALLOW_COMMENT_AUDIT, true)) {
             commentVo.setStatus(WebConstant.COMMENT_NO_AUDIT);
-            commentVo.setActive(false);
         } else {
             commentVo.setStatus(WebConstant.COMMENT_APPROVED);
-            commentVo.setActive(true);
         }
 
         UserDomain newUserDomain = commentService.postNewComment(commentVo,userDomain);
         if(userDomain==null || userDomain.getId()==null){
             // 将临时用户jwt放入cookie
             String jwt = userService.getJwtLoginToken(newUserDomain, true);
-            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt);
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt, WebConstant.REMEMBER_ME_INTERVAL);
         }
         return RestResponse.ok();
     }

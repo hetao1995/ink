@@ -11,6 +11,7 @@ import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.MultiIdentifierAndPasswordAuthenticationToken;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.service.impl.UserServiceImpl;
+import xyz.itao.ink.utils.InkUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -30,13 +31,11 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)  {
         String token = userService.getJwtLoginToken((UserDomain) authentication.getPrincipal(), ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe());
-        Cookie cookie = new Cookie(WebConstant.AUTHORIZATION, token);
-        cookie.setHttpOnly(true);
-        cookie.setMaxAge(-1);
         if(((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe()){
-            cookie.setMaxAge(WebConstant.REMEMBER_ME_INTERVAL);
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, WebConstant.REMEMBER_ME_INTERVAL);
+        }else{
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, -1);
         }
-        response.addCookie(cookie);
-        request.setAttribute(WebConstant.LOGIN_USER, (UserDomain) authentication.getPrincipal());
+        request.setAttribute(WebConstant.LOGIN_USER,  authentication.getPrincipal());
     }
 }

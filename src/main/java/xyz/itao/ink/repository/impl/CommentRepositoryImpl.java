@@ -1,7 +1,10 @@
 package xyz.itao.ink.repository.impl;
 
+import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.dao.CommentMapper;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.DomainFactory;
@@ -113,8 +116,8 @@ public class CommentRepositoryImpl  implements CommentRepository {
     }
 
     @Override
-    public List<CommentDomain> loadAllActiveCommentDomainByParentId(Long pid) {
-        CommentDomain domain = domainFactory.createCommentDomain().setParentId(pid).setDeleted(false).setActive(true);
+    public List<CommentDomain> loadAllActiveApprovedCommentDomainByParentId(Long pid) {
+        CommentDomain domain = domainFactory.createCommentDomain().setParentId(pid).setDeleted(false).setActive(true).setStatus(WebConstant.COMMENT_APPROVED);
         return commentMapper
                 .selectByNoNulProperties(domain.entity())
                 .stream()

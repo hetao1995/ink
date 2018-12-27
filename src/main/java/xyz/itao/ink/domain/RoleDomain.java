@@ -99,6 +99,7 @@ public class RoleDomain{
         this.updateTime = DateUtils.getNow();
         this.deleted = false;
         this.id = IdUtils.nextId();
+        this.active = true;
         roleRepository.saveNewRole(this);
         return this;
     }
