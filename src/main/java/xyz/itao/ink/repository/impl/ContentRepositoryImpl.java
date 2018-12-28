@@ -1,5 +1,6 @@
 package xyz.itao.ink.repository.impl;
 
+import org.elasticsearch.index.engine.Engine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.constant.TypeConst;
@@ -134,5 +135,23 @@ public class ContentRepositoryImpl implements ContentRepository {
                 .stream()
                 .map(e->domainFactory.createContentDomain().assemble(e))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ContentDomain loadNextActivePublishContentDomain(Integer created, String type) {
+        Content content = contentMapper.selectNextContentDomain(created, true, TypeConst.PUBLISH, type);
+        if(content==null){
+            return null;
+        }
+        return domainFactory.createContentDomain().assemble(content);
+    }
+
+    @Override
+    public ContentDomain loadPrevActivePublishContentDomain(Integer created, String type) {
+        Content content = contentMapper.selectPrevContentDomain(created, true, TypeConst.PUBLISH, type);
+        if(content==null){
+            return null;
+        }
+        return domainFactory.createContentDomain().assemble(content);
     }
 }

@@ -81,4 +81,22 @@ public interface ContentMapper {
      * @return
      */
     List<Content> searchContents(@Param("keyword") String keyword, @Param("type") String type, @Param("active") boolean active);
+
+    /**
+     * 加载上一个content
+     * @param created created
+     * @param active active
+     * @param status statuc
+     * @return
+     */
+    Content selectNextContentDomain(@Param("created") Integer created, @Param("active") boolean active, @Param("status") String status, @Param("type") String type);
+
+    /**
+     * 加载下一个content
+     * @param created created
+     * @param active active
+     * @param status statuc
+     * @return
+     */
+    Content selectPrevContentDomain(@Param("created") Integer created, @Param("active") boolean active, @Param("status") String status, @Param("type") String type);
 }

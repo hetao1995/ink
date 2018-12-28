@@ -153,6 +153,40 @@
     order by
           title_score desc, categories_score desc, tags_score desc, content_score desc
   </select>
+    <select id="selectPrevContentDomain" resultMap="BaseResultMap">
+      select
+      <include refid="Base_Column_List"/>
+      from contents
+      where
+            deleted = false
+      and
+            active = #{active,jdbcType=BIT}
+      and
+            status = #{status,jdbcType=VARCHAR}
+      and
+            created &gt; #{created,jdbcType=INTEGER}
+      and
+            type = #{type,jdbcType=VARCHAR}
+      order by created asc
+      limit 1
+    </select>
+  <select id="selectNextContentDomain" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from contents
+    where
+    deleted = false
+    and
+    active = #{active,jdbcType=BIT}
+    and
+    status = #{status,jdbcType=VARCHAR}
+    and
+    created &lt; #{created,jdbcType=INTEGER}
+    and
+    type = #{type,jdbcType=VARCHAR}
+    order by created desc
+    limit 1
+  </select>
 
   <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Content" >
     insert into contents

@@ -87,7 +87,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     public PageInfo<ContentDomain> loadAllActivePublishContentDomain(ArticleParam articleParam) {
-        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true).setStatus(TypeConst.PUBLISH);
+        ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true).setStatus(TypeConst.PUBLISH).setType(articleParam.getType());
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
         PageInfo<ContentDomain> pageInfo = new PageInfo<>(page);

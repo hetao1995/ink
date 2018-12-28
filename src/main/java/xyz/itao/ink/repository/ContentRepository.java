@@ -107,4 +107,18 @@ public interface ContentRepository {
      * @return
      */
     List<ContentDomain> searchContentDomain(String keyword, String type);
+
+    /**
+     * 根据created加载下一个已发布的content
+     * @param created created
+     * @return 下一个，如果没有返回null
+     */
+    ContentDomain loadNextActivePublishContentDomain(Integer created, String type);
+
+    /**
+     * 根据created加载上一个已发布的content
+     * @param created created
+     * @return 上一个，如果没有返回null
+     */
+    ContentDomain loadPrevActivePublishContentDomain(Integer created, String type);
 }

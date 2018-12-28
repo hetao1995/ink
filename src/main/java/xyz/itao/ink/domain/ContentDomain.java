@@ -584,4 +584,12 @@ public class ContentDomain {
     public String getModifiedFmt(){
         return DateUtils.dateFormat(this.getUpdateTime(),"yyyy/MM/dd HH:mm" );
     }
+
+    public ContentDomain getPrev(){
+        return contentRepository.loadPrevActivePublishContentDomain(this.getCreated(), this.type);
+    }
+
+    public ContentDomain getNext(){
+        return contentRepository.loadNextActivePublishContentDomain(this.getCreated(), this.type);
+    }
 }
