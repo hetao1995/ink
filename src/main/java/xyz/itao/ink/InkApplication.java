@@ -25,14 +25,7 @@ import java.util.Collections;
 @SpringBootApplication
 @MapperScan("xyz.itao.ink.dao")
 @EnableCaching
-public class InkApplication extends SpringBootServletInitializer {
-    @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        super.onStartup(servletContext);
-        servletContext.setSessionTrackingModes(Collections.singleton(SessionTrackingMode.COOKIE));
-        SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
-        sessionCookieConfig.setHttpOnly(true);
-    }
+public class InkApplication {
     public static void main(String[] args) {
         SpringApplication.run(InkApplication.class, args);
     }
