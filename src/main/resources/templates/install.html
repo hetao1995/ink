@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta content="${_csrf_token}" name="csrf_token"/>
-    <link rel="shortcut icon" href="/static/admin/images/favicon.png"/>
+    <link rel="shortcut icon" th:href="${props.getCdnUrl('/images/favicon.png')}"/>
     <title>Ink - 博客安装</title>
     <link th:href="${props.getCdnUrl('/plugins/jquery-steps/1.1.0/jquery.steps.css')}" rel="stylesheet" >
     <link th:href="${props.getCdnUrl('/plugins/bootstrap/3.3.7/css/bootstrap.min.css')}" rel="stylesheet" />
@@ -144,7 +144,7 @@
 <script th:src="${props.getCdnUrl('/plugins/jquery/3.2.1/jquery.min.js')}"></script>
 <script th:src="${props.getCdnUrl('/plugins/bootstrap/3.3.7/js/bootstrap.min.js')}"></script>
 <script th:src="${props.getCdnUrl('/plugins/vue/vue.min.js')}"></script>
-<script th:src="${props.getCdnUrl('/plugins/vue-loading/vue-loading.min.js')}+"></script>
+<script th:src="${props.getCdnUrl('/plugins/vue-loading/vue-loading.min.js')}"></script>
 <script th:src="${props.getCdnUrl('/plugins/axios/axios.min.js')}"></script>
 <script th:src="${props.getCdnUrl('/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.js')}"></script>
 <script th:src="${props.getCdnUrl('/plugins/jquery-validate/1.15.1/jquery.validate.min.js')}"></script>
