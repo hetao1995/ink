@@ -30,6 +30,7 @@ pre {font-size:8pt; letter-spacing:4px; line-height:8pt; font-weight:bold;}
 
 https://www.degraeve.com/img2txt-yay.php?url=http%3A%2F%2Fimages.clipartpanda.com%2Fpaint-brush-stroke-png-InkMEJ6_p6.png&mode=A&size=60&charstr=ABCDEFGHIJKLMNOPQRSTUVWXYZ&order=R&invert=N
 
+http://images.clipartpanda.com/paint-brush-stroke-png-InkMEJ6_p6.png
 </pre>
 
 
