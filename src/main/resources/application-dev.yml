@@ -1,6 +1,8 @@
 server:
   port: 8080
-
+  session:
+    store-type: none
+    tracking-modes: cookie
 
 
 spring:
@@ -37,14 +39,9 @@ spring:
           multipart:
             max-file-size: 10MB
             max-request-size: 100MB
-    session:
-      store-type: none
-      tracking-modes: cookie
 
-    security:
-      http:
-        auto-config: false
-        disable-url-rewriting: true
+
+
 
     devtools:
       restart:

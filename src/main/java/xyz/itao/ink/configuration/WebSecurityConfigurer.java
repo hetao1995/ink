@@ -74,6 +74,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .logoutSuccessHandler(new ForwardLogoutSuccessHandler("/"))
                 .and()
                 .sessionManagement().disable();
+        http.sessionManagement().enableSessionUrlRewriting(false);
     }
     //配置provider
     @Override
