@@ -62,6 +62,9 @@ pagehelper:
 logging:
   level:
     xyz.itao.ink.dao : DEBUG
+  pattern:
+    console: "%d - %msg%n"
+  #config: classpath: log4j2-spring.xml
 
 
 swagger:
