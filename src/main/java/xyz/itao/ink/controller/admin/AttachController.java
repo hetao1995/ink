@@ -7,11 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.annotation.SysLog;
-import xyz.itao.ink.common.Commons;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.controller.BaseController;
+import xyz.itao.ink.domain.LinkDomain;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LinkVo;
@@ -31,12 +31,12 @@ import java.util.List;
 @RequestMapping("admin/attach")
 @Slf4j
 public class AttachController {
-    @Autowired
-    Commons commons;
-
 
     @Autowired
     private LinkService linkService;
+
+    @Autowired
+    private Props props;
 
 
     /**
@@ -46,9 +46,9 @@ public class AttachController {
      */
     @GetMapping(value = "")
     public String index(HttpServletRequest request, PageParam pageParam) {
-        PageInfo<LinkVo> attachPaginator = linkService.loadAllActiveLinkVo(pageParam);
+        PageInfo<LinkDomain> attachPaginator = linkService.loadAllActiveLinkDomain(pageParam);
         request.setAttribute("attaches", attachPaginator);
-        request.setAttribute(TypeConst.ATTACH_URL, commons.siteOption(TypeConst.ATTACH_URL, commons.siteUrl()));
+        request.setAttribute(TypeConst.ATTACH_URL, props.getAttachUrl());
         request.setAttribute("max_file_size", WebConstant.MAX_FILE_SIZE / 1024);
         return "admin/attaches";
     }

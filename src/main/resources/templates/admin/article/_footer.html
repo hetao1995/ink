@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" >
 <footer th:replace="admin/footer"/>
-<script th:src="${commons.cdnUrl()}+'/plugins/tagsinput/jquery.tagsinput.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/datetimepicker/bootstrap-datetimepicker.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/jquery-multi-select/jquery.quicksearch.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/mditor/js/mditor.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/wysihtml5/0.3.0/wysihtml5.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/summernote/0.8.2/summernote.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/summernote/0.8.2/lang/summernote-zh-CN.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/vue-select/vue-select.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/jquery-toggles/2.0.4/toggles.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/dropzone/4.3.0/min/dropzone.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/to-markdown/3.1.0/to-markdown.min.js'"></script>
+<script th:src="${props.getCdnUrl('/plugins/tagsinput/jquery.tagsinput.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/datetimepicker/bootstrap-datetimepicker.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/datetimepicker/bootstrap-datetimepicker.zh-CN.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery-multi-select/jquery.quicksearch.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/mditor/js/mditor.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/wysihtml5/0.3.0/wysihtml5.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/summernote/0.8.2/summernote.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/summernote/0.8.2/lang/summernote-zh-CN.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/vue-select/vue-select.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery-toggles/2.0.4/toggles.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/dropzone/4.3.0/min/dropzone.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/to-markdown/3.1.0/to-markdown.min.js')}"></script>

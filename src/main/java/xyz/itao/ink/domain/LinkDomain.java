@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import xyz.itao.ink.domain.entity.Link;
 import xyz.itao.ink.domain.vo.LinkVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -158,5 +159,9 @@ public class LinkDomain {
         this.setDeleted(true);
         this.updateById();
         return this;
+    }
+
+    public String getSubstrFileName(){
+        return StringUtils.substring(this.getFileName(), 0, 12);
     }
 }

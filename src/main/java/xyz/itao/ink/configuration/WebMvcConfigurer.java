@@ -42,8 +42,8 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     SysLogInterceptor sysLogInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/user/**").addResourceLocations("classpath:/templates/themes/default/static/");
-        registry.addResourceHandler("/plugins/**").addResourceLocations("classpath:/templates/admin/static/plugins/");
+//        registry.addResourceHandler("/user/**").addResourceLocations("classpath:/templates/themes/default/static/");
+//        registry.addResourceHandler("/plugins/**").addResourceLocations("classpath:/templates/admin/static/plugins/");
         registry.addResourceHandler("/admin/**").addResourceLocations("classpath:/templates/admin/static/");
         registry.addResourceHandler("/themes/**").addResourceLocations("classpath:/templates/themes/");
         registry.addResourceHandler("/upload/**").addResourceLocations("classpath:/upload/");

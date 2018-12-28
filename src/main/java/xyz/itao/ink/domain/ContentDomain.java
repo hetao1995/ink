@@ -479,6 +479,10 @@ public class ContentDomain {
      */
     public String getContentHtml(){
         String content = StringUtils.replaceFirst(this.getContent(),WebConstant.INTRODUCTION_SPLITTER, "\n");
+        return getHtml(content);
+    }
+
+    private String getHtml(String content) {
         if(WebConstant.FMT_HTML.equals(this.getFmtType())){
             return content;
         }else if(WebConstant.FMT_MARK_DOWN.equals(this.getFmtType())){
@@ -495,12 +499,7 @@ public class ContentDomain {
         String intro = StringUtils.substring(this.getContent(), 0, props.getInt(WebConstant.OPTION_INTRO_MAX_LEN, 75));
         int pos = StringUtils.indexOf(intro, WebConstant.INTRODUCTION_SPLITTER);
         intro =  pos<0 ? intro : StringUtils.substring(intro, 0, pos);
-        if(WebConstant.FMT_HTML.equals(this.getFmtType())){
-            return intro;
-        }else if(WebConstant.FMT_MARK_DOWN.equals(this.getFmtType())){
-            return InkUtils.mdToHtml(intro);
-        }
-        return intro;
+        return getHtml(intro);
     }
 
     /**
@@ -523,7 +522,7 @@ public class ContentDomain {
             String img = "";
             final String regExImg = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
             Pattern pImage = Pattern.compile(regExImg, Pattern.CASE_INSENSITIVE);
-            Matcher mImage = pImage.matcher(content);
+            Matcher mImage = pImage.matcher(this.getContentHtml());
             if (mImage.find()) {
                 img = img + "," + mImage.group();
                 // 匹配src

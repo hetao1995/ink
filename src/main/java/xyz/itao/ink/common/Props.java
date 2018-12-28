@@ -1,6 +1,8 @@
 package xyz.itao.ink.common;
 
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -20,6 +22,7 @@ import xyz.itao.ink.service.ContentService;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -187,12 +190,12 @@ public class Props {
         return this.getBoolean(WebConstant.OPTION_ALLOW_CLOUD_CDN, false);
     }
 
-    public String getTheme(){
+    public String getSiteTheme(){
         return this.get(WebConstant.OPTION_SITE_THEME, "default");
     }
 
     public String getThemeUrl(String sub){
-        return this.getSiteUrl(WebConstant.THEME_URI+"/"+this.getTheme() + sub);
+        return this.getSiteUrl(WebConstant.THEME_URI+"/"+this.getSiteTheme() + sub);
     }
 
     /**
@@ -219,6 +222,43 @@ public class Props {
         commentParam.setPageNum(1);
         commentParam.setPageSize(limit);
         return commentService.loadAllActiveApprovedCommentDomain(commentParam).getList();
+    }
+
+
+    public  String getAttachUrl(){
+        return this.getAttachUrl("");
+    }
+
+    public String getAttachUrl(String fileKey){
+        return this.get(TypeConst.ATTACH_URL, this.getSiteUrl("/upload/"))+fileKey;
+    }
+
+    public Integer getYearNow(){
+        return LocalDate.now().getYear();
+    }
+
+    public String getRandomBgUrl(){
+        return this.getCdnUrl("/images/bg/"+ RandomUtils.nextInt(1, 6) + ".png");
+    }
+
+    public String renderTheme(String viewName){
+        return "themes/"+ this.getSiteTheme() + "/" + viewName;
+    }
+
+    public String render404(){
+        return "/comm/error_404";
+    }
+
+    public String getThemeOption(){
+        return this.get(this.getThemeOptionKey(), null);
+    }
+
+    public void setThemeOption(Map<String, String> options, UserDomain userDomain){
+        this.set(this.getThemeOptionKey(),JSON.toJSONString(options), userDomain);
+    }
+
+    public String getThemeOptionKey(){
+        return "theme_" + this.getSiteTheme() + "_options";
     }
 
 }

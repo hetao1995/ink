@@ -1,17 +1,14 @@
 package xyz.itao.ink.controller.admin;
 
 import com.alibaba.fastjson.JSON;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.service.OptionService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +23,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/admin/theme")
 @Slf4j
-public class ThemeController extends BaseController {
+public class ThemeController  {
     @Autowired
     OptionService optionService;
     @Autowired
@@ -42,10 +39,7 @@ public class ThemeController extends BaseController {
      */
     @GetMapping("/setting")
     public String setting(HttpServletRequest request) {
-        String currentTheme = props.get(WebConstant.OPTION_SITE_THEME, "default");
-        String key          = "theme_" + currentTheme + "_options";
-
-        String              option = props.get(key, "");
+        String option = props.getThemeOption();
         Map<String, Object> map    = new HashMap<>();
         try {
             if (StringUtils.isNotBlank(option)) {
@@ -56,6 +50,6 @@ public class ThemeController extends BaseController {
             log.error("解析主题设置出现异常", e);
         }
         request.setAttribute("theme_options", map);
-        return this.render("setting");
+        return props.renderTheme("setting");
     }
 }

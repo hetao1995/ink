@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ContentDomain;
@@ -25,13 +26,16 @@ import java.util.Set;
  * @description
  */
 @Controller
-public class MetaController extends BaseController {
+public class MetaController {
 
     @Autowired
     private ContentService contentService;
 
     @Autowired
     private MetaService metaService;
+
+    @Autowired
+    private Props props;
 
     /**
      * 分类列表页
@@ -42,7 +46,7 @@ public class MetaController extends BaseController {
         Set<String> categories = mapping.keySet();
         request.setAttribute("categories", categories);
         request.setAttribute("mapping", mapping);
-        return this.render("categories");
+        return props.renderTheme("categories");
     }
 
     /**
@@ -73,7 +77,7 @@ public class MetaController extends BaseController {
         Set<String> tags    = mapping.keySet();
         request.setAttribute("tags", tags);
         request.setAttribute("mapping", mapping);
-        return this.render("tags");
+        return props.renderTheme("tags");
     }
 
     /**
@@ -99,7 +103,7 @@ public class MetaController extends BaseController {
         pageNum = pageNum < 0 || pageNum > WebConstant.MAX_PAGE ? 1 : pageNum;
         MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(type, name);
         if (null == metaDomain) {
-            return this.render_404();
+            return props.render404();
         }
 
         PageInfo<ContentDomain> contentsPage = contentService.getPublishArticlesByMeta(metaDomain, pageNum, pageSize);
@@ -117,7 +121,7 @@ public class MetaController extends BaseController {
         }
 
 
-        return this.render("page-category");
+        return props.renderTheme("page-category");
     }
 
 }

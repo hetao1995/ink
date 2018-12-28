@@ -33,7 +33,7 @@ import java.nio.file.Paths;
  */
 @Controller
 @RequestMapping("/install")
-public class InstallController extends BaseController {
+public class InstallController {
     @Autowired
     private SiteService siteService;
     @Autowired

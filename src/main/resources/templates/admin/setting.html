@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="title='系统设置',active='setting', has_sub=''">
 <header th:replace="admin/header::headerFragment(${title},${active},${has_sub})"></header>
-<link th:href="|${commons.cdnUrl()}/plugins/toggles/toggles.css|" rel="stylesheet">
+<link th:href="${props.getCdnUrl('/plugins/toggles/toggles.css')}" rel="stylesheet">
 
 <div id="wrapper">
     <div th:replace="admin/header::header-body"></div>
@@ -148,7 +148,7 @@
         </div>
     </div>
 </div>
-<script th:src="|${commons.cdnUrl()}/plugins/jquery-toggles/2.0.4/toggles.min.js|"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery-toggles/2.0.4/toggles.min.js')}"></script>
 <script >
     var tale = new $.tale();
     var vm = new Vue({

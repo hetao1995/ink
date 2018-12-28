@@ -2,18 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"  >
 <head th:fragment="headerFragment(title,active,has_sub)">
     <meta charset="utf-8"/>
-    <title><th:block th:text="${title!=null?title:'博客后台'}+'- Ink'"></th:block></title>
+    <title th:text="${title ?: '博客后台'}+'- Ink'"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta content="Tao" name="author"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <link rel="shortcut icon" th:href="@{/admin/images/favicon.png}"/>
+    <link rel="shortcut icon" th:href="${props.getCdnUrl('/images/favicon.png')}"/>
 
-    <th:block th:if="${commons.allowCloudCdn()}">
+    <th:block th:if="${props.allowCloudCdn}">
         <link th:href="@{//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css}" rel="stylesheet">
         <link th:href="@{//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css}" rel="stylesheet">
         <link th:href="@{//cdn.bootcss.com/limonte-sweetalert2/6.4.1/sweetalert2.min.css}" rel="stylesheet">
-        <link th:href="|${commons.cdnUrl()}/plugins/vue-loading/vue-loading.min.css|" rel="stylesheet">
-        <link th:href="|${commons.cdnUrl()}/css/style.min.css|" rel="stylesheet" >
+        <link th:href="${props.getCdnUrl('/plugins/vue-loading/vue-loading.min.css')}" rel="stylesheet">
+        <link th:href="${props.getCdnUrl('/css/style.min.css')}" rel="stylesheet" >
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -21,17 +21,17 @@
         <script src="https://cdn.bootcss.com/respond.js/1.4.0/respond.min.js"></script>
         <![endif]-->
     </th:block>
-    <th:block th:unless="${commons.allowCloudCdn()}">
-        <link th:href="|${commons.cdnUrl()}/plugins/bootstrap/3.3.7/css/bootstrap.min.css|" rel="stylesheet" />
-        <link th:href="|${commons.cdnUrl()}/plugins/font-awesome/4.7.0/css/font-awesome.min.css|" rel="stylesheet">
-        <link th:href="|${commons.cdnUrl()}/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.css|" rel="stylesheet">
-        <link th:href="|${commons.cdnUrl()}/plugins/vue-loading/vue-loading.min.css|" rel="stylesheet">
-        <link th:href="|${commons.cdnUrl()}/css/style.min.css|" rel="stylesheet" >
+    <th:block th:unless="${props.allowCloudCdn}">
+        <link th:href="${props.getCdnUrl('/plugins/bootstrap/3.3.7/css/bootstrap.min.css')}" rel="stylesheet" />
+        <link th:href="${props.getCdnUrl('/plugins/font-awesome/4.7.0/css/font-awesome.min.css')}" rel="stylesheet">
+        <link th:href="${props.getCdnUrl('/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.css')}" rel="stylesheet">
+        <link th:href="${props.getCdnUrl('/plugins/vue-loading/vue-loading.min.css')}" rel="stylesheet">
+        <link th:href="${props.getCdnUrl('/css/style.min.css')}" rel="stylesheet" >
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
-        <script th:src="|${commons.cdnUrl()}/plugins/html5shiv/3.7.0/html5shiv.js|"></script>
-        <script th:src="|${commons.cdnUrl()}/plugins/respond.js/1.3.0/respond.min.js|"></script>
+        <script th:src="${props.getCdnUrl('/plugins/html5shiv/3.7.0/html5shiv.js')}"></script>
+        <script th:src="${props.getCdnUrl('/plugins/respond.js/1.3.0/respond.min.js')}"></script>
         <![endif]-->
     </th:block>
 </head>
@@ -62,10 +62,10 @@
                     <ul class="nav navbar-nav navbar-right pull-right">
                         <li class="dropdown">
                             <a th:href="@{index.html}" class="dropdown-toggle profile" data-toggle="dropdown"
-                               aria-expanded="true"><img th:src="${commons.gravatar(login_user.email)}" alt="user-img"
+                               aria-expanded="true"><img th:src="${login_user.gravatar}" alt="user-img"
                                                          class="img-circle"/> </a>
                             <ul class="dropdown-menu">
-                                <li><a th:href="@{${commons.siteUrl()}}" target="_blank"><i class="fa fa-eye" aria-hidden="true"></i> 预览站点</a></li>
+                                <li><a th:href="@{props.siteUrl}" target="_blank"><i class="fa fa-eye" aria-hidden="true"></i> 预览站点</a></li>
                                 <li><a th:href="@{/admin/profile}"><i class="fa fa-sun-o"></i> 个人设置</a></li>
                                 <li><a th:href="@{/logout}"><i class="fa fa-sign-out"></i> 注销</a></li>
                             </ul>

@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Controller
 @Slf4j
-public class IndexController extends BaseController{
+public class IndexController{
     @Autowired
     ContentService contentService;
     @Autowired
@@ -66,7 +66,7 @@ public class IndexController extends BaseController{
         articleParam.setOrderBy("created desc");
         request.setAttribute("articles", contentService.loadAllActivePublishContentDomain(articleParam));
         request.setAttribute("is_home", true);
-        return this.render("index");
+        return props.renderTheme("index");
     }
     /**
      * 搜索页
@@ -93,7 +93,7 @@ public class IndexController extends BaseController{
         request.setAttribute("type", "搜索");
         request.setAttribute("keyword", keyword);
         request.setAttribute("page_prefix", "/search/" + keyword);
-        return this.render("page-category");
+        return props.renderTheme("page-category");
     }
 
     /**
@@ -117,7 +117,7 @@ public class IndexController extends BaseController{
         PageInfo<ArchiveDomain> archivePage = contentService.loadContentArchives(articleParam);
         request.setAttribute("archivePage", archivePage);
         request.setAttribute("is_archive", true);
-        return this.render("archives");
+        return props.renderTheme("archives");
     }
 
     /**

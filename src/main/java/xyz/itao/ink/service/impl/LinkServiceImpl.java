@@ -54,6 +54,15 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
+    public PageInfo<LinkDomain> loadAllActiveLinkDomain(PageParam pageParam) {
+        Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
+        List<LinkDomain> linkDomains = linkRepository.loadAllActiveLinkDomain();
+        PageInfo<LinkDomain> pageInfo =  new PageInfo<>(page);
+        pageInfo.setList(linkDomains);
+        return pageInfo;
+    }
+
+    @Override
     public void deleteAttachesById(Long id, UserDomain userDomain) {
         LinkDomain linkDomain = linkRepository.loadLinkDomainById(id);
         if(linkDomain==null){

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.WebConstant;
 

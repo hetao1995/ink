@@ -1,19 +1,13 @@
 package xyz.itao.ink.interceptor;
 
 import com.alibaba.fastjson.JSON;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.Props;
-import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.domain.vo.UserVo;
-import xyz.itao.ink.service.OptionService;
-import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.IpUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,15 +24,6 @@ import java.util.Map;
 public class BaseInterceptor implements HandlerInterceptor {
     private static final String USER_AGENT = "user-agent";
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private OptionService optionService;
-
-
-    @Autowired
-    private Commons commons;
 
     @Autowired
     private Props props;
@@ -54,15 +39,16 @@ public class BaseInterceptor implements HandlerInterceptor {
         log.debug("用户访问地址: {}, 来路地址: {}", uri, IpUtils.getIpAddrByRequest(request));
 
 
-        request.setAttribute("props", props);
+
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
         //一些工具类和公共方法
-        request.setAttribute("commons", commons);
-        String themJson = props.get("theme_default_options", "");
+//        request.setAttribute("commons", commons);
+        request.setAttribute("props", props);
+        String themJson = props.getThemeOption();
         if(StringUtils.isBlank(themJson)){
             return ;
         }

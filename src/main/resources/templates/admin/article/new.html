@@ -15,7 +15,7 @@
                                 <h3 class="panel-title">发布文章</h3>
                             </div>
                             <div class="panel-body">
-                                <input type="hidden" id="attach_url" th:value="${commons.attachUrl()}" />
+                                <input type="hidden" id="attach_url" th:value="${props.attachUrl}" />
                                 <form id="articleForm">
                                     <input type="hidden" v-model="article.id"/>
                                     <input type="hidden" v-model="article.createTime"/>
@@ -129,6 +129,6 @@
     </div>
 </div>
 
-<script th:src="${commons.cdnUrl()}+'/js/new_article.js'" ></script>
+<script th:src="${props.getCdnUrl('/js/new_article.js')}" ></script>
 </body>
 </html>

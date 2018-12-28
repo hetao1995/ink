@@ -61,7 +61,7 @@
 
                                                     <li class="list-group-item"  th:each="item : ${articles}">
                                                         <span class="badge badge-primary" th:title="|${item.commentsNum}条评论|" th:text="${item.commentsNum}"></span>
-                                                        <a target="_blank" th:href="|${commons.siteUrl('/article/')}${item.id}|" th:text="${item.title}"></a>
+                                                        <a target="_blank" th:href="|${props.getSiteUrl('/article/')}${item.id}|" th:text="${item.title}"></a>
                                                     </li>
 
                                                 </ul>

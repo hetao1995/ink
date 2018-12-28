@@ -17,13 +17,13 @@
                                 <div class="col-md-3 text-center m-t-10" v-for="item in themes">
                                     <img class="attach-img bx-shadow" :src="'/themes/'+ item.name + '/screenshot.png'" width="300" height="200" :title="item.name"/>
                                     <div class="clearfix m-t-10">
-                                        主题：<span>{{item.name}}</span> <mark th:v-if="|item.name == '${commons.siteTheme()}'|">（当前主题）</mark>
+                                        主题：<span>{{item.name}}</span> <mark th:v-if="|item.name == '${props.siteTheme}'|">（当前主题）</mark>
                                     </div>
                                     <div class="clearfix m-t-10">
 
-                                        <a th:v-if="|item.name == '${commons.siteTheme()}' && item.hasSetting|" class="btn btn-info" href="/admin/theme/setting"><span>主题设置</span></a>
+                                        <a th:v-if="|item.name == '${props.siteTheme}' && item.hasSetting|" class="btn btn-info" href="/admin/theme/setting"><span>主题设置</span></a>
 
-                                        <button th:v-if="|item.name != '${commons.siteTheme()}'|" @click="active(item.name)" type="button" class="btn btn-danger btn-sm waves-effect waves-light m-t-5">
+                                        <button th:v-if="|item.name != '${props.siteTheme}'|" @click="active(item.name)" type="button" class="btn btn-danger btn-sm waves-effect waves-light m-t-5">
                                             <i class="fa fa-check-circle"></i> <span>启用该主题</span>
                                         </button>
                                     </div>

@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.bootstrap.InkLoader;
 import xyz.itao.ink.common.CommonValidator;
-import xyz.itao.ink.common.Commons;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.TypeConst;
@@ -56,8 +55,6 @@ public class AdminApiController {
     LinkService linkService;
     @Autowired
     Props props;
-    @Autowired
-    Commons commons;
     @GetMapping(value = "/logs")
     public RestResponse sysLogs( PageParam pageParam) {
         pageParam.setOderBy("create_time desc");
@@ -338,15 +335,7 @@ public class AdminApiController {
     @SysLog("保存主题设置")
     @PostMapping("/themes")
     public RestResponse<?> saveSetting(@RequestParam Map<String, String> query, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
-
-        String currentTheme = props.get(WebConstant.OPTION_SITE_THEME, "default");
-        String key          = "theme_" + currentTheme + "_options";
-
-        Map<String, String> options = Maps.newHashMap();
-        query.forEach(options::put);
-
-        props.set(key, JSON.toJSONString(options), userDomain);
-
+        props.setThemeOption(query, userDomain);
         return RestResponse.ok();
     }
 
@@ -355,7 +344,7 @@ public class AdminApiController {
     public RestResponse<?> activeTheme( ThemeParam themeParam, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
         props.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme(), userDomain);
         optionService.deleteAllThemes(userDomain);
-        Commons.THEME = themeParam.getSiteTheme();
+        props.set(WebConstant.OPTION_SITE_THEME, themeParam.getSiteTheme(), userDomain);
 
         String themePath = "/templates/themes/" + themeParam.getSiteTheme();
         try {

@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * @description
  */
 @Controller
-public class ArticleController extends BaseController {
+public class ArticleController {
 
     @Autowired
     private ContentService contentService;
@@ -51,8 +51,8 @@ public class ArticleController extends BaseController {
     @GetMapping(value = {"/{idOrSlug}", "/{idOrSlug}.html"})
     public String page(@PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize, HttpServletRequest request) {
         ContentDomain contentDomain = contentService.loadActivePublishContentDomainByIdOrSlug(idOrSlug);
-        if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus())) {
-            return this.render_404();
+        if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus()) || !TypeConst.PAGE.equals(contentDomain.getType())) {
+            return props.render404();
         }
         setArticleAttribute(request, pageNum, pageSize, contentDomain);
         contentService.hit(contentDomain);
@@ -67,13 +67,13 @@ public class ArticleController extends BaseController {
 
         ContentDomain contentDomain = contentService.loadActivePublishContentDomainByIdOrSlug(idOrSlug);
         if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus()) || !TypeConst.ARTICLE.equals(contentDomain.getType())) {
-            return this.render_404();
+            return props.render404();
         }
 
         setArticleAttribute(request, pageNum, pageSize, contentDomain);
         request.setAttribute("is_post", true);
         contentService.hit(contentDomain);
-        return this.render("post");
+        return props.renderTheme("post");
     }
 
 
@@ -84,7 +84,7 @@ public class ArticleController extends BaseController {
     public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserDomain userDomain){
         ContentDomain contentDomain = contentService.loadDraftByIdOrSlug(idOrSlug, userDomain);
         if(null == contentDomain){
-            return this.render_404();
+            return props.render404();
         }
         request.setAttribute("article", contentDomain);
         return renderContent(request, contentDomain);
@@ -122,12 +122,12 @@ public class ArticleController extends BaseController {
     private String renderContent(HttpServletRequest request, ContentDomain contentDomain) {
         if (TypeConst.ARTICLE.equals(contentDomain.getType())) {
             request.setAttribute("is_post", true);
-            return this.render("post");
+            return props.renderTheme("post");
         }
         if (TypeConst.PAGE.equals(contentDomain.getType())) {
-            return this.render("page");
+            return props.renderTheme("page");
         }
-        return this.render_404();
+        return props.render404();
     }
 
     /**

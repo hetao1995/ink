@@ -8,9 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.common.RestResponse;
 import xyz.itao.ink.constant.WebConstant;
-import xyz.itao.ink.controller.BaseController;
 import xyz.itao.ink.domain.UserDomain;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.UserService;
 
 /**
