@@ -53,10 +53,12 @@
                                 if (result.msg) {
                                     tale.alertError(result.msg || '安装失败');
                                 }
+                                tale.hideLoading();
                             }
                         },
                         error: function (e) {
                             console.log('post异常', e);
+                            tale.hideLoading();
                         }
                     });
                     return isValid;
