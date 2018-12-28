@@ -41,15 +41,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 //静态资源访问无需认证
                 .antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html", "/**/*.png","/**/*.svg","/**/*.otf","/**/*.eot", "/**/*.ttf","/**/*.woff","/**/*.woff2").permitAll()
                 .antMatchers("/*","/themes/**/static/**","/upload/**").permitAll()
-//                .antMatchers("/admin/login").permitAll()
-                //admin开头的请求，需要admin权限
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
-
-                //需登陆才能访问的url
-//                .antMatchers("/backend/**").hasRole("USER")
-                //默认其它的请求都需要认证
-//                .anyRequest().authenticated()
-//                .anyRequest().permitAll()
                 .and()
                 //CRSF禁用，因为不使用session
                 .csrf().disable()
@@ -57,10 +49,6 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .formLogin()
                 .loginPage("/login")
-//                .failureForwardUrl("/login?error")
-//                .successForwardUrl("/admin/index")
-                //拒绝form登录
-//                .disable()
                 .and()
                 //支持跨域
                 .cors()
@@ -80,16 +68,12 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
                 .and()
                 //使用默认的logoutFilter
                 .logout()
-//              .logoutUrl("/logout")   //默认就是"/logout"
                 //logout时清除token
                 .addLogoutHandler(tokenClearLogoutHandler())
                 //logout成功后返回200
-//                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
                 .logoutSuccessHandler(new ForwardLogoutSuccessHandler("/"))
                 .and()
                 .sessionManagement().disable();
-        // 禁用缓存
-        http.headers().frameOptions().sameOrigin().cacheControl();
     }
     //配置provider
     @Override

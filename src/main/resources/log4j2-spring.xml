@@ -12,29 +12,38 @@
     </properties>
 
     <!-- appender用于接收各种日志 -->
-    <appenders>
+    <Appenders>
         <!-- 常见的输出到console,常用于开发环境中,默认是system_err,还有一个system_out -->
-        <console name="console" target="system_out">
+        <Console name="console" target="system_out">
             <!-- appender级别的日志过滤 -->
             <!-- <thresholdFilter level="info" onMatch="accept" onMismatch="deny"/> -->
-            <patternLayout pattern="${FORMAT}"/>
-        </console>
+            <PatternLayout pattern="${FORMAT}"/>
+        </Console>
         <!-- 常用于开发环境,把日志记录到文件中,默认追加 -->
-        <file name="db_log" fileName="${LOG_HOME}/my-blog-db.log" append="true">
+        <RollingFile name="db_log" fileName="${LOG_HOME}/ink-db.log" filePattern="${LOG_HOME}/ink-db-%d{yyyy-MM-dd HH}.log">
             <patternLayout pattern="${FORMAT}"/>
-        </file>
-        <file name="service_log" fileName="${LOG_HOME}/my-blog-info.log" append="true">
+            <Policies>
+                <TimeBasedTriggeringPlicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="250MB"/>
+                <DefaultRolloverStrategy max="7"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="service_log" fileName="${LOG_HOME}/ink-service.log" filePattern="${LOG_HOME}/ink-service-%d{yyy-MM-dd HH}.log">
             <patternLayout pattern="${FORMAT}"/>
-        </file>
-    </appenders>
+            <Policies>
+                <TimeBasedTriggeringPlicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="250MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
 
     <!-- 接收appender -->
     <loggers>
         <logger name="org.apache.http" level="warn"/>
         <!-- Spring -->
-        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.springframework" level="INFO"/>
         <!-- mybatis loggers -->
-        <logger name="com.ibatis" level="DEBUG"/>
+        <logger name="com.mybatis" level="DEBUG"/>
         <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG"/>
         <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG"/>
         <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG"/>
@@ -47,19 +56,20 @@
 
         <!-- 对包进行更详细的配置 -->
         <!-- additivity表示是否追加,防止重复,因为root已经接收过一次了 -->
-        <logger name="com.my.blog.website.dao" level="DEBUG" additivity="true">
+        <logger name="xyz.itao.ink.dao" level="DEBUG" additivity="true">
             <appender-ref ref="db_log"/>
         </logger>
-        <logger name="com.my.blog.website.controller" level="DEBUG" additivity="false">
+        <logger name="xyz.itao.ink.controller" level="DEBUG" additivity="true">
             <appender-ref ref="service_log"/>
         </logger>
-        <logger name="com.my.blog.website.service" level="DEBUG" additivity="false">
-            <appender-ref ref="service_log"/>
+        <logger name="xyz.itao.ink.service" level="DEBUG" additivity="true">
+            <AppenderRef ref="service_log"/>
         </logger>
-        <!-- root logger,一般用于放置所有的appender -->
+        <!-- All < Trace < Debug < Info < Warn < Error < Fatal < OFF. -->
+        <!-- 程序会打印高于或等于所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。-->
+        <!-- 此level设置的日志级别，是过滤项目中输出的日志信息，和ThresholdFilter的level有所区别 -->
         <root level="DEBUG">
-            <appender-ref ref="db_log"/>
-            <appender-ref ref="console"/>
+            <AppenderRef ref="console"/>
         </root>
     </loggers>
 

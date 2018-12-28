@@ -39,6 +39,12 @@ spring:
             max-request-size: 100MB
     session:
       store-type: none
+      tracking-modes: cookie
+
+    security:
+      http:
+        auto-config: false
+        disable-url-rewriting: true
 
     devtools:
       restart:
@@ -58,14 +64,6 @@ pagehelper:
     supportMethodsArguments: true
     params: count=countSql
     returnPageInfo: check
-
-logging:
-  level:
-    xyz.itao.ink.dao : DEBUG
-  pattern:
-    console: "%d - %msg%n"
-  #config: classpath: log4j2-spring.xml
-
 
 swagger:
   show: true
