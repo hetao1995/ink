@@ -6,14 +6,14 @@
     <meta content="${_csrf_token}" name="csrf_token"/>
     <link rel="shortcut icon" href="/static/admin/images/favicon.png"/>
     <title>Ink - 博客安装</title>
-    <link th:href="${commons.cdnUrl()}+'/plugins/jquery-steps/1.1.0/jquery.steps.css'" rel="stylesheet" >
-    <link th:href="${commons.cdnUrl()}+'/plugins/bootstrap/3.3.7/css/bootstrap.min.css'" rel="stylesheet" />
-    <link th:href="${commons.cdnUrl()}+'/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.css'" rel="stylesheet">
-    <link th:href="${commons.cdnUrl()}+'/plugins/vue-loading/vue-loading.min.css'" rel="stylesheet" >
-    <link th:href="${commons.cdnUrl()}+'/css/style.min.css'" rel="stylesheet" >
+    <link th:href="${props.getCdnUrl('/plugins/jquery-steps/1.1.0/jquery.steps.css')}" rel="stylesheet" >
+    <link th:href="${props.getCdnUrl('/plugins/bootstrap/3.3.7/css/bootstrap.min.css')}" rel="stylesheet" />
+    <link th:href="${props.getCdnUrl('/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.css')}" rel="stylesheet">
+    <link th:href="${props.getCdnUrl('/plugins/vue-loading/vue-loading.min.css')}" rel="stylesheet" >
+    <link th:href="${props.getCdnUrl('/css/style.min.css')}" rel="stylesheet" >
     <style>
         body,html {
-            background: url("[[${commons.cdnUrl()}]]/images/bg/[[${commons.random(5, '.png')}]]") no-repeat;;
+            background: url("[[${props.randomBgUrl}]]") no-repeat;;
             background-size: cover;
         }
         .home-text {
@@ -45,8 +45,8 @@
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <script th:src="${commons.cdnUrl()}+'/plugins/html5shiv/3.7.0/html5shiv.js'"></script>
-    <script th:src="${commons.cdnUrl()}+'/plugins/respond.js/1.3.0/respond.min.js'"></script>
+    <script th:src="${props.getCdnUrl('/plugins/html5shiv/3.7.0/html5shiv.js')}"></script>
+    <script th:src="${props.getCdnUrl('/plugins/respond.js/1.3.0/respond.min.js')}"></script>
     <![endif]-->
 </head>
 <body>
@@ -141,16 +141,16 @@
         文件。
     </div>
 </div>
-<script th:src="${commons.cdnUrl()}+'/plugins/jquery/3.2.1/jquery.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/bootstrap/3.3.7/js/bootstrap.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/vue/vue.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/vue-loading/vue-loading.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/axios/axios.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/jquery-validate/1.15.1/jquery.validate.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/jquery-validate/1.15.1/localization/messages_zh.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/plugins/jquery-steps/1.1.0/jquery.steps.min.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/js/base.js'"></script>
-<script th:src="${commons.cdnUrl()}+'/js/install.js'"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery/3.2.1/jquery.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/bootstrap/3.3.7/js/bootstrap.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/vue/vue.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/vue-loading/vue-loading.min.js')}+"></script>
+<script th:src="${props.getCdnUrl('/plugins/axios/axios.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/limonte-sweetalert2/6.4.1/sweetalert2.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery-validate/1.15.1/jquery.validate.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery-validate/1.15.1/localization/messages_zh.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/plugins/jquery-steps/1.1.0/jquery.steps.min.js')}"></script>
+<script th:src="${props.getCdnUrl('/js/base.js')}"></script>
+<script th:src="${props.getCdnUrl('/js/install.js')}"></script>
 </body>
 </html>
