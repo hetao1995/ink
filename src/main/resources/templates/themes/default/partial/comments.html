@@ -49,7 +49,7 @@
                                             <div class="comment-header">
                                                 <!--设置get请求的参数-->
                                                 <img class="avatar"
-                                                     th:src="@{${commons.gravatar(comment.author.Email)}(s='80',r='G',d='')}"
+                                                     th:src="@{${comment.author.gravatar}(s='80',r='G',d='')}"
                                                      th:title="${comment.author.displayName}"
                                                      width="80" height="80"/>
                                                 <span class="comment-author">
@@ -59,10 +59,10 @@
                                             </div>
                                             <div class="comment-content">
                                                 <span class="comment-author-at"></span>
-                                                <p th:utext="${commons.article(comment.content)}"></p>
+                                                <p th:utext="${comment.contentHtml}"></p>
                                             </div>
                                             <div class="comment-meta">
-                                                <time class="comment-time" th:text="${commons.fmtDate(comment.createTime)}"></time>
+                                                <time class="comment-time" th:text="${comment.createdFmt}"></time>
                                                 <span class="comment-reply">
                                                     <a rel="nofollow" th:onclick="|TaleComment.reply(`${comment.id}`);|">回复</a>
                                                 </span>
@@ -78,7 +78,7 @@
                                                         <div th:id="|comment-${child.id}|">
                                                             <div class="comment-view">
                                                                 <div class="comment-header">
-                                                                    <img class="avatar" th:src="|${commons.gravatar(child.author.email)}?s=80&r=G&d=|" th:title="${child.author.displayName}" width="80" height="80">
+                                                                    <img class="avatar" th:src="|${child.author.gravatar}?s=80&r=G&d=|" th:title="${child.author.displayName}" width="80" height="80">
                                                                     <span class="comment-author comment-by-author">
                                                                         <a th:href="${child.author.homeUrl}" target="_blank" rel="external nofollow" th:text="${child.author.displayName}"></a>
                                                                     </span>
@@ -87,10 +87,10 @@
                                                                     <span class="comment-author-at" >
                                                                         <a th:href="|#comment-${child.parentId}|" th:text="|@ ${child.parent.author.displayName}|"></a>
                                                                     </span>
-                                                                    <p th:utext="${commons.article(child.content)}"></p>
+                                                                    <p th:utext="${child.contentHtml}"></p>
                                                                 </div>
                                                                 <div class="comment-meta">
-                                                                    <time class="comment-time" th:text="${commons.fmtDate(child.createTime)}"></time>
+                                                                    <time class="comment-time" th:text="${child.createdFmt}"></time>
                                                                     <span class="comment-reply">
                                                                         <a rel="nofollow" th:onclick="|TaleComment.reply(`${child.id}`);|">回复</a>
                                                                     </span>

@@ -3,6 +3,8 @@ package xyz.itao.ink.domain;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.vo.CommentVo;
@@ -11,6 +13,7 @@ import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
+import xyz.itao.ink.utils.InkUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -224,5 +227,17 @@ public class CommentDomain {
 
     public CommentDomain getParent(){
         return commentRepository.loadCommentDomainById(this.parentId);
+    }
+
+    /**
+     * 获取content转化后的html
+     * @return html文本
+     */
+    public String getContentHtml(){
+        return InkUtils.mdToHtml(this.getContent());
+    }
+
+    public String getCreatedFmt(){
+        return DateUtils.dateFormat(this.getCreateTime(), "yyyy-MM-dd HH:mm");
     }
 }

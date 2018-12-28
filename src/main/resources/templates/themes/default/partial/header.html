@@ -7,19 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta http-equiv="Cache-Control" content="no-transform"/>
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <meta name="keywords" th:content="${keywords ?: commons.siteKeywords()}"/>
-    <meta name="description" th:content="${description ?: commons.siteDescription()}"/>
-    <link rel="shortcut icon" th:href="${commons.themeUrl('/static/img/favicon.png')}"/>
-    <link rel="apple-touch-icon" th:href="${commons.themeUrl('/static/img/apple-touch-icon.png')}"/>
-    <title><th:block th:text="|${title ?: '首页'} - ${commons.siteTitle()}|"/></title>
-    <link th:href="${commons.themeUrl('/static/css/default.min.css')}" rel="stylesheet"/>
-    <link th:href="${commons.themeUrl('/static/css/style.min.css')}" rel="stylesheet"/>
+    <meta name="keywords" th:content="${keywords ?: props.siteKeywords}"/>
+    <meta name="description" th:content="${description ?: props.siteDescription}"/>
+    <link rel="shortcut icon" th:href="${props.getThemeUrl('/static/img/favicon.png')}"/>
+    <link rel="apple-touch-icon" th:href="${props.getThemeUrl('/static/img/apple-touch-icon.png')}"/>
+    <title><th:block th:text="|${title ?: '首页'} - ${props.siteTitle}|"/></title>
+    <link th:href="${props.getThemeUrl('/static/css/default.min.css')}" rel="stylesheet"/>
+    <link th:href="${props.getThemeUrl('/static/css/style.min.css')}" rel="stylesheet"/>
     
-    <script th:if="${commons.allowCloudCdn()}" th:src="@{//cdn.bootcss.com/jquery/3.2.1/jquery.min.js}" ></script>
-    <script th:unless="${commons.allowCloudCdn()}" th:src="|${commons.cdnUrl()}/plugins/jquery/3.2.1/jquery.min.js|" rel="stylesheet"></script>
+    <script th:if="${props.allowCloudCdn}" th:src="@{//cdn.bootcss.com/jquery/3.2.1/jquery.min.js}" ></script>
+    <script th:unless="${props.allowCloudCdn}" th:src="${props.getCdnUrl('/plugins/jquery/3.2.1/jquery.min.js')}" rel="stylesheet"></script>
     
-    <script th:src="${commons.themeUrl('/static/js/highlight.min.js')}"></script>
-    <script th:src="${commons.themeUrl('/static/js/instantclick.min.js')}"></script>
+    <script th:src="${props.getThemeUrl('/static/js/highlight.min.js')}"></script>
+    <script th:src="${props.getThemeUrl('/static/js/instantclick.min.js')}"></script>
     
 
     <!--[if lt IE 9]>
@@ -35,13 +35,13 @@
 <![endif]-->
 <header id="header" class="header bg-white">
     <div class="navbar-container">
-        <a th:href="${commons.siteUrl()}" class="navbar-logo">
-            <img th:src="${commons.themeUrl('/static/img/logo.png')}" alt="首页"/>
+        <a th:href="${props.siteUrl}" class="navbar-logo">
+            <img th:src="${props.getThemeUrl('/static/img/logo.png')}" alt="首页"/>
         </a>
         <div class="navbar-menu">
-            <a th:href="${commons.siteUrl('/archive')}">归档</a>
-            <a th:href="${commons.siteUrl('/link')}">友链</a>
-            <a th:href="${commons.siteUrl('/about')}">关于</a>
+            <a th:href="${props.getSiteUrl('/archive')}">归档</a>
+            <a th:href="${props.getSiteUrl('/link')}">友链</a>
+            <a th:href="${props.getSiteUrl('/about')}">关于</a>
         </div>
         <div class="navbar-search" onclick="">
             <span class="icon-search"></span>
@@ -55,9 +55,9 @@
         <div class="navbar-mobile-menu" onclick="">
             <span class="icon-menu cross"><span class="middle"></span></span>
             <ul>
-                <li><a th:href="${commons.siteUrl('/archive')}">归档</a></li>
-                <li><a th:href="${commons.siteUrl('/link')}">友链</a></li>
-                <li><a th:href="${commons.siteUrl('/about')}">关于</a></li>
+                <li><a th:href="${props.getSiteUrl('/archive')}">归档</a></li>
+                <li><a th:href="${props.getSiteUrl('/link')}">友链</a></li>
+                <li><a th:href="${props.getSiteUrl('/about')}">关于</a></li>
             </ul>
         </div>
     </div>

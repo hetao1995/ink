@@ -317,24 +317,24 @@ public final class Commons {
      *
      * @return
      */
-    public  String showThumb(String content) {
-        content = InkUtils.mdToHtml(content);
-        if (content.contains("<img")) {
-            String img = "";
-            String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
-            Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
-            Matcher m_image = p_image.matcher(content);
-            if (m_image.find()) {
-                img = img + "," + m_image.group();
-                // //匹配src
-                Matcher m = SRC_PATTERN.matcher(img);
-                if (m.find()) {
-                    return m.group(1);
-                }
-            }
-        }
-        return "";
-    }
+//    public  String showThumb(String content) {
+//        content = InkUtils.mdToHtml(content);
+//        if (content.contains("<img")) {
+//            String img = "";
+//            String regEx_img = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
+//            Pattern p_image = Pattern.compile(regEx_img, Pattern.CASE_INSENSITIVE);
+//            Matcher m_image = p_image.matcher(content);
+//            if (m_image.find()) {
+//                img = img + "," + m_image.group();
+//                // //匹配src
+//                Matcher m = SRC_PATTERN.matcher(img);
+//                if (m.find()) {
+//                    return m.group(1);
+//                }
+//            }
+//        }
+//        return "";
+//    }
 
     private  final String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
 

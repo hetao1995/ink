@@ -7,7 +7,6 @@
         <div class="content">
             <div class="container">
                 <div class="row">
-
                     <div class="col-sm-12">
                         <h4 class="page-title">主题设置</h4>
                     </div>
@@ -24,7 +23,7 @@
                                         <label class="col-md-3 control-label">主题LOGO</label>
                                         <div class="col-md-9">
                                             <input type="text" class="form-control" name="logo_url"
-                                                   th:value="${props.get('logo_url', commons.siteUrl('/user/img/logo.png')) }"
+                                                   th:value="${props.get('logo_url', props.getSiteUrl('/themes/default/static/img/logo.png')) }"
                                                    placeholder="请输入主题LOGO外链"/>
                                         </div>
                                     </div>

@@ -4,6 +4,7 @@ import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import xyz.itao.ink.common.Props;
 import xyz.itao.ink.repository.*;
 
 /**
@@ -59,13 +60,16 @@ public class DomainFactory {
     @Autowired
     @Lazy
     private RoleRepository roleRepository;
+    @Autowired
+    @Lazy
+    private Props props;
 
     /**
      * 生成ContentDoamin
      * @return
      */
     public ContentDomain createContentDomain(){
-        return new ContentDomain(userRepository, contentRepository, commentRepository, metaRepository, this);
+        return new ContentDomain(userRepository, contentRepository, commentRepository, metaRepository, this, props);
     }
 
     /**

@@ -110,6 +110,14 @@ public class WebConstant {
      */
     public static final String LOGIN_URI = "/admin/login";
 
+    public static final String ARTICLE_URI = "/article";
+
+    public static final String CATEGORY_URI = "/category";
+
+    public static final String TAG_URI = "/tag";
+
+    public static final String THEME_URI = "/themes";
+
     /**
      * 插件菜单 Attribute Name
      */
@@ -148,4 +156,22 @@ public class WebConstant {
     public static final int REMEMBER_ME_INTERVAL = 60*60*24*30;
 
     public static final String AUTHORIZATION = "Authorization";
+
+    public static final String FMT_MARK_DOWN = "markdown";
+
+    public static final String FMT_HTML = "html";
+
+    public static final String INTRODUCTION_SPLITTER = "<!-- more -->";
+
+    public static final String OPTION_INTRO_MAX_LEN = "intro_max_len";
+
+    public static final String OPTION_DEFAULT_PROTOCOL = "default_protocol";
+
+    public static final String OPTION_RAND_THUMB_LEN = "rand_thumb_len";
+
+    public static final String OPTION_ATTACH_URL = "attach_url";
+
+    public static final String OPTION_RECENT_ARTICLE_LEN = "recent_article_len";
+
+    public static final String OPTION_RECENT_COMMENT_LEN = "recent_comment_len";
 }

@@ -65,7 +65,8 @@ public class InkUtils {
         Node document = parser.parse(markdown);
         HtmlRenderer renderer = HtmlRenderer.builder().extensions(extensions).build();
         String content = renderer.render(document);
-        content = Commons.emoji(content);
+        // An :grinning:awesome :smiley:string &#128516;with a few :wink:emojis! * <p>* 这种格式的字符转换为emoji表情
+        content = EmojiParser.parseToUnicode(content);
         return content;
     }
 
