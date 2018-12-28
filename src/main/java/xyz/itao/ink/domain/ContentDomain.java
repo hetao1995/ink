@@ -1,9 +1,10 @@
 package xyz.itao.ink.domain;
 
+import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.common.util.set.Sets;
+
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -16,7 +17,7 @@ import xyz.itao.ink.repository.CommentRepository;
 import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
-import xyz.itao.ink.utils.CryptoUtils;
+
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 import xyz.itao.ink.utils.InkUtils;

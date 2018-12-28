@@ -1,6 +1,5 @@
 package xyz.itao.ink.repository.impl;
 
-import org.elasticsearch.index.engine.Engine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import xyz.itao.ink.constant.TypeConst;
