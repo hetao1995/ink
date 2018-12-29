@@ -94,7 +94,7 @@ public class ArticleController {
      * 评论操作
      */
     @SysLog("发表评论")
-    @StopRepeatSubmit(key = "comment",interval = 6000)
+    @StopRepeatSubmit(key = "comment",interval = 60)
     @PostMapping(value = "comment")
     @ResponseBody
     public RestResponse<?> comment(HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserDomain userDomain) {
