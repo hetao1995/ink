@@ -27,6 +27,12 @@ public class EhCacheUtils {
         getCache(cacheName).put(element);
     }
 
+    public static void put(String cacheName, String key, Object value, Integer idle){
+        Element element = new Element(key, value);
+        element.setTimeToIdle(idle);
+        getCache(cacheName).put(element);
+    }
+
     public static void remove(String cacheName, String key) {
         getCache(cacheName).remove(key);
     }

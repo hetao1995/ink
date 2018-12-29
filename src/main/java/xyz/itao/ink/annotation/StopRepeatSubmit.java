@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface StopRepeatSubmit {
     String key() ;
 
-    long interval() default 3000;
+    int interval() default 30;
 }

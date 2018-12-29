@@ -1,5 +1,6 @@
 package xyz.itao.ink.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.sun.syndication.feed.rss.Channel;
 import com.sun.syndication.feed.rss.Content;
 import com.sun.syndication.feed.rss.Item;
@@ -17,6 +18,8 @@ import xyz.itao.ink.domain.vo.ContentVo;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -284,5 +287,12 @@ public class InkUtils {
         cookie.setMaxAge(expire);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+    }
+
+
+    public static void returnJson(HttpServletResponse response, Object obj) throws IOException {
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=utf-8");
+        response.getWriter().print(JSON.toJSON(obj));
     }
 }

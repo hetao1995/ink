@@ -32,7 +32,6 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
         String contextPath = request.getContextPath();
-        // System.out.println(contextPath);
         String uri = request.getRequestURI();
 
         log.debug("UserAgent: {}", request.getHeader(USER_AGENT));

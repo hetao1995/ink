@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.apache.commons.lang3.StringUtils;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.filter.EmptyStringParameterFilter;
 import xyz.itao.ink.interceptor.BaseInterceptor;
+import xyz.itao.ink.interceptor.StopRepeatSubmitInterceptor;
 import xyz.itao.ink.interceptor.SysLogInterceptor;
 
 import java.util.List;
@@ -43,6 +45,8 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     BaseInterceptor baseInterceptor;
     @Autowired
     SysLogInterceptor sysLogInterceptor;
+    @Autowired
+    StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
 //        registry.addResourceHandler("/user/**").addResourceLocations("classpath:/templates/themes/default/static/");
@@ -57,6 +61,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     protected void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(baseInterceptor);
         registry.addInterceptor(sysLogInterceptor);
+        registry.addInterceptor(stopRepeatSubmitInterceptor);
         super.addInterceptors(registry);
     }
 

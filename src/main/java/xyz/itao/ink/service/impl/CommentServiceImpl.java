@@ -79,7 +79,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "commentVo.contentId+'*'")
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#commentVo.contentId+'*'")
     public UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain) {
         if(userDomain == null){
             UserVo userVo = UserVo
