@@ -13,6 +13,7 @@ import xyz.itao.ink.utils.IpUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author hetao
@@ -36,16 +37,16 @@ public class BaseInterceptor implements HandlerInterceptor {
 
         log.debug("UserAgent: {}", request.getHeader(USER_AGENT));
         log.debug("用户访问地址: {}, 来路地址: {}", uri, IpUtils.getIpAddrByRequest(request));
-
-
-
+        Set<String> blockIps = props.getBlockIps();
+        if(blockIps.contains(IpUtils.getIpAddrByRequest(request))){
+            return false;
+        }
         return true;
     }
 
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
-        //一些工具类和公共方法
-//        request.setAttribute("commons", commons);
+        //一些公共属性
         request.setAttribute("props", props);
         String themJson = props.getThemeOption();
         if(StringUtils.isBlank(themJson)){
