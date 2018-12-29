@@ -32,7 +32,7 @@ public interface MetaService {
      * @param id
      * @param userVo
      */
-    void deleteMetaById(Long id, UserDomain userVo);
+    MetaDomain deleteMetaById(Long id, UserDomain userVo);
 
 
     /**

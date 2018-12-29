@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
@@ -124,4 +127,11 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     public EmptyStringParameterFilter emptyStringParameterFilter(){
         return new EmptyStringParameterFilter();
     }
+
+
+    @Bean
+    public EhCacheManagerFactoryBean ehCacheManagerFactoryBean(){
+        return new EhCacheManagerFactoryBean();
+    }
+
 }

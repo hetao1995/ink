@@ -22,7 +22,6 @@ import java.util.Map;
  * @description
  */
 @Service("optionService")
-@Cacheable("option")
 public class OptionServiceImpl implements OptionService {
 
     @Autowired
@@ -44,7 +43,6 @@ public class OptionServiceImpl implements OptionService {
 
 
     @Override
-    @CacheEvict(allEntries = true)
     public void deleteOption(String key, UserDomain userDomain) {
         deleteByNameLike(key+"%", userDomain);
     }
@@ -65,7 +63,6 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    @CacheEvict(allEntries = true)
     public void deleteAllThemes(UserDomain userDomain) {
         deleteByNameLike("theme_option_%", userDomain);
     }

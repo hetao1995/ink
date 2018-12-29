@@ -1,7 +1,10 @@
 package xyz.itao.ink.repository.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
+import xyz.itao.ink.annotation.CacheRemove;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.dao.ContentMetaMapper;
 import xyz.itao.ink.dao.MetaMapper;
 import xyz.itao.ink.domain.ContentDomain;
@@ -67,8 +70,8 @@ public class MetaRepositoryImpl  implements MetaRepository {
     }
 
     @Override
+    @Cacheable(value = WebConstant.META_CACHE, key = "#id+'_count_article'")
     public Integer countArticlesByMetaId(Long id) {
-        // todo 先从缓存中查找
         return contentMetaMapper.countContentsByMetaId(id);
     }
 
@@ -113,11 +116,13 @@ public class MetaRepositoryImpl  implements MetaRepository {
     }
 
     @Override
+    @CacheRemove(value = WebConstant.META_CACHE, key = "#contentMeta.metaId+'*'")
     public boolean saveNewContentMeta(ContentMeta contentMeta) {
         return contentMetaMapper.insertSelective(contentMeta);
     }
 
     @Override
+    @Cacheable(value = WebConstant.META_CACHE, key = "'type_'+#type+'_count'")
     public Long countMetaNum(String type) {
         return metaMapper.countMetaByType(type);
     }

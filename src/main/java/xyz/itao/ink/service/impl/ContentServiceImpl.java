@@ -10,7 +10,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.annotation.CacheRemove;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.*;
 import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.ArticleParam;
@@ -29,7 +31,7 @@ import java.util.stream.Collectors;
  */
 @Service("contentService")
 @Slf4j
-@CacheConfig(cacheNames = "content")
+@CacheConfig(cacheNames = WebConstant.CONTENT_CACHE)
 public class ContentServiceImpl  implements ContentService {
     @Autowired
     private ContentRepository contentRepository;
@@ -55,6 +57,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     @CachePut(key="#result.id")
+    @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#contentVo.type+'*'")
     public ContentDomain publishNewContent(ContentVo contentVo, UserDomain userDomain) {
         return domainFactory
                 .createContentDomain()
@@ -65,6 +68,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize")
     public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
@@ -76,6 +80,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize")
     public PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
@@ -86,6 +91,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'publish'")
     public PageInfo<ContentDomain> loadAllActivePublishContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true).setStatus(TypeConst.PUBLISH).setType(articleParam.getType());
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
@@ -106,6 +112,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @Cacheable(key="'type_post_feed'")
     public List<ContentVo> selectAllFeedArticles() {
         List<ContentDomain> contentDomains = contentRepository.loadAllFeedArticles();
         return contentDomains.stream().map(ContentDomain::vo).collect(Collectors.toList());
@@ -117,6 +124,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @Cacheable(value = WebConstant.META_CACHE, key = "#metaDomain.id+'_article_num_'+#pageNum+'_size_'+#pageSize")
     public PageInfo<ContentDomain> getPublishArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize) {
         Page page = PageHelper.startPage(pageNum, pageSize);
         List<ContentDomain> contentDomains = metaDomain.getActivePublishArticles();
@@ -159,6 +167,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'archive'")
     public PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam) {
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(),articleParam.getOrderBy());
         List<Archive> archives = contentRepository.loadContentArchives(articleParam.getType(), articleParam.getStatus());

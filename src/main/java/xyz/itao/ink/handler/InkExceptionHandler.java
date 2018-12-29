@@ -1,5 +1,6 @@
 package xyz.itao.ink.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,18 +16,19 @@ import javax.servlet.http.HttpServletRequest;
  * @description
  */
 @ControllerAdvice
+@Slf4j
 public class InkExceptionHandler {
-    @ExceptionHandler(TipException.class)
+    @ExceptionHandler(value = {TipException.class, InnerException.class})
     @ResponseBody
     public RestResponse<?> handlerException(Exception e){
-        TipException exception = (TipException)e;
-        return RestResponse.fail(exception.getCode(), exception.getMessage());
+        if(e instanceof TipException){
+            TipException exception = (TipException)e;
+            return RestResponse.fail(exception.getCode(), exception.getMessage());
+        }else {
+            InnerException exception = (InnerException)e;
+            log.error("出现了内部错误,{}",e);
+            return RestResponse.fail(exception.getCode(), exception.getMessage());
+        }
     }
 
-    @ExceptionHandler(InnerException.class)
-    public String handleException(Exception e, HttpServletRequest request){
-        request.setAttribute("javax.servlet.error.status_code",500);
-        request.setAttribute("error", e);
-        return "forward:/error";
-    }
 }

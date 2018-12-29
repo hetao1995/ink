@@ -31,7 +31,7 @@ public interface CommentService {
      * @param userDomain 操作的用户
      * @return
      */
-    void deleteCommentById(Long id, UserDomain userDomain);
+    CommentDomain deleteCommentById(Long id, UserDomain userDomain);
 
     /**
      * 修改commnet

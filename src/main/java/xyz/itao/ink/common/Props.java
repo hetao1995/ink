@@ -1,13 +1,11 @@
 package xyz.itao.ink.common;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Sets;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -19,6 +17,7 @@ import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.OptionRepository;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.ContentService;
+import xyz.itao.ink.utils.EhCacheUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -32,18 +31,18 @@ import java.util.*;
  */
 @Component
 @Slf4j
-@CacheConfig(cacheNames = "props")
 public class Props {
     @Autowired
-    OptionRepository optionRepository;
+    private OptionRepository optionRepository;
     @Autowired
-    DomainFactory domainFactory;
+    private DomainFactory domainFactory;
     @Autowired
-    ContentService contentService;
+    private ContentService contentService;
     @Autowired
-    CommentService commentService;
+    private CommentService commentService;
 
-    @CachePut(key = "#name")
+
+
     public String  set(String name, Object value, UserDomain userDomain){
         OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
         if(optionDomain == null){
@@ -58,6 +57,7 @@ public class Props {
         }else{
             optionDomain.setName(name).setValue(value.toString()).setUpdateBy(userDomain.getId()).updateById();
         }
+        EhCacheUtils.remove(WebConstant.PROPS_CACHE, name);
         return optionDomain.getValue();
     }
 
@@ -102,14 +102,18 @@ public class Props {
     }
 
     public Optional<String> get(String name){
+        Object obj = EhCacheUtils.get(WebConstant.PROPS_CACHE, name);
+        if(obj != null){
+            return Optional.ofNullable(obj.toString());
+        }
         OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
         if(optionDomain==null){
             return  Optional.empty();
         }
+        EhCacheUtils.put(WebConstant.PROPS_CACHE, name, optionDomain.getValue());
         return Optional.ofNullable(optionDomain.getValue());
     }
 
-    @Cacheable(key = "#name")
     public String get(String name, String defaultValue){
         return get(name).orElse(defaultValue);
     }
@@ -259,6 +263,23 @@ public class Props {
 
     public String getThemeOptionKey(){
         return "theme_" + this.getSiteTheme() + "_options";
+    }
+
+
+    private static String BLOCK_IPS_SET = "block_ips_set";
+    public void setBlockIps(String blockIps, UserDomain userDomain){
+        this.set(WebConstant.OPTION_BLOCK_IPS, blockIps, userDomain);
+        EhCacheUtils.put(WebConstant.PROPS_CACHE, BLOCK_IPS_SET, Sets.newHashSet(blockIps.split(",")));
+    }
+
+    public Set<String> getBlockIps(){
+        Object obj = EhCacheUtils.get(WebConstant.PROPS_CACHE, BLOCK_IPS_SET);
+        if(obj != null && obj instanceof Set){
+            return (Set<String>) obj;
+        }
+        Set<String> set = Sets.newHashSet(this.get(WebConstant.OPTION_BLOCK_IPS, "").split(","));
+        EhCacheUtils.put(WebConstant.PROPS_CACHE, BLOCK_IPS_SET, set);
+        return set;
     }
 
 }

@@ -2,6 +2,7 @@ package xyz.itao.ink.domain;
 
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.common.Props;
@@ -64,12 +65,16 @@ public class DomainFactory {
     @Lazy
     private Props props;
 
+    @Autowired
+    @Lazy
+    private CacheManager cacheManager;
+
     /**
      * 生成ContentDoamin
      * @return
      */
     public ContentDomain createContentDomain(){
-        return new ContentDomain(userRepository, contentRepository, commentRepository, metaRepository, this, props);
+        return new ContentDomain(userRepository, contentRepository, commentRepository, metaRepository, this, props, cacheManager);
     }
 
     /**
@@ -117,7 +122,7 @@ public class DomainFactory {
     }
 
     public UserDomain createUserDomain(){
-        return new UserDomain(userRepository, roleRepository);
+        return new UserDomain(userRepository, roleRepository, cacheManager);
     }
 
     public RoleDomain createRoleDomain(){

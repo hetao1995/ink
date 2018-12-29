@@ -175,4 +175,16 @@ public class WebConstant {
     public static final String OPTION_RECENT_ARTICLE_LEN = "recent_article_len";
 
     public static final String OPTION_RECENT_COMMENT_LEN = "recent_comment_len";
+
+    public static final String OPTION_BLOCK_IPS = "block_ips";
+
+    public final static String PROPS_CACHE = "props_cache";
+
+    public final static String CONTENT_CACHE = "content_cache";
+
+    public final static String USER_CACHE = "user_cache";
+
+    public final static String COMMENT_CACHE = "comment_cache";
+
+    public final static String META_CACHE = "meta_cache";
 }

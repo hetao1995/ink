@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -40,13 +42,17 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 public class ContentDomain {
 
-    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory, Props props){
+    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory, Props props, CacheManager cacheManager){
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
         this.metaRepository =  metaRepository;
         this.domainFactory = domainFactory;
         this.props = props;
+        this.cacheManager = cacheManager;
+        this.cache = cacheManager.getCache(WebConstant.CONTENT_CACHE);
+        this.authorCache = cacheManager.getCache(WebConstant.USER_CACHE);
+
     }
     /**
      * UserRepository 对象
@@ -68,6 +74,12 @@ public class ContentDomain {
     private ContentRepository contentRepository;
 
     private Props props;
+
+    private CacheManager cacheManager;
+
+    private Cache cache;
+
+    private Cache authorCache;
     /**
      * 内容的id
      */
@@ -202,7 +214,14 @@ public class ContentDomain {
      * @return
      */
     public List<CommentDomain> getActiveComments() {
-        return commentRepository.loadAllActiveRootCommentDomainByContentId(id);
+        String key = this.id+"active_comments";
+        Cache.ValueWrapper wrapper = cache.get(key);
+        if(wrapper != null){
+            return (List<CommentDomain>) wrapper.get();
+        }
+        List<CommentDomain> contentDomains = commentRepository.loadAllActiveRootCommentDomainByContentId(id);
+        cache.put(key, contentDomains);
+        return contentDomains;
     }
 
     /**
@@ -218,7 +237,13 @@ public class ContentDomain {
      * @return
      */
     public UserDomain getAuthor() {
-        return userRepository.loadActiveUserDomainById(authorId);
+        Cache.ValueWrapper wrapper = authorCache.get(this.authorId);
+        if(wrapper != null){
+            return (UserDomain) wrapper.get();
+        }
+        UserDomain userDomain = userRepository.loadActiveUserDomainById(authorId);
+        authorCache.put(this.authorId, userDomain);
+        return userDomain;
     }
 
     /**
@@ -282,14 +307,22 @@ public class ContentDomain {
             }
             metaDomain.saveContentMeta(id, this.updateBy);
         }
+        cache.put("metas:"+type+this.id, metas);
     }
 
     private String getMetas(String type){
         if(id==null){
             return null;
         }
+        String key = "metas:"+type+this.id;
+        Cache.ValueWrapper wrapper = cache.get(key);
+        if(wrapper != null){
+            return (String) wrapper.get();
+        }
         List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
-        return StringUtils.join(metaDomains.stream().map(MetaDomain::getName).collect(Collectors.toList()), ",");
+        String metas = StringUtils.join(metaDomains.stream().map(MetaDomain::getName).collect(Collectors.toList()), ",");
+        cache.put(key, metas);
+        return metas;
     }
 
     public ContentDomain save(){
@@ -323,7 +356,7 @@ public class ContentDomain {
             }
         }
         contentRepository.updateContentDomain(this);
-
+        this.cacheEvict();
         return this;
     }
 
@@ -337,14 +370,24 @@ public class ContentDomain {
         for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
             commentDomain.setActive(false).updateById();
         }
+        this.cacheEvict();
         return this.updateById();
     }
+
+
 
     public ContentDomain loadById(){
         if(id==null){
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
-        ContentDomain contentDomain = contentRepository.loadContentDomainById(id);
+        Cache.ValueWrapper wrapper = cache.get(this.id);
+        ContentDomain contentDomain;
+        if(wrapper != null){
+            contentDomain =  (ContentDomain) wrapper.get();
+        }else {
+            contentDomain = contentRepository.loadContentDomainById(id);
+            cache.put(this.id, contentDomain);
+        }
         return assemble(contentDomain.entity());
     }
 
@@ -352,7 +395,6 @@ public class ContentDomain {
         if(entity==null){
             return this;
         }
-
 
         this.setId(entity.getId())
                 .setDeleted(entity.getDeleted())
@@ -479,8 +521,15 @@ public class ContentDomain {
      * @return html文本
      */
     public String getContentHtml(){
+        String key = "content_html:"+this.getId();
+        Cache.ValueWrapper wrapper = cache.get(key);
+        if (wrapper!=null){
+            return (String)wrapper.get();
+        }
         String content = StringUtils.replaceFirst(this.getContent(),WebConstant.INTRODUCTION_SPLITTER, "\n");
-        return getHtml(content);
+        String html = getHtml(content);
+        cache.put(key, html);
+        return html;
     }
 
     private String getHtml(String content) {
@@ -587,10 +636,39 @@ public class ContentDomain {
     }
 
     public ContentDomain getPrev(){
-        return contentRepository.loadPrevActivePublishContentDomain(this.getCreated(), this.type);
+        String key = "prev:"+this.id;
+        Cache.ValueWrapper wrapper = cache.get(key);
+        if(wrapper != null){
+            return (ContentDomain) wrapper.get();
+        }
+        ContentDomain contentDomain = contentRepository.loadPrevActivePublishContentDomain(this.getCreated(), this.type);
+        cache.put(key, contentDomain);
+        return contentDomain;
     }
 
     public ContentDomain getNext(){
-        return contentRepository.loadNextActivePublishContentDomain(this.getCreated(), this.type);
+        String key = "next:"+this.id;
+        Cache.ValueWrapper wrapper = cache.get(key);
+        if(wrapper != null){
+            return (ContentDomain) wrapper.get();
+        }
+        ContentDomain contentDomain = contentRepository.loadNextActivePublishContentDomain(this.getCreated(), this.type);
+        cache.put(key, contentDomain);
+        return contentDomain;
+    }
+
+    public void cacheEvict(){
+        String prev = "prev:"+this.id, next = "next:"+this.id;
+        cache.evict(prev);
+        cache.evict(next);
+        ContentDomain p = getPrev(), n = getNext();
+        if(p!=null){
+            cache.evict("next:"+p.getId());
+        }
+        if(n!=null){
+            cache.evict("prev:"+n.getId());
+        }
+        cache.evict(this.id);
+        cache.evict("content_html:"+this.getId());
     }
 }

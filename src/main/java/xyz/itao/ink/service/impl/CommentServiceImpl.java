@@ -4,7 +4,11 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.annotation.CacheRemove;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.CommentDomain;
 import xyz.itao.ink.domain.ContentDomain;
@@ -29,6 +33,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Service("commentService")
+@CacheConfig(cacheNames = WebConstant.COMMENT_CACHE)
 public class CommentServiceImpl  implements CommentService {
     @Autowired
     UserService userService;
@@ -40,6 +45,7 @@ public class CommentServiceImpl  implements CommentService {
     DomainFactory domainFactory;
 
     @Override
+    @Cacheable(key = "#commentParam.contentId+'_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum")
     public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllActiveCommentDomain();
@@ -51,8 +57,10 @@ public class CommentServiceImpl  implements CommentService {
 
 
     @Override
-    public void deleteCommentById(Long id, UserDomain userDomain) {
-        domainFactory
+    @CacheEvict(key = "#id")
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#result.contentId+'*")
+    public CommentDomain deleteCommentById(Long id, UserDomain userDomain) {
+        return domainFactory
                 .createCommentDomain()
                 .setId(id)
                 .setUpdateBy(userDomain.getId())
@@ -60,6 +68,8 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @CacheEvict(key = "#commentVo.id")
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "commentVo.contentId+'_comment_*")
     public void updateCommentVo(CommentVo commentVo, UserDomain userDomain) {
         domainFactory
                 .createCommentDomain()
@@ -69,6 +79,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "commentVo.contentId+'*'")
     public UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain) {
         if(userDomain == null){
             UserVo userVo = UserVo
@@ -96,6 +107,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @Cacheable(key = "#commentParam.contentId+'_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum+'_active'")
     public PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain) {
         Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
 
@@ -106,6 +118,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @Cacheable(key = "#commentParam.contentId+'_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum+'_approved'")
     public PageInfo<CommentDomain> loadAllActiveApprovedCommentDomain(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllActiveRootCommentDomain(domainFactory.createCommentDomain().assemble(commentParam).setStatus(WebConstant.COMMENT_APPROVED));

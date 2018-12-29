@@ -215,6 +215,7 @@ public class MetaDomain {
                 .contentId(contentId)
                 .metaId(id)
                 .build();
+
         return metaRepository.saveNewContentMeta(contentMeta);
     }
 

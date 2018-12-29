@@ -29,7 +29,7 @@ import java.util.Date;
  * @description
  */
 @Service("userService")
-@CacheConfig(cacheNames = "user")
+@CacheConfig(cacheNames = WebConstant.USER_CACHE)
 public class UserServiceImpl  implements UserService {
     /**
      * 临时token，一个小时后过期

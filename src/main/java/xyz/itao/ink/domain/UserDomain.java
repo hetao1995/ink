@@ -4,11 +4,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.util.Assert;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.User;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -30,15 +33,19 @@ import java.util.*;
 @Accessors(chain = true)
 public class UserDomain implements CredentialsContainer {
 
-    UserDomain(UserRepository userRepository, RoleRepository roleRepository){
+    UserDomain(UserRepository userRepository, RoleRepository roleRepository, CacheManager cacheManager){
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.cacheManager = cacheManager;
+        this.cache = cacheManager.getCache(WebConstant.USER_CACHE);
     }
     /**
      * 角色的repository，用于获取当前用户的角色
      */
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private CacheManager cacheManager;
+    private Cache cache;
     /**
      * id
      */
@@ -132,7 +139,14 @@ public class UserDomain implements CredentialsContainer {
         if (id == null) {
             return Lists.newArrayList();
         }
-        return roleRepository.loadAllActiveRoleDomainByUserId(id);
+        String key = "roles:" + this.id;
+        Cache.ValueWrapper wrapper = cache.get(key);
+        if(wrapper != null){
+            return (List<RoleDomain>) wrapper.get();
+        }
+        List<RoleDomain> roleDomains =  roleRepository.loadAllActiveRoleDomainByUserId(id);
+        cache.put(key, roleDomains);
+        return roleDomains;
     }
     public UserDomain setRoles(List<RoleDomain> roles) {
         this.roles = roles;
@@ -149,6 +163,7 @@ public class UserDomain implements CredentialsContainer {
         for(RoleDomain roleDomain : set){
             roleDomain.saveUserRole(id, this.updateBy);
         }
+        cache.put("roles:" + this.id, this.roles);
         return this;
     }
 
@@ -253,6 +268,7 @@ public class UserDomain implements CredentialsContainer {
         if(roles!=null){
             this.saveRoles();
         }
+        cacheManager.getCache(WebConstant.USER_CACHE).evict(this.id);
         return this;
     }
 

@@ -274,11 +274,9 @@ public class AdminApiController {
 
         // 要过过滤的黑名单列表
         if (StringUtils.isNotBlank(advanceParam.getBlockIps())) {
-            props.set(TypeConst.BLOCK_IPS, advanceParam.getBlockIps(), userDomain);
-            WebConstant.BLOCK_IPS.addAll(Arrays.asList(advanceParam.getBlockIps().split(",")));
+            props.setBlockIps(advanceParam.getBlockIps(), userDomain);
         } else {
-            props.set(TypeConst.BLOCK_IPS, "", userDomain);
-            WebConstant.BLOCK_IPS.clear();
+            props.setBlockIps("", userDomain);
         }
         // 处理卸载插件
         if (StringUtils.isNotBlank(advanceParam.getPluginName())) {

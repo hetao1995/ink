@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd"
+         updateCheck="false">
+    <defaultCache
+            eternal="false"
+            maxElementsInMemory="1000"
+            overflowToDisk="false"
+            diskPersistent="false"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="100"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <cache
+            name="props_cache"
+            eternal="false"
+            maxElementsInMemory="100"
+            overflowToDisk="false"
+            diskPersistent="false"
+            timeToIdleSeconds="300"
+            timeToLiveSeconds="12000"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <cache
+            name="content_cache"
+            eternal="false"
+            maxElementsInMemory="100"
+            overflowToDisk="false"
+            diskPersistent="false"
+            timeToIdleSeconds="300"
+            timeToLiveSeconds="12000"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <cache
+            name="user_cache"
+            eternal="false"
+            maxElementsInMemory="10"
+            overflowToDisk="false"
+            diskPersistent="false"
+            timeToIdleSeconds="600"
+            memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="meta_cache"
+           eternal="false"
+           maxElementsInMemory="100"
+           overflowToDisk="false"
+           diskPersistent="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="12000"
+           memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="comment_cache"
+           eternal="false"
+           maxElementsInMemory="100"
+           overflowToDisk="false"
+           diskPersistent="false"
+           timeToIdleSeconds="60"
+           timeToLiveSeconds="6000"
+           memoryStoreEvictionPolicy="LRU" />
+</ehcache>

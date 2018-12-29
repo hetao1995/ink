@@ -2,7 +2,9 @@ server:
   port: 8080
   session:
     store-type: none
-    tracking-modes: cookie
+  servlet:
+    session:
+      tracking-modes: cookie
 
 
 spring:
@@ -40,12 +42,13 @@ spring:
             max-file-size: 10MB
             max-request-size: 100MB
 
-
-
-
     devtools:
       restart:
         enabled: true
+    cache:
+      ehcache:
+        config: classpath:ehcache.xml
+      type: ehcache
 
 
 

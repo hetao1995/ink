@@ -4,10 +4,11 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
+import xyz.itao.ink.annotation.CacheRemove;
 import xyz.itao.ink.constant.TypeConst;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * @description
  */
 @Service("metaService")
-@CacheConfig(cacheNames = "meta")
+@CacheConfig(cacheNames = WebConstant.META_CACHE)
 public class MetaServiceImpl implements MetaService {
 
     @Autowired
@@ -41,7 +42,7 @@ public class MetaServiceImpl implements MetaService {
 
 
     @Override
-    @CachePut(key = "")
+    @CacheEvict(key = "'type:'+#result.type")
     public MetaDomain saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
         if(StringUtils.isBlank(type)){
             throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
@@ -65,8 +66,13 @@ public class MetaServiceImpl implements MetaService {
     }
 
     @Override
-    public void deleteMetaById(Long id, UserDomain userDomain) {
-        domainFactory
+    @Caching(evict = {
+            @CacheEvict(key ="'type:'+#result.type+'_'+'name:'+#result.name"),
+            @CacheEvict(key = "'type:'+#result.type")
+    })
+    @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
+    public MetaDomain deleteMetaById(Long id, UserDomain userDomain) {
+        return domainFactory
                 .createMetaDomain()
                 .setId(id)
                 .setUpdateBy(userDomain.getId())
@@ -75,17 +81,20 @@ public class MetaServiceImpl implements MetaService {
 
 
     @Override
+    @Cacheable(key = "'type:'+#type+'_'+'name:'+#name")
     public MetaDomain getMetaDomainByTypeAndName(String type, String name) {
         return metaRepository.loadMetaDomainByTypeAndName(type, name);
     }
 
     @Override
+    @Cacheable(key = "'type:'+#type")
     public List<MetaVo> getMetasByType(String type) {
         List<MetaDomain> metaDomains = metaRepository.loadMetaDomainsByType(type);
         return metaDomains.stream().map(MetaDomain::vo).collect(Collectors.toList());
     }
 
     @Override
+    @Cacheable(key="#id+'_num_'+#pageNum+'_size_'+#pageSize")
     public PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaIdAndStatus(id, TypeConst.PUBLISH);
@@ -93,6 +102,11 @@ public class MetaServiceImpl implements MetaService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(key ="'type:'+#result.type+'_'+'name:'+#result.name"),
+            @CacheEvict(key = "'type:'+#result.type")
+    })
+    @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
     public MetaDomain updateCategory(Long id, MetaParam metaParam, UserDomain userDomain) {
         MetaDomain metaDomain = domainFactory
                 .createMetaDomain()
