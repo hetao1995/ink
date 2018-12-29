@@ -30,7 +30,6 @@ public class ContentRepositoryImpl implements ContentRepository {
 
     @Override
     public ContentDomain updateContentDomain(ContentDomain domain) {
-        Content content = domain.entity();
         contentMapper.updateByPrimaryKeySelective(domain.entity());
         return domain;
     }
