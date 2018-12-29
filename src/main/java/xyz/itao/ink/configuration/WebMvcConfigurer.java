@@ -31,6 +31,7 @@ import xyz.itao.ink.filter.EmptyStringParameterFilter;
 import xyz.itao.ink.interceptor.BaseInterceptor;
 import xyz.itao.ink.interceptor.StopRepeatSubmitInterceptor;
 import xyz.itao.ink.interceptor.SysLogInterceptor;
+import xyz.itao.ink.listener.PvCacheEventListenerFactory;
 
 import java.util.List;
 

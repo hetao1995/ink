@@ -145,4 +145,9 @@ public class CommentRepositoryImpl  implements CommentRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Long countActiveApprovedCommentByContentId(Long contentId) {
+        return commentMapper.countCommentByActiveStatusAndContentId(true, WebConstant.COMMENT_APPROVED, contentId);
+    }
+
 }

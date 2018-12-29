@@ -58,7 +58,7 @@ public class EhCacheRemoveAspect {
                     String cacheKeyStr = String.valueOf(cacheKey);
                     if (pattern.matcher(cacheKeyStr).find()){
                         EhCacheUtils.remove(value, cacheKeyStr);
-                        log.debug("remove value={}, key={}", value, key);
+                        log.debug("remove value={}, key={}", value, cacheKeyStr);
                     }
                 }
             }

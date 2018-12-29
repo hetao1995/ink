@@ -9,8 +9,8 @@
         </h1>
         <div class="post-data">
             <time th:datetime="${article.createdFmt}" itemprop="datePublished" th:text="'发布于 '+ ${article.createdFmt}"></time>
-            / <th:block th:utext="${article.categoriesHtml}"/> / <a href="#comments" th:text="${article.commentsNum ?: 0}+' 条评论'"></a> /
-            <th:block th:text="${article.hits}"/>浏览
+            / <th:block th:utext="${article.categoriesHtml}"/> / <a href="#comments" th:text="${article.totalComments ?: 0}+' 条评论'"></a> /
+            <th:block th:text="${article.pv}"/>浏览
         </div>
     </div>
     <div id="post-content" class="post-content" itemprop="articleBody">

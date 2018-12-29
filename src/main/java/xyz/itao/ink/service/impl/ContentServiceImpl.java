@@ -120,7 +120,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     public void hit(ContentDomain contentDomain) {
-        contentRepository.updateHit(contentDomain.getId());
+        contentDomain.hit();
     }
 
     @Override

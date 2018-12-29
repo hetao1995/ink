@@ -68,6 +68,18 @@
       and
             deleted = false
     </select>
+    <select id="countCommentByActiveStatusAndContentId" resultType="java.lang.Long">
+      SELECT count(1)
+      FROM comments
+      WHERE
+        active = #{active,jdbcType=BIT}
+            and
+        deleted = false
+            and
+        status = #{status,jdbcType=VARCHAR}
+            and
+        content_id = #{contentId,jdbcType=BIGINT}
+    </select>
 
     <insert id="insertSelective" parameterType="xyz.itao.ink.domain.entity.Comment" >
     insert into comments

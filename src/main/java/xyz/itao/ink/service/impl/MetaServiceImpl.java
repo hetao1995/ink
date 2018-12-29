@@ -103,7 +103,7 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key ="'type:'+#result.type+'_'+'name:'+#result.name"),
+            @CacheEvict(key ="'type:'+#result.type+'_name:'+#result.name"),
             @CacheEvict(key = "'type:'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})

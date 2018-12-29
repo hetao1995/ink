@@ -17,23 +17,24 @@ import java.util.List;
 public class EhCacheUtils {
     private static CacheManager cacheManager = SpringContextHolder.getBean("ehCacheManagerFactoryBean");
 
-    public static Object get(String cacheName, String key) {
+    public static Object get(String cacheName, Object key) {
         Element element = getCache(cacheName).get(key);
         return element == null ? null : element.getObjectValue();
     }
 
-    public static void put(String cacheName, String key, Object value) {
+    public static void put(String cacheName, Object key, Object value) {
         Element element = new Element(key, value);
         getCache(cacheName).put(element);
     }
 
-    public static void put(String cacheName, String key, Object value, Integer idle){
+    public static void put(String cacheName, Object key, Object value, Integer idle){
         Element element = new Element(key, value);
         element.setTimeToIdle(idle);
         getCache(cacheName).put(element);
     }
 
-    public static void remove(String cacheName, String key) {
+
+    public static void remove(String cacheName, Object key) {
         getCache(cacheName).remove(key);
     }
 

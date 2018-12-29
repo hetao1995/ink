@@ -1,5 +1,6 @@
 package xyz.itao.ink.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.Comment;
 
@@ -42,4 +43,10 @@ public interface CommentMapper {
      * @return
      */
     Long countCommentByActive(boolean active);
+
+    /**
+     * 统计文章评论数
+     * @return
+     */
+    Long countCommentByActiveStatusAndContentId(@Param("active") boolean active, @Param("status") String status, @Param("contentId") Long contentId);
 }

@@ -189,4 +189,6 @@ public class WebConstant {
     public final static String META_CACHE = "meta_cache";
 
     public final static String REPEAT_SUBMIT_CACHE = "repeat_submit_cache";
+
+    public final static String PV_CACHE = "pv_cache";
 }

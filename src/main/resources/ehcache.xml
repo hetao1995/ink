@@ -51,10 +51,18 @@
 
     <cache name="comment_cache"
            eternal="false"
-           maxElementsInMemory="100"
+           maxElementsInMemory="300"
            overflowToDisk="false"
            diskPersistent="false"
            timeToIdleSeconds="60"
            timeToLiveSeconds="6000"
            memoryStoreEvictionPolicy="LRU" />
+
+    <cache name="pv_cache"
+           timeToIdleSeconds="36"
+           overflowToDisk="false"
+           diskPersistent="false"
+           maxElementsInMemory="300">
+        <cacheEventListenerFactory class="xyz.itao.ink.listener.PvCacheEventListenerFactory"/>
+    </cache>
 </ehcache>

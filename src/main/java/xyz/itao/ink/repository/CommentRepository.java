@@ -40,4 +40,10 @@ public interface CommentRepository {
     List<CommentDomain> loadAllCommentDomain();
 
     List<CommentDomain> loadAllActiveCommentDomain();
+
+    /**
+     * @param contentId 文章id
+     * @return 文章通过的评论数
+     */
+    Long countActiveApprovedCommentByContentId(Long contentId);
 }

@@ -30,6 +30,7 @@ public class ContentRepositoryImpl implements ContentRepository {
 
     @Override
     public ContentDomain updateContentDomain(ContentDomain domain) {
+        Content content = domain.entity();
         contentMapper.updateByPrimaryKeySelective(domain.entity());
         return domain;
     }
@@ -68,15 +69,13 @@ public class ContentRepositoryImpl implements ContentRepository {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public void updateHit(Long id) {
-        // todo 先放入缓存，缓存达到条件后更新到数据库
-    }
 
     @Override
     public Long getHit(Long id) {
-        // todo 先从缓存中获取
-        return loadActiveContentDomainById(id).getHits();
+        if(id==null){
+            return null;
+        }
+        return contentMapper.selectByPrimaryKey(id).getHits();
     }
 
 

@@ -21,6 +21,7 @@ import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.repository.UserRepository;
 
 import xyz.itao.ink.utils.DateUtils;
+import xyz.itao.ink.utils.EhCacheUtils;
 import xyz.itao.ink.utils.IdUtils;
 import xyz.itao.ink.utils.InkUtils;
 
@@ -134,6 +135,7 @@ public class ContentDomain {
      * 内容所属评论数目
      */
     private Long commentsNum;
+
 
     /**
      * 是否允许ping
@@ -345,6 +347,7 @@ public class ContentDomain {
         this.updateTime = DateUtils.getNow();
         this.saveTags(this.tags);
         this.saveCategories(this.categories);
+        this.setCommentsNum(this.getTotalComments());
         // 根据status修改commentzhuangt
         if(TypeConst.DRAFT.equals(this.getStatus())){
             for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
@@ -670,5 +673,35 @@ public class ContentDomain {
         }
         cache.evict(this.id);
         cache.evict("content_html:"+this.getId());
+    }
+
+    public ContentDomain hit(){
+        Long hit = this.getPv();
+        EhCacheUtils.put(WebConstant.PV_CACHE, this.getId(), hit+1);
+        return this;
+    }
+
+    public Long getPv(){
+        Long hit = (Long) EhCacheUtils.get(WebConstant.PV_CACHE, this.getId());
+        if(hit != null){
+            return hit;
+        }
+        hit = contentRepository.getHit(this.getId());
+        EhCacheUtils.put(WebConstant.PV_CACHE, this.getId(), hit);
+        return hit;
+    }
+
+    /**
+     * 获取commentNums
+     * @return
+     */
+    public Long getTotalComments() {
+        Long cn = (Long) EhCacheUtils.get(WebConstant.COMMENT_CACHE, this.getId()+"commentsNum");
+        if(cn != null){
+            return cn;
+        }
+        cn = commentRepository.countActiveApprovedCommentByContentId(this.id);
+        EhCacheUtils.put(WebConstant.COMMENT_CACHE, this.getId()+"commentsNum", cn);
+        return cn;
     }
 }

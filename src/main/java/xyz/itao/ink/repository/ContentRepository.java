@@ -45,13 +45,6 @@ public interface ContentRepository {
      */
     List<ContentDomain> loadAllFeedArticles();
 
-    /**
-     * 点击时间发生，更新点击次数
-     * 首先更新Redis中的数据
-     * 到了一定时间后更新数据库中的数据
-     * @param id 更新那个内容的hit
-     */
-    void updateHit(Long id);
 
     /**
      * 获取到当前的hit，先从缓存中获取，没有的话然后从数据库中获取
