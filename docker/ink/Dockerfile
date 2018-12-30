@@ -7,4 +7,4 @@ WORKDIR /opt/ink
 
 COPY ./target/*.jar /opt/ink/app.jar
 
-CMD ["java", "-Xmx200m", "-Djava.security.egd=file:/dev/./urandom","-jar","/opt/ink/app.jar"]
+CMD ["java", "-Xmx200m", "-Djava.security.egd=file:/dev/./urandom","-jar","/opt/ink/app.jar","--spring.profiles.active=docker"]
