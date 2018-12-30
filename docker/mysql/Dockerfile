@@ -1,3 +1,5 @@
-FROM mysql:5.7
+FROM mysql:5.7.17
+
 MAINTAINER hetao
-COPY ink.sql /docker-entrypoint-initdb.d
+
+ADD ink.sql /docker-entrypoint-initdb.d/
