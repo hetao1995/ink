@@ -155,7 +155,7 @@ public class Props {
      */
     public String getSiteUrl(String sub){
         final String prefix = "http";
-        String siteUrl = this.get(WebConstant.OPTION_SITE_URL, null);
+        String siteUrl = this.get(WebConstant.OPTION_SITE_URL, "");
         String protocol = this.get(WebConstant.OPTION_DEFAULT_PROTOCOL, "http://");
         if(StringUtils.isNotBlank(siteUrl) && !siteUrl.startsWith(prefix)){
             siteUrl = protocol+siteUrl;

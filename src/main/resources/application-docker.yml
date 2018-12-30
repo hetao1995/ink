@@ -1,0 +1,66 @@
+server:
+  port: 8080
+  session:
+    store-type: none
+  servlet:
+    session:
+      tracking-modes: cookie
+
+spring:
+    datasource:
+        name: mysql_ink
+        type: com.zaxxer.hikari.HikariDataSource
+        #HikariCP相关配置
+        hikari:
+          #基本属性
+          jdbc-url: jdbc:mysql://mysql:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: root
+          #连接池大小名称等
+          maximum-pool-size: 5
+          connection-test-query: SELECT 1
+          pool-name: ink
+          auto-commit: true
+        url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
+
+    thymeleaf:
+            prefix: classpath:/templates/
+            check-template-location: true
+            suffix: .html
+            encoding: UTF-8
+            mode: HTML
+            cache: false
+            servlet:
+              content-type: text/html
+    aop:
+      auto: true
+      proxy-target-class: true
+    servlet:
+          multipart:
+            max-file-size: 10MB
+            max-request-size: 100MB
+
+    devtools:
+      restart:
+        enabled: true
+    cache:
+      ehcache:
+        config: classpath:ehcache.xml
+      type: ehcache
+
+
+
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: xyz.itao.domain.entity
+
+
+#pagehelper
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+    returnPageInfo: check
+
