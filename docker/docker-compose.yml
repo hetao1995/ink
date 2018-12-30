@@ -29,8 +29,8 @@ services:
     container_name: ink
     restart: always
     build:
-      context: ./ink
-      dockerfile: ./Dockerfile
+      context: ../
+      dockerfile: ./docker/ink/Dockerfile
     ports:
       - 18080:8080
     networks:
