@@ -1,19 +1,20 @@
-version : '2'
+version : '3'
 services:
   mysql:
     container_name: mysql
     restart: always
     build:
-      context: ./mysql
       dockerfile: ./mysql/Dockerfile
     environment:
       - "MYSQL_ROOT_PASSWORD=root"
       - "MYSQL_DATABASE=ink"
       - "MYSQL_ROOT_HOST=%"
     ports:
-      - "13307:3307"
+      - 13307:3307
     networks:
       - net-ink
+    volumes:
+       - ./data/mysql:/var/lib/mysql
     command: [
           'mysqld',
           '--innodb-buffer-pool-size=20M',
@@ -27,14 +28,13 @@ services:
     container_name: ink
     restart: always
     build:
-      context: .
       dockerfile: ./ink/Dockerfile
     ports:
-      - "18080:8080"
+      - 18080:8080
     networks:
       - net-ink
     volumes:
-      - /opt/ink
+      - ./data/ink:/opt/ink
     depends_on:
       - mysql
     links:
