@@ -4,6 +4,7 @@ services:
     container_name: mysql
     restart: always
     build:
+      context: .
       dockerfile: ./mysql/Dockerfile
     environment:
       - "MYSQL_ROOT_PASSWORD=root"
@@ -28,6 +29,7 @@ services:
     container_name: ink
     restart: always
     build:
+      context: .
       dockerfile: ./ink/Dockerfile
     ports:
       - 18080:8080
