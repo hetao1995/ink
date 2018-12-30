@@ -34,7 +34,7 @@ services:
     networks:
       - net-ink
     volumes:
-      - /etc/ink
+      - /opt/ink
     depends_on:
       - mysql
     links:
