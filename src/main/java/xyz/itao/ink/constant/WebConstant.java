@@ -20,37 +20,13 @@ public class WebConstant {
      * 用户domain域的key
      */
     public static final String LOGIN_USER = "login_user";
-    public static  String CLASSPATH;
+    public static final String CLASSPATH = new File(AdminApiController.class.getResource("/").getPath()).getPath() + File.separatorChar;
 
-    static {
-        try {
-            CLASSPATH = new File(AdminApiController.class.getResource("/").toURI().getPath()).getPath() + File.separatorChar;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public static final String      REMEMBER_IN_COOKIE = "remember_me";
-    public static final String      LOGIN_ERROR_COUNT  = "login_error_count";
-    public static       String      LOGIN_SESSION_KEY  = "login_user";
-    public static       String      REMEMBER_TOKEN     = "";
-    public static       Boolean     INSTALLED          = false;
-    public static       Boolean     ENABLED_CDN        = true;
-    public static       Map<String, Object> OPTIONS = Maps.newConcurrentMap();
     /**
      * 上传的目录 upload 目录
      */
-    public static final String UP_DIR = CLASSPATH.substring(0, CLASSPATH.length() - 1)+File.separator+"upload"+File.separator;
-
-    /**
-     * 最大页码
-     */
-    public static final int MAX_PAGE = 100;
-
-    /**
-     * 最大获取文章条数
-     */
-    public static final int MAX_POSTS = 9999;
+    public static final String UP_DIR = "./upload/";
 
     /**
      * 文章内容文字数限制
@@ -80,20 +56,7 @@ public class WebConstant {
      */
     public static Integer MAX_FILE_SIZE = 204800;
 
-    /**
-     * 要过滤的ip列表
-     */
-    public static final Set<String> BLOCK_IPS = new HashSet<>(16);
 
-    public static final String SLUG_HOME        = "/";
-    public static final String SLUG_ARCHIVES    = "archives";
-    public static final String SLUG_CATEGRORIES = "categories";
-    public static final String SLUG_TAGS        = "tags";
-
-    /**
-     * 静态资源URI
-     */
-    public static final String STATIC_URI = "/static";
 
     /**
      * 安装页面URI

@@ -100,7 +100,6 @@ public class MetaController {
 
 
     private String metas(HttpServletRequest request, String name, int pageNum, int pageSize, String type){
-        pageNum = pageNum < 0 || pageNum > WebConstant.MAX_PAGE ? 1 : pageNum;
         MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(type, name);
         if (null == metaDomain) {
             return props.render404();

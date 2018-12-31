@@ -27,6 +27,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import xyz.itao.ink.annotation.SysLog;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.filter.EmptyStringParameterFilter;
 import xyz.itao.ink.interceptor.BaseInterceptor;
 import xyz.itao.ink.interceptor.StopRepeatSubmitInterceptor;
@@ -50,11 +51,9 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-//        registry.addResourceHandler("/user/**").addResourceLocations("classpath:/templates/themes/default/static/");
-//        registry.addResourceHandler("/plugins/**").addResourceLocations("classpath:/templates/admin/static/plugins/");
         registry.addResourceHandler("/admin/**").addResourceLocations("classpath:/templates/admin/static/");
         registry.addResourceHandler("/themes/**").addResourceLocations("classpath:/templates/themes/");
-        registry.addResourceHandler("/upload/**").addResourceLocations("classpath:/upload/");
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:"+WebConstant.UP_DIR);
         super.addResourceHandlers(registry);
     }
 

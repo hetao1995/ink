@@ -36,7 +36,8 @@ services:
     networks:
       - net-ink
     volumes:
-      - ./data/ink:/opt/ink
+      - ./data/ink/logs:/opt/ink/logs
+      - ./data/ink/upload:/opt/ink/upload
     depends_on:
       - mysql
     links:
