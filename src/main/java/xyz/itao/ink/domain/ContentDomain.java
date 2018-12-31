@@ -11,6 +11,7 @@ import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.Content;
+import xyz.itao.ink.domain.entity.Option;
 import xyz.itao.ink.domain.params.ArticleParam;
 import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -29,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -333,6 +335,8 @@ public class ContentDomain {
         this.id = IdUtils.nextId();
         this.deleted = false;
         this.active = true;
+        this.hits = 0L;
+        this.commentsNum = 0L;
         this.saveTags(this.tags);
         this.saveCategories(this.categories);
         contentRepository.saveNewContentDomain(this);
@@ -687,6 +691,9 @@ public class ContentDomain {
             return hit;
         }
         hit = contentRepository.getHit(this.getId());
+        if (hit == null){
+            hit = 0L;
+        }
         EhCacheUtils.put(WebConstant.PV_CACHE, this.getId(), hit);
         return hit;
     }

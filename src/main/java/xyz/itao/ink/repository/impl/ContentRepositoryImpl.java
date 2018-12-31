@@ -74,7 +74,11 @@ public class ContentRepositoryImpl implements ContentRepository {
         if(id==null){
             return null;
         }
-        return contentMapper.selectByPrimaryKey(id).getHits();
+        Content content = contentMapper.selectByPrimaryKey(id);
+        if(content==null){
+            return null;
+        }
+        return content.getHits();
     }
 
 

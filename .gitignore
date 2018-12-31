@@ -34,3 +34,4 @@ target
 .ink.iml
 install.lock
 docker/data
+.m2

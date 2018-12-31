@@ -5,7 +5,7 @@ set -e
 cd ../
 
 # 打包并创建镜像(不注释也可以,镜像覆盖,因此需要删除原有镜像,命令在下面,删除名称为none的镜像)
-mvn clean package -Dmaven.test.skip=true
+# mvn clean package -Dmaven.test.skip=true
 
 cd docker
 
