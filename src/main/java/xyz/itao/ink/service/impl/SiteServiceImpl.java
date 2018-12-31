@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import xyz.itao.ink.constant.WebConstant;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.RoleDomain;
 import xyz.itao.ink.domain.UserDomain;
@@ -41,13 +41,14 @@ public class SiteServiceImpl implements SiteService {
 
 
     @Override
+    @Transactional
     public UserDomain installSite(InstallParam installParam) {
         if(StringUtils.isBlank(installParam.getSiteTitle())){
             throw  new TipException(ExceptionEnum.SITE_TITLE_ILLEGAL);
         }
         installParam.setSiteUrl(InkUtils.buildURL(installParam.getSiteUrl()));
         UserDomain admin = initAdmin(installParam);
-        File lock = new File(WebConstant.CLASSPATH+"install.lock");
+        File lock = new File("./install.lock");
         try {
             boolean res = lock.createNewFile();
             if(!res){
@@ -75,7 +76,8 @@ public class SiteServiceImpl implements SiteService {
                 .build();
         UserDomain userDomain = userService.registerPermanentUser(userVo);
         RoleDomain roleDomain = domainFactory.createRoleDomain().setRole("ADMIN").setDetail("管理员").setCreateBy(0L).setUpdateBy(0L).save();
-        List<RoleDomain> roleDomains = userDomain.getRoles();
+        // 不能直接用缓存中的，需要拷贝一份
+        List<RoleDomain> roleDomains = Lists.newArrayList(userDomain.getRoles());
         roleDomains.add(roleDomain);
         userDomain.setRoles(roleDomains).setUpdateBy(0L).updateById();
         return userDomain;

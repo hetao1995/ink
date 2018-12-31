@@ -46,7 +46,7 @@ public class Props {
     public String  set(String name, Object value, UserDomain userDomain){
         OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
         if(optionDomain == null){
-            domainFactory
+            optionDomain = domainFactory
                     .createOptionDomain()
                     .setCreateBy(userDomain.getId())
                     .setUpdateBy(userDomain.getId())

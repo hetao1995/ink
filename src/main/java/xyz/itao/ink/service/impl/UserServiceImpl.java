@@ -10,6 +10,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.common.CommonValidator;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.DomainFactory;
@@ -48,6 +49,7 @@ public class UserServiceImpl  implements UserService {
     PasswordEncoder passwordEncoder;
     @Override
     @CachePut(key = "#result.id")
+    @Transactional
     public UserDomain registerTemporaryUser(UserVo userVo) {
         CommonValidator.valid(userVo, false);
         userVo.setActive(true);
@@ -98,7 +100,8 @@ public class UserServiceImpl  implements UserService {
     }
 
     @Override
-    @CachePut(key = "result.id")
+    @CachePut(key = "#result.id")
+    @Transactional
     public UserDomain registerPermanentUser(UserVo userVo) {
         CommonValidator.valid(userVo, true);
 
@@ -120,6 +123,7 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     @CacheEvict(key = "#userDomain.id")
+    @Transactional
     public void updateProfile(String screenName, String email, UserDomain userDomain) {
         UserVo userVo = UserVo.builder().displayName(screenName).email(email).build();
         CommonValidator.valid(userVo, false);
@@ -136,6 +140,7 @@ public class UserServiceImpl  implements UserService {
 
     @Override
     @CacheEvict(key = "#userDomain.id")
+    @Transactional
     public void updatePassword(String old_password, String password, UserDomain userDomain) {
         if(!passwordEncoder.matches(old_password, userDomain.getPassword())){
             throw  new TipException(ExceptionEnum.WRONG_OLD_PASSWORD);

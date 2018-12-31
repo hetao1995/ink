@@ -6,6 +6,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.OptionDomain;
@@ -43,6 +44,7 @@ public class OptionServiceImpl implements OptionService {
 
 
     @Override
+    @Transactional
     public void deleteOption(String key, UserDomain userDomain) {
         deleteByNameLike(key+"%", userDomain);
     }
@@ -63,6 +65,7 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
+    @Transactional
     public void deleteAllThemes(UserDomain userDomain) {
         deleteByNameLike("theme_option_%", userDomain);
     }

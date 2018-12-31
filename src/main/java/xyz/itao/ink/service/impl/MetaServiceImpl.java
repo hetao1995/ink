@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.annotation.CacheRemove;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -43,6 +44,7 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     @CacheEvict(key = "'type:'+#result.type")
+    @Transactional
     public MetaDomain saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
         if(StringUtils.isBlank(type)){
             throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
@@ -71,6 +73,7 @@ public class MetaServiceImpl implements MetaService {
             @CacheEvict(key = "'type:'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
+    @Transactional
     public MetaDomain deleteMetaById(Long id, UserDomain userDomain) {
         return domainFactory
                 .createMetaDomain()
@@ -107,6 +110,7 @@ public class MetaServiceImpl implements MetaService {
             @CacheEvict(key = "'type:'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
+    @Transactional
     public MetaDomain updateCategory(Long id, MetaParam metaParam, UserDomain userDomain) {
         MetaDomain metaDomain = domainFactory
                 .createMetaDomain()

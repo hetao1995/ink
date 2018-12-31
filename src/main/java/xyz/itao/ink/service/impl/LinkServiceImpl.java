@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -63,6 +64,7 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
+    @Transactional
     public void deleteAttachesById(Long id, UserDomain userDomain) {
         LinkDomain linkDomain = linkRepository.loadLinkDomainById(id);
         if(linkDomain==null){
@@ -73,6 +75,7 @@ public class LinkServiceImpl implements LinkService {
 
 
     @Override
+    @Transactional
     public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain)  {
         List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {

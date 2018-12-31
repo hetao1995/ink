@@ -68,6 +68,6 @@ public class InstallController {
     }
 
     private boolean isRepeatInstall() {
-        return Files.exists(Paths.get(WebConstant.CLASSPATH + "install.lock"))&& !props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, false);
+        return Files.exists(Paths.get("./install.lock"))&& !props.getBoolean(WebConstant.OPTION_ALLOW_INSTALL, false);
     }
 }

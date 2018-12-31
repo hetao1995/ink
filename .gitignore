@@ -32,4 +32,5 @@ target
 .mvnw
 .mvnw.cmd
 .ink.iml
+install.lock
 docker/data

@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.annotation.CacheRemove;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.CommentDomain;
@@ -58,7 +59,8 @@ public class CommentServiceImpl  implements CommentService {
 
     @Override
     @CacheEvict(key = "#id")
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#result.contentId+'*")
+    @Transactional
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#result.contentId+'*'")
     public CommentDomain deleteCommentById(Long id, UserDomain userDomain) {
         return domainFactory
                 .createCommentDomain()
@@ -69,7 +71,8 @@ public class CommentServiceImpl  implements CommentService {
 
     @Override
     @CacheEvict(key = "#commentVo.id")
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "commentVo.contentId+'_comment_*")
+    @Transactional
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#commentVo.contentId+'_comment_*'")
     public void updateCommentVo(CommentVo commentVo, UserDomain userDomain) {
         domainFactory
                 .createCommentDomain()
@@ -79,6 +82,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @Transactional
     @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#commentVo.contentId+'*'")
     public UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain) {
         if(userDomain == null){

@@ -4,12 +4,14 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.annotation.CacheRemove;
 import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
@@ -41,6 +43,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     @CacheEvict(key = "#id")
+    @Transactional
     public void deleteById(Long id, UserDomain userDomain) {
         domainFactory
                 .createContentDomain()
@@ -57,6 +60,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     @CachePut(key="#result.id")
+    @Transactional
     @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#contentVo.type+'*'")
     public ContentDomain publishNewContent(ContentVo contentVo, UserDomain userDomain) {
         return domainFactory
@@ -103,6 +107,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     @CachePut(key = "#contentVo.id")
+    @Transactional
     public ContentDomain updateContentVo(ContentVo contentVo, UserDomain userDomain) {
         return domainFactory
                 .createContentDomain()
