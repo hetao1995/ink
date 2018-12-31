@@ -55,7 +55,7 @@ public class ArticleController {
             return props.render404();
         }
         setArticleAttribute(request, pageNum, pageSize, contentDomain);
-        contentService.hit(contentDomain);
+//        contentService.hit(contentDomain);
         return renderContent(request, contentDomain);
     }
 
@@ -63,7 +63,7 @@ public class ArticleController {
      * 文章页
      */
     @GetMapping(value = {"/article/{idOrSlug}", "/article/{idOrSlug}.html"})
-    public String post(HttpServletRequest request, @PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize) {
+    public String post(HttpServletRequest request, HttpServletResponse response, @PathVariable String idOrSlug, @RequestParam(value = "cp", defaultValue = "1") Integer pageNum, @RequestParam(value = "size", defaultValue = "6") Integer pageSize) {
 
         ContentDomain contentDomain = contentService.loadActivePublishContentDomainByIdOrSlug(idOrSlug);
         if (null == contentDomain || TypeConst.DRAFT.equals(contentDomain.getStatus()) || !TypeConst.ARTICLE.equals(contentDomain.getType())) {
@@ -72,7 +72,11 @@ public class ArticleController {
 
         setArticleAttribute(request, pageNum, pageSize, contentDomain);
         request.setAttribute("is_post", true);
-        contentService.hit(contentDomain);
+        // 在一段时间内访问同一文章不计算浏览
+        if(!InkUtils.containsCookieName(request, contentDomain.getId().toString())){
+            contentService.hit(contentDomain);
+            InkUtils.setCookie(response, contentDomain.getId().toString(), null, WebConstant.PV_INTERVAL);
+        }
         return props.renderTheme("post");
     }
 

@@ -154,4 +154,6 @@ public class WebConstant {
     public final static String REPEAT_SUBMIT_CACHE = "repeat_submit_cache";
 
     public final static String PV_CACHE = "pv_cache";
+    // 两个小时内多次访问不计算
+    public final static Integer PV_INTERVAL = 60*60*2;
 }

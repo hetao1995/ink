@@ -191,6 +191,8 @@ public class InkUtils {
     private static final String SITEMAP_HEAD = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
             "<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\" xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
 
+
+
     static class Url {
         String loc;
         String lastmod;
@@ -287,6 +289,25 @@ public class InkUtils {
         cookie.setMaxAge(expire);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
+    }
+
+    /**
+     * 查找cookies是否存在指定的key
+     * @param request
+     * @param name
+     * @return
+     */
+    public static boolean containsCookieName(HttpServletRequest request, String name) {
+        if(StringUtils.isBlank(name)){
+            return false;
+        }
+        Cookie[] cookies = request.getCookies();
+        for(Cookie cookie : cookies){
+            if(name.equals(cookie.getName())){
+                return true;
+            }
+        }
+        return false;
     }
 
 
