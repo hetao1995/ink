@@ -1,5 +1,19 @@
 version : '3'
 services:
+  nginx:
+    container_name: nginx
+    restart: always
+    build:
+      context: ./nginx
+      dockerfile: ./Dockerfile
+    networks:
+      - net-ink
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - upload:/opt/app/upload
+
   mysql:
     container_name: mysql
     restart: always
@@ -25,20 +39,21 @@ services:
           '--lower-case-table-names=1'
         ]
 
-  ink:
-    container_name: ink
+  app:
+    container_name: app
     restart: always
     build:
       context: ../
-      dockerfile: ./docker/ink/Dockerfile
+      dockerfile: ./docker/app/Dockerfile
     ports:
       - "18080:8080"
     networks:
       - net-ink
     volumes:
-      - ./data/ink/logs:/opt/ink/logs
-      - ./data/ink/upload:/opt/ink/upload
+      - ./data/app/logs:/opt/app/logs
+      - upload:/opt/app/upload
     depends_on:
+      - nginx
       - mysql
     links:
       - mysql
@@ -46,3 +61,7 @@ services:
 networks:
   net-ink:
     driver: bridge
+
+
+volumes:
+  upload:

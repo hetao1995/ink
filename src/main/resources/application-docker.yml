@@ -15,14 +15,14 @@ spring:
           #基本属性
           jdbc-url: jdbc:mysql://mysql:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
           driver-class-name: com.mysql.cj.jdbc.Driver
-          username: root
+          username: ink
           password: root
           #连接池大小名称等
           maximum-pool-size: 5
           connection-test-query: SELECT 1
           pool-name: ink
           auto-commit: true
-        url: jdbc:mysql://127.0.0.1:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
+        url: jdbc:mysql://mysql:3306/ink?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&serverTimezone=UTC
 
     thymeleaf:
             prefix: classpath:/templates/
