@@ -46,7 +46,7 @@ public class CommentServiceImpl  implements CommentService {
     DomainFactory domainFactory;
 
     @Override
-    @Cacheable(key = "#commentParam.contentId+'_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum")
+    @Cacheable(key = "'all_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum")
     public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllActiveCommentDomain();
@@ -60,7 +60,7 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     @CacheEvict(key = "#id")
     @Transactional
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#result.contentId+'*'")
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#result.contentId+'*'","'all*'"})
     public CommentDomain deleteCommentById(Long id, UserDomain userDomain) {
         return domainFactory
                 .createCommentDomain()
@@ -72,7 +72,7 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     @CacheEvict(key = "#commentVo.id")
     @Transactional
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#commentVo.contentId+'_comment_*'")
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#commentVo.contentId+'*'","'all*'"})
     public void updateCommentVo(CommentVo commentVo, UserDomain userDomain) {
         domainFactory
                 .createCommentDomain()
@@ -83,7 +83,7 @@ public class CommentServiceImpl  implements CommentService {
 
     @Override
     @Transactional
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = "#commentVo.contentId+'*'")
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#commentVo.contentId+'*'","'all*'"})
     public UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain) {
         if(userDomain == null){
             UserVo userVo = UserVo
