@@ -32,3 +32,4 @@ target
 .mvnw
 .mvnw.cmd
 .ink.iml
+docker/data
