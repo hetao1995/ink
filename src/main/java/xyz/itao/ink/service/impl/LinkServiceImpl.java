@@ -91,13 +91,11 @@ public class LinkServiceImpl implements LinkService {
                     .active(true)
                     .build();
 
-            // todo 上传到TFS
             String filePath = WebConstant.UP_DIR + fkey;
             System.out.println("filePath:"+filePath);
             try {
                 Files.write(Paths.get(filePath), multipartFile.getBytes());
                 if(TypeConst.IMAGE.equals(ftype)){
-                    // todo 上传剪切文件到TFS
                     String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
                     ImageUtils.cutCenterImage(WebConstant.UP_DIR + fkey, WebConstant.UP_DIR +thumbnailFilePath, 270, 380);
                 }

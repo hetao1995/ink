@@ -6,10 +6,7 @@ import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.annotation.CacheRemove;
@@ -42,12 +39,17 @@ public class ContentServiceImpl  implements ContentService {
 
 
     @Override
-    @CacheEvict(key = "#id")
+    @Caching(evict = {
+            @CacheEvict(key = "#id") ,
+            @CacheEvict(key = "#result.slug")
+    })
+    @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#result.type+'*'")
     @Transactional
-    public void deleteById(Long id, UserDomain userDomain) {
-        domainFactory
+    public ContentDomain deleteById(Long id, UserDomain userDomain) {
+        return domainFactory
                 .createContentDomain()
                 .setId(id)
+                .loadById()
                 .setUpdateBy(userDomain.getId())
                 .deleteById();
     }
@@ -72,7 +74,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize")
+    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'_vo'")
     public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
@@ -106,7 +108,11 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @CachePut(key = "#contentVo.id")
+    @Caching(evict = {
+            @CacheEvict(key = "#result.id") ,
+            @CacheEvict(key = "#result.slug")
+    })
+    @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#contentVo.type+'*'")
     @Transactional
     public ContentDomain updateContentVo(ContentVo contentVo, UserDomain userDomain) {
         return domainFactory
@@ -172,7 +178,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'archive'")
+    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'_archive'")
     public PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam) {
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(),articleParam.getOrderBy());
         List<Archive> archives = contentRepository.loadContentArchives(articleParam.getType(), articleParam.getStatus());

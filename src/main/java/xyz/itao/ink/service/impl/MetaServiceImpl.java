@@ -43,7 +43,7 @@ public class MetaServiceImpl implements MetaService {
 
 
     @Override
-    @CacheEvict(key = "'type:'+#result.type")
+    @CacheEvict(key = "'type_'+#result.type")
     @Transactional
     public MetaDomain saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
         if(StringUtils.isBlank(type)){
@@ -69,8 +69,8 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key ="'type:'+#result.type+'_'+'name:'+#result.name"),
-            @CacheEvict(key = "'type:'+#result.type")
+            @CacheEvict(key ="'type_'+#result.type+'_name_'+#result.name"),
+            @CacheEvict(key = "'type_'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
     @Transactional
@@ -84,13 +84,13 @@ public class MetaServiceImpl implements MetaService {
 
 
     @Override
-    @Cacheable(key = "'type:'+#type+'_'+'name:'+#name")
+    @Cacheable(key = "'type_'+#type+'_name_'+#name")
     public MetaDomain getMetaDomainByTypeAndName(String type, String name) {
         return metaRepository.loadMetaDomainByTypeAndName(type, name);
     }
 
     @Override
-    @Cacheable(key = "'type:'+#type")
+    @Cacheable(key = "'type_'+#type")
     public List<MetaVo> getMetasByType(String type) {
         List<MetaDomain> metaDomains = metaRepository.loadMetaDomainsByType(type);
         return metaDomains.stream().map(MetaDomain::vo).collect(Collectors.toList());
@@ -106,8 +106,8 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key ="'type:'+#result.type+'_name:'+#result.name"),
-            @CacheEvict(key = "'type:'+#result.type")
+            @CacheEvict(key ="'type_'+#result.type+'_name_'+#result.name"),
+            @CacheEvict(key = "'type_'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
     @Transactional

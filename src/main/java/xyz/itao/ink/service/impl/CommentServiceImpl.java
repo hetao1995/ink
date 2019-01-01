@@ -46,7 +46,7 @@ public class CommentServiceImpl  implements CommentService {
     DomainFactory domainFactory;
 
     @Override
-    @Cacheable(key = "'all_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum")
+    @Cacheable(key = "'all_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum+'_vo'")
     public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllActiveCommentDomain();
