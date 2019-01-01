@@ -22,7 +22,7 @@ public interface ContentService {
      * 通过id删除文章
      * @param id content的id
      */
-    void deleteById(Long id, UserDomain userDomain);
+    ContentDomain deleteById(Long id, UserDomain userDomain);
 
     /**
      * 通过id加载ContentVo

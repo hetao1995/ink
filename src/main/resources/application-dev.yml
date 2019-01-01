@@ -65,5 +65,9 @@ pagehelper:
     params: count=countSql
     returnPageInfo: check
 
+logging:
+  config: classpath:log4j2.yml
+
+
 swagger:
   show: true

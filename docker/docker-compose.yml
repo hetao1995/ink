@@ -28,8 +28,8 @@ services:
       - "13306:3306"
     networks:
       - net-ink
-    volumes:
-       - ./data/mysql:/var/lib/mysql
+#    volumes:
+#       - ./data/mysql:/var/lib/mysql
     command: [
           'mysqld',
           '--innodb-buffer-pool-size=20M',
@@ -52,8 +52,7 @@ services:
     volumes:
       - ./data/app/logs:/opt/app/logs
       - upload:/opt/app/upload
-      - ./.m2:/root/.m2
-      - ./*.lock:/opt/app/*.lock
+      - ../.m2:/root/.m2
     depends_on:
       - nginx
       - mysql
