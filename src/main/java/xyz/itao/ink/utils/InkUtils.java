@@ -302,6 +302,9 @@ public class InkUtils {
             return false;
         }
         Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            return false;
+        }
         for(Cookie cookie : cookies){
             if(name.equals(cookie.getName())){
                 return true;
