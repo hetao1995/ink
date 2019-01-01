@@ -28,15 +28,16 @@ services:
       - "13306:3306"
     networks:
       - net-ink
-#    volumes:
-#       - ./data/mysql:/var/lib/mysql
+    volumes:
+       - ./mysql/db:/var/lib/mysql
     command: [
           'mysqld',
           '--innodb-buffer-pool-size=20M',
           '--character-set-server=utf8',
           '--collation-server=utf8_general_ci',
           '--default-time-zone=+8:00',
-          '--lower-case-table-names=1'
+          '--lower-case-table-names=1',
+          '--innodb_use_native_aio=0'
         ]
 
   app:
@@ -50,7 +51,7 @@ services:
     networks:
       - net-ink
     volumes:
-      - ./data/app/logs:/opt/app/logs
+      - ../logs:/opt/app/logs
       - upload:/opt/app/upload
       - ../.m2:/root/.m2
     depends_on:

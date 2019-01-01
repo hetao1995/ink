@@ -35,3 +35,4 @@ target
 install.lock
 docker/data
 .m2
+docker/mysql/db
