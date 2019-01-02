@@ -34,7 +34,7 @@ import java.util.Arrays;
  * @date 2018-11-30
  * @description
  */
-@EnableWebSecurity(debug = true)
+@EnableWebSecurity(debug = false)
 public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception {
