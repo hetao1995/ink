@@ -43,6 +43,7 @@ spring:
             max-request-size: 100MB
 
     devtools:
+      # 开发环境设置为true
       restart:
         enabled: true
     cache:
