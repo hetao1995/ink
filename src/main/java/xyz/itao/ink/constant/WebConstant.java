@@ -68,10 +68,12 @@ public class WebConstant {
      */
     public static final String ADMIN_URI = "/admin";
 
+    public static final String CDN_URI = "/cdn";
+
     /**
      * 后台登录地址
      */
-    public static final String LOGIN_URI = "/admin/login";
+    public static final String LOGIN_URI = "/login";
 
     public static final String ARTICLE_URI = "/article";
 

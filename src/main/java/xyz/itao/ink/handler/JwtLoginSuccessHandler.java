@@ -9,6 +9,7 @@ import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.JwtAuthenticationToken;
 import xyz.itao.ink.service.UserService;
+import xyz.itao.ink.utils.InkUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -39,11 +40,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         request.setAttribute(WebConstant.LOGIN_USER, userDomain);
         if (shouldRefresh) {
             String newToken = userService.getJwtLoginToken(userDomain, false);
-//            response.setHeader("Authorization", newToken);
-            Cookie cookie = new Cookie("Authorization", newToken);
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge(-1);
-            response.addCookie(cookie);
+            InkUtils.setCookie(response,WebConstant.AUTHORIZATION,newToken,-1, "/");
         }
     }
 

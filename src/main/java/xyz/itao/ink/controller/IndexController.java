@@ -165,6 +165,11 @@ public class IndexController{
         return "comm/error_404";
     }
 
+    @GetMapping(value = "error_403")
+    public String error403(){
+        return "comm/error_403";
+    }
+
     @GetMapping(value = "error_500")
     public String error500(){
         return "comm/error_500";

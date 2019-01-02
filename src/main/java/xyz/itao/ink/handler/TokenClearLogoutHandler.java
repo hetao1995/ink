@@ -23,7 +23,7 @@ public class TokenClearLogoutHandler implements LogoutHandler {
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 //        response.setHeader("Authorization", "");
         request.removeAttribute(WebConstant.LOGIN_USER);
-        InkUtils.clearCookies(request, response);
+        InkUtils.removeCookie(request, response, WebConstant.AUTHORIZATION);
     }
 
 }

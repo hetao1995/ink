@@ -115,7 +115,7 @@ public class ArticleController {
         if(userDomain==null || userDomain.getId()==null){
             // 将临时用户jwt放入cookie
             String jwt = userService.getJwtLoginToken(newUserDomain, true);
-            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt, WebConstant.REMEMBER_ME_INTERVAL);
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt, WebConstant.REMEMBER_ME_INTERVAL,"/");
         }
         return RestResponse.ok();
     }

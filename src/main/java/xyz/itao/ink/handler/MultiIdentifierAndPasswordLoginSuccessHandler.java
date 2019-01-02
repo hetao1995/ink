@@ -32,9 +32,9 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)  {
         String token = userService.getJwtLoginToken((UserDomain) authentication.getPrincipal(), ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe());
         if(((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe()){
-            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, WebConstant.REMEMBER_ME_INTERVAL);
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, WebConstant.REMEMBER_ME_INTERVAL, "/");
         }else{
-            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, -1);
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, -1, "/");
         }
         request.setAttribute(WebConstant.LOGIN_USER,  authentication.getPrincipal());
     }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <link rel="shortcut icon" th:href="@{/admin/images/favicon.png}"/>
+    <link rel="shortcut icon" th:href="${props.getCdnUrl('/images/favicon.png')}"/>
     <title>Ink - 用户登录</title>
     <link th:href="${props.getCdnUrl('/plugins/font-awesome/4.7.0/css/font-awesome.min.css')}" rel="stylesheet"/>
     <link th:href="${props.getCdnUrl('/plugins/bootstrap/3.3.7/css/bootstrap.min.css')}" rel="stylesheet" type="text/css"/>

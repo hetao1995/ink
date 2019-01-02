@@ -183,7 +183,7 @@ public class Props {
     }
 
     public String getCdnUrl(String sub){
-        return this.get(WebConstant.OPTION_CDN_URL, "/admin") + sub;
+        return this.get(WebConstant.OPTION_CDN_URL, WebConstant.CDN_URI) + sub;
     }
 
     public  String getCdnUrl(){

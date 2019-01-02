@@ -51,7 +51,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/admin/**").addResourceLocations("classpath:/templates/admin/static/");
+        registry.addResourceHandler(WebConstant.CDN_URI+"/**").addResourceLocations("classpath:/templates/admin/static/");
         registry.addResourceHandler("/themes/**").addResourceLocations("classpath:/templates/themes/");
         registry.addResourceHandler("/upload/**").addResourceLocations("file:"+WebConstant.UP_DIR);
         super.addResourceHandlers(registry);

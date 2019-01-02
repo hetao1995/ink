@@ -26,9 +26,9 @@ public class JwtLoginConfigurer<T extends JwtLoginConfigurer<T, B>, B extends Ht
     public void configure(B http) throws Exception {
         authFilter.setAuthenticationManager(http.getSharedObject(AuthenticationManager.class));
         authFilter.setAuthenticationFailureHandler(new HttpStatusLoginFailureHandler());
-        //将filter放到muti前
+        //将filter放到muti后
         JwtAuthenticationFilter filter = postProcess(authFilter);
-        http.addFilterBefore(filter, MultiIdentifierAndPasswordAuthenticationFilter.class);
+        http.addFilterAfter(filter, MultiIdentifierAndPasswordAuthenticationFilter.class);
     }
     //设置匿名用户可访问url
     public JwtLoginConfigurer<T, B> permissiveRequestUrls(String ... urls){

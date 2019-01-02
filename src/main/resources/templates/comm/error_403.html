@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
-    <title>404（找不到页面）- Ink</title>
+    <title>403（无权访问此页面）- Ink</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <link rel="shortcut icon" th:href="${props.getCdnUrl('/images/favicon.png')}"/>
@@ -20,10 +20,8 @@
 
 <div class="wrapper-page">
     <div class="ex-page-content text-center">
-        <h1>400!</h1>
-        <h2>错误的请求！</h2>
-        <h3 th:text="${error.getMessage()}"></h3>
-        <h3 th:text="error"></h3>
+        <h1>403!</h1>
+        <h2>很抱歉，你无权访问这个页面！</h2>
         <br></br>
         <a class="btn btn-purple waves-effect waves-light" href="/"><i class="fa fa-angle-left"></i> 返回首页</a>
     </div>

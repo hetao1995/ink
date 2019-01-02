@@ -278,6 +278,23 @@ public class InkUtils {
         }
     }
 
+    public static void removeCookie(HttpServletRequest request, HttpServletResponse response, String name){
+        Cookie[] cookies = request.getCookies();
+        if(cookies==null){
+            return;
+        }
+        if(StringUtils.isBlank(name)){
+            return;
+        }
+        for(Cookie cookie : cookies){
+            if(!StringUtils.equals(cookie.getName(), name)){
+                continue;
+            }
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+        }
+    }
+
     /**
      * 添加cookie
      * @param response
@@ -288,6 +305,14 @@ public class InkUtils {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expire);
         cookie.setHttpOnly(true);
+        response.addCookie(cookie);
+    }
+
+    public static void setCookie(HttpServletResponse response, String name, String value, Integer expire, String path){
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(expire);
+        cookie.setHttpOnly(true);
+        cookie.setPath(path);
         response.addCookie(cookie);
     }
 

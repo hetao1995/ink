@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.filter.JwtAuthenticationFilter;
 import xyz.itao.ink.filter.OptionRequestFilter;
 import xyz.itao.ink.handler.MultiIdentifierAndPasswordLoginSuccessHandler;
@@ -40,7 +41,7 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter{
         http.authorizeRequests()
                 //静态资源访问无需认证
                 .antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html", "/**/*.png","/**/*.svg","/**/*.otf","/**/*.eot", "/**/*.ttf","/**/*.woff","/**/*.woff2").permitAll()
-                .antMatchers("/*","/themes/**/static/**","/upload/**").permitAll()
+                .antMatchers("/*","/themes/**/static/**","/upload/**", WebConstant.CDN_URI+"/**").permitAll()
                 .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .and()
                 //CRSF禁用，因为不使用session
