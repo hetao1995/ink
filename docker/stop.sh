@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # 停止原先运行的容器
 docker-compose stop
