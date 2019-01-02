@@ -50,7 +50,7 @@ public class CommonValidator {
         if((isPermanent || userVo.getPassword() != null) && (userVo.getPassword().length()<6 || userVo.getPassword().length()>20)){
             throw new TipException(ExceptionEnum.PASSWORD_ILLEGAL);
         }
-        if(isPermanent || (userVo.getDisplayName() != null) && (userVo.getDisplayName().length()<2 || userVo.getDisplayName().length()>20)){
+        if((isPermanent || userVo.getDisplayName() != null) && (userVo.getDisplayName().length()<2 || userVo.getDisplayName().length()>20)){
             throw new TipException(ExceptionEnum.DISPLAY_NAME_ILLEGAL);
         }
     }
