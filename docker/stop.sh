@@ -9,7 +9,7 @@ docker-compose rm -f
 #docker ps -a | grep "Exited" | awk '{print $1 }'|xargs docker rm
 
 #删除名称为none的镜像
-docker images|grep none|awk '{print $3 }'|xargs docker rmi
+#docker images|grep none|awk '{print $3 }'|xargs docker rmi
 
 #删除生成的镜像
 docker rmi docker_mysql docker_app docker_nginx
