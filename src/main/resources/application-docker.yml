@@ -30,6 +30,7 @@ spring:
             suffix: .html
             encoding: UTF-8
             mode: HTML
+            # 运行环境设置为true
             cache: true
             servlet:
               content-type: text/html
