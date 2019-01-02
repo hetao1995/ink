@@ -35,7 +35,7 @@ public class UserServiceImpl  implements UserService {
     /**
      * 临时token，一个小时后过期
      */
-    private static final Long TEMPORARY_JWT_EXPIRE_INTERVAL = 1000*60L;
+    private static final Long TEMPORARY_JWT_EXPIRE_INTERVAL = 1000*60*60L;
     /**
      * 长期token，一个月后过期
      */
