@@ -79,21 +79,26 @@ public class LinkServiceImpl implements LinkService {
     public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain)  {
         List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {
-            String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
-            String fid = String.valueOf(IdUtils.nextId());
-            String fkey = fid+"."+ FileUtils.fileExt(fname);
-            LinkVo linkVo = LinkVo
-                    .builder()
-                    .fileName(fname)
-                    .authorId(userDomain.getId())
-                    .fileKey(fkey)
-                    .fileType(ftype)
-                    .active(true)
-                    .build();
-
-            String filePath = WebConstant.UP_DIR + fkey;
-            System.out.println("filePath:"+filePath);
+            LinkVo linkVo = null;
             try {
+                String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
+                String fid = String.valueOf(IdUtils.nextId());
+                linkVo = LinkVo
+                        .builder()
+                        .fileName(fname)
+                        .authorId(userDomain.getId())
+                        .fileType(ftype)
+                        .active(true)
+                        .build();
+                String ext = FileUtils.fileExt(multipartFile.getInputStream(), fname);
+                if (ext==null){
+                    continue;
+                }
+                String fkey = fid+"."+ ext;
+                linkVo.setFileKey(fkey);
+
+                String filePath = WebConstant.UP_DIR + fkey;
+                System.out.println("filePath:"+filePath);
                 Files.write(Paths.get(filePath), multipartFile.getBytes());
                 if(TypeConst.IMAGE.equals(ftype)){
                     String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
