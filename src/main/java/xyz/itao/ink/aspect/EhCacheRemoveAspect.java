@@ -17,26 +17,29 @@ import xyz.itao.ink.utils.EhCacheUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * ehcache 正则cache擦除
+ *
  * @author hetao
  * @date 2018-12-29
- * @description ehcache 正则cache擦除
  */
 @Aspect
 @Component
 @Slf4j
 public class EhCacheRemoveAspect {
     @Pointcut(value = "(execution(* *.*(..)) && @annotation(xyz.itao.ink.annotation.CacheRemove))")
-    private void pointcut() {}
+    private void pointcut() {
+    }
 
     /**
      * 功能描述: 在方法返回后移除ehcache中的复合正则表达式的key
-    */
+     */
     @AfterReturning(value = "pointcut()")
-    private void process(JoinPoint joinPoint){
+    private void process(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         // 获取切面的参数
         Object[] args = joinPoint.getArgs();
@@ -45,18 +48,18 @@ public class EhCacheRemoveAspect {
         // 获取注解
         CacheRemove cacheRemove = method.getAnnotation(CacheRemove.class);
 
-        if (cacheRemove != null){
+        if (cacheRemove != null) {
             String value = cacheRemove.value();
             //需要移除的正则key
             String[] keys = cacheRemove.key();
 
             List cacheKeys = EhCacheUtils.cacheKeys(value);
-            for (String key : keys){
+            for (String key : keys) {
                 key = parseKey(key, method, args);
                 Pattern pattern = Pattern.compile(key);
-                for (Object cacheKey: cacheKeys) {
+                for (Object cacheKey : cacheKeys) {
                     String cacheKeyStr = String.valueOf(cacheKey);
-                    if (pattern.matcher(cacheKeyStr).find()){
+                    if (pattern.matcher(cacheKeyStr).find()) {
                         EhCacheUtils.remove(value, cacheKeyStr);
                         log.debug("remove value={}, key={}", value, cacheKeyStr);
                     }
@@ -66,48 +69,55 @@ public class EhCacheRemoveAspect {
     }
 
     /**
-     *    获取缓存的key
-     *    key 定义在注解上，支持SPEL表达式
-     * @return
+     * 获取缓存的key
+     * key 定义在注解上，支持SPEL表达式
+     *
+     * @return 返回key
      */
-    private String parseKey(String key,Method method,Object [] args){
+    private String parseKey(String key, Method method, Object[] args) {
         //获取被拦截方法参数名列表(使用Spring支持类库)
         LocalVariableTableParameterNameDiscoverer u =
                 new LocalVariableTableParameterNameDiscoverer();
-        String [] paraNameArr=u.getParameterNames(method);
+        String[] paraNameArr = u.getParameterNames(method);
 
         //使用SPEL进行key的解析
         ExpressionParser parser = new SpelExpressionParser();
         //SPEL上下文
         StandardEvaluationContext context = new StandardEvaluationContext();
         //把方法参数放入SPEL上下文中
-        for(int i=0;i<paraNameArr.length;i++){
+        for (int i = 0; i < Objects.requireNonNull(paraNameArr).length; i++) {
             context.setVariable(paraNameArr[i], args[i]);
         }
-        List<String> pList = descFormat(key);//获取#p0这样的表达式
+        //获取#p0这样的表达式
+        List<String> pList = descFormat(key);
         //将p0作为参数放入SPEL上下文中
-        for(String p:pList) {
+        for (String p : pList) {
             context.setVariable(p.substring(1), args[Integer.valueOf(p.substring(2))]);
         }
-        return parser.parseExpression(key).getValue(context,String.class);
+        return parser.parseExpression(key).getValue(context, String.class);
     }
 
     /**
-     * 提取出#p[数字]这样的表达式
-     * @param desc
-     * @return
+     * 取出表达式的正则
      */
-    private static List<String> descFormat(String desc){
+    private static Pattern pattern = Pattern.compile("#p[0-9]+");
+
+    /**
+     * 提取出#p[数字]这样的表达式
+     *
+     * @param desc 缓存的key
+     * @return 表达式
+     */
+    private static List<String> descFormat(String desc) {
         List<String> list = new ArrayList<>();
-        Pattern pattern = Pattern.compile("#p[0-9]+");
+
         Matcher matcher = pattern.matcher(desc);
-        while(matcher.find()){
+        while (matcher.find()) {
             String t = matcher.group(0);
             list.add(t);
         }
         return list;
     }
-
 
 }
 

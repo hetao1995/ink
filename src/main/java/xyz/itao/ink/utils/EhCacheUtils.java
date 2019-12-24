@@ -1,8 +1,6 @@
 package xyz.itao.ink.utils;
 
 
-
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -12,7 +10,6 @@ import java.util.List;
 /**
  * @author hetao
  * @date 2018-12-29
- * @description
  */
 public class EhCacheUtils {
     private static CacheManager cacheManager = SpringContextHolder.getBean("ehCacheManagerFactoryBean");
@@ -27,7 +24,7 @@ public class EhCacheUtils {
         getCache(cacheName).put(element);
     }
 
-    public static void put(String cacheName, Object key, Object value, Integer idle){
+    public static void put(String cacheName, Object key, Object value, Integer idle) {
         Element element = new Element(key, value);
         element.setTimeToIdle(idle);
         getCache(cacheName).put(element);
@@ -38,14 +35,15 @@ public class EhCacheUtils {
         getCache(cacheName).remove(key);
     }
 
-    public static List cacheKeys(String cacheName){
+    public static List cacheKeys(String cacheName) {
         return getCache(cacheName).getKeys();
     }
 
     /**
      * 获得一个Cache，没有则创建一个。
-     * @param cacheName
-     * @return
+     *
+     * @param cacheName cacheName
+     * @return Cache
      */
     private static Cache getCache(String cacheName) {
         Cache cache = cacheManager.getCache(cacheName);

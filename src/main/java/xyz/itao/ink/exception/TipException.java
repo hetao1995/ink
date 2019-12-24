@@ -5,13 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author hetao
  * @date 2018-12-01 22:18
- * @description
  */
 @Slf4j
 public class TipException extends RuntimeException {
 
 
     private Integer code;
+
     public TipException() {
     }
 
@@ -27,7 +27,7 @@ public class TipException extends RuntimeException {
         super(cause);
     }
 
-    public TipException(ExceptionEnum exceptionEnum){
+    public TipException(ExceptionEnum exceptionEnum) {
         super(exceptionEnum.getMessage());
         this.code = exceptionEnum.getCode();
     }

@@ -5,7 +5,6 @@ import lombok.Data;
 /**
  * @author hetao
  * @date 2018-12-06
- * @description
  */
 @Data
 public class ThemeParam {

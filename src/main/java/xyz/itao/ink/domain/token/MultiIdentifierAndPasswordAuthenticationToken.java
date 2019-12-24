@@ -10,17 +10,15 @@ import java.util.Collections;
 /**
  * @author hetao
  * @date 2018-12-03
- * @description
  */
 public class MultiIdentifierAndPasswordAuthenticationToken extends AbstractAuthenticationToken {
-    private UserDomain principal ;
+    private UserDomain principal;
     private String identifier;
     private String password;
     private Boolean rememberMe;
 
 
-
-    public MultiIdentifierAndPasswordAuthenticationToken(String identifier, String password, Boolean rememberMe){
+    public MultiIdentifierAndPasswordAuthenticationToken(String identifier, String password, Boolean rememberMe) {
         super(Collections.emptyList());
         this.identifier = identifier;
         this.password = password;
@@ -48,8 +46,7 @@ public class MultiIdentifierAndPasswordAuthenticationToken extends AbstractAuthe
         return identifier;
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 

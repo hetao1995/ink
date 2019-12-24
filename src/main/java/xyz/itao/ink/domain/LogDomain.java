@@ -14,19 +14,19 @@ import java.util.Date;
 /**
  * @author hetao
  * @date 2018-12-05
- * @description
  */
 @Data
 @Accessors(chain = true)
-public class LogDomain  {
-    
-    LogDomain(LogRepository logRepository, UserRepository userRepository){
+public class LogDomain {
+
+    LogDomain(LogRepository logRepository, UserRepository userRepository) {
         this.logRepository = logRepository;
         this.userRepository = userRepository;
     }
+
     LogRepository logRepository;
     UserRepository userRepository;
-    
+
     /**
      * 日志的id
      */
@@ -87,11 +87,11 @@ public class LogDomain  {
      */
     private Long updateBy;
 
-    public  UserDomain getUserDomain(){
+    public UserDomain getUserDomain() {
         return userRepository.loadActiveUserDomainById(userId);
     }
-    
-    public LogDomain assemble(Log entity){
+
+    public LogDomain assemble(Log entity) {
         return this
                 .setId(entity.getId())
                 .setDeleted(entity.getDeleted())
@@ -106,8 +106,8 @@ public class LogDomain  {
                 .setAction(entity.getAction())
                 .setUserId(entity.getUserId());
     }
-    
-    public Log entity(){
+
+    public Log entity() {
         return Log
                 .builder()
                 .id(this.getId())
@@ -124,8 +124,8 @@ public class LogDomain  {
                 .userId(this.getUserId())
                 .build();
     }
-    
-    public LogVo vo(){
+
+    public LogVo vo() {
         UserDomain userDomain = this.getUserDomain();
         return LogVo
                 .builder()
@@ -134,19 +134,19 @@ public class LogDomain  {
                 .agent(this.getAgent())
                 .data(this.getData())
                 .action(this.getAction())
-                .operator(userDomain==null ? this.getIp() : userDomain.getDisplayName())
+                .operator(userDomain == null ? this.getIp() : userDomain.getDisplayName())
                 .createTime(this.createTime)
                 .build();
     }
 
-    public LogDomain save(){
+    public LogDomain save() {
         this
                 .setId(IdUtils.nextId())
                 .setActive(true)
                 .setDeleted(false)
                 .setCreateTime(DateUtils.getNow())
                 .setUpdateTime(DateUtils.getNow());
-         logRepository.saveNewLogDomain(this);
+        logRepository.saveNewLogDomain(this);
         return this;
     }
 }

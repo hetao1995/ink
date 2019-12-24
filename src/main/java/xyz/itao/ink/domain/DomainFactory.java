@@ -1,6 +1,5 @@
 package xyz.itao.ink.domain;
 
-import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Lazy;
@@ -11,7 +10,6 @@ import xyz.itao.ink.repository.*;
 /**
  * @author hetao
  * @date 2018-12-21
- * @description
  */
 @Component
 public class DomainFactory {
@@ -71,65 +69,71 @@ public class DomainFactory {
 
     /**
      * 生成ContentDoamin
-     * @return
+     *
+     * @return domain
      */
-    public ContentDomain createContentDomain(){
+    public ContentDomain createContentDomain() {
         return new ContentDomain(userRepository, contentRepository, commentRepository, metaRepository, this, props, cacheManager);
     }
 
     /**
      * 生成MetaDomain
-     * @return
+     *
+     * @return domain
      */
-    public MetaDomain createMetaDomain(){
+    public MetaDomain createMetaDomain() {
         return new MetaDomain(metaRepository);
     }
 
     /**
      * 生成archiveDomain对象
-     * @return
+     *
+     * @return domain
      */
-    public ArchiveDomain createArchiveDomain(){
+    public ArchiveDomain createArchiveDomain() {
         return new ArchiveDomain(contentRepository);
     }
 
     /**
      * 生成CommentDomain对象
-     * @return
+     *
+     * @return domain
      */
-    public CommentDomain createCommentDomain(){
+    public CommentDomain createCommentDomain() {
         return new CommentDomain(userRepository, contentRepository, commentRepository);
     }
 
     /**
      * 生成LogDomain对象
-     * @return
+     *
+     * @return domian
      */
-    public LogDomain createLogDomain(){
+    public LogDomain createLogDomain() {
         return new LogDomain(logRepository, userRepository);
     }
 
     /**
      * 生成StatisticsDomain对象
-     * @return
+     *
+     * @return domain
      */
-    public StatisticsDomain createStatisticsDomain(){
-        return new StatisticsDomain(contentRepository,commentRepository, metaRepository, linkRepository);
+    public StatisticsDomain createStatisticsDomain() {
+        return new StatisticsDomain(contentRepository, commentRepository, metaRepository, linkRepository);
     }
 
-    public OptionDomain createOptionDomain(){
+    public OptionDomain createOptionDomain() {
         return new OptionDomain(optionRepository);
     }
 
-    public UserDomain createUserDomain(){
+    public UserDomain createUserDomain() {
         return new UserDomain(userRepository, roleRepository, cacheManager);
     }
 
-    public RoleDomain createRoleDomain(){
+    public RoleDomain createRoleDomain() {
         return new RoleDomain(roleRepository);
     }
 
-    public LinkDomain createLinkDomain(){
+    public LinkDomain createLinkDomain() {
         return new LinkDomain(linkRepository);
     }
 }

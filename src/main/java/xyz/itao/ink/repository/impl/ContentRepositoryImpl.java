@@ -17,16 +17,19 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Repository(value = "contentRepository")
 public class ContentRepositoryImpl implements ContentRepository {
+    private final ContentMapper contentMapper;
+    private final UserRepository userRepository;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    ContentMapper contentMapper;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    DomainFactory domainFactory;
+    public ContentRepositoryImpl(ContentMapper contentMapper, UserRepository userRepository, DomainFactory domainFactory) {
+        this.contentMapper = contentMapper;
+        this.userRepository = userRepository;
+        this.domainFactory = domainFactory;
+    }
 
     @Override
     public ContentDomain updateContentDomain(ContentDomain domain) {
@@ -44,7 +47,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     public ContentDomain loadActiveContentDomainById(Long id) {
         ContentDomain domain = domainFactory.createContentDomain().setId(id).setDeleted(false).setActive(true);
         List<Content> contents = contentMapper.selectByNoNulProperties(domain.entity());
-        if(contents.isEmpty()){
+        if (contents.isEmpty()) {
             return null;
         }
 
@@ -55,7 +58,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     public List<ContentDomain> loadAllActiveContentDomain(ContentDomain contentDomain) {
         contentDomain.setDeleted(false).setActive(true);
         List<Content> contents = contentMapper.selectByNoNulProperties(contentDomain.entity());
-        return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
+        return contents.stream().map(e -> domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -64,18 +67,18 @@ public class ContentRepositoryImpl implements ContentRepository {
         return contentMapper
                 .selectByNoNulProperties(contentDomain.entity())
                 .stream()
-                .map(e->domainFactory.createContentDomain().assemble(e))
+                .map(e -> domainFactory.createContentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
 
     @Override
     public Long getHit(Long id) {
-        if(id==null){
+        if (id == null) {
             return null;
         }
         Content content = contentMapper.selectByPrimaryKey(id);
-        if(content==null){
+        if (content == null) {
             return null;
         }
         return content.getHits();
@@ -88,7 +91,7 @@ public class ContentRepositoryImpl implements ContentRepository {
         return contentMapper
                 .selectByNoNulProperties(contentDomain.entity())
                 .stream()
-                .map(e->domainFactory.createContentDomain().assemble(e))
+                .map(e -> domainFactory.createContentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
@@ -98,14 +101,14 @@ public class ContentRepositoryImpl implements ContentRepository {
         return contentMapper
                 .selectByNoNulProperties(contentDomain.entity())
                 .stream()
-                .map(e->domainFactory.createContentDomain().assemble(e))
+                .map(e -> domainFactory.createContentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ContentDomain> loadAllActiveContentDomainByContentIdIn(List<Long> articleIds) {
         List<Content> contents = contentMapper.selectAllContentIn(articleIds, false, true);
-        return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
+        return contents.stream().map(e -> domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -115,8 +118,8 @@ public class ContentRepositoryImpl implements ContentRepository {
 
     @Override
     public List<ContentDomain> loadAllContentDomainCreatedBetween(String type, String status, Integer start, Integer end) {
-        List<Content> contents = contentMapper.selectContentCreatedBetween(type,status,start,end);
-        return contents.stream().map(e->domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
+        List<Content> contents = contentMapper.selectContentCreatedBetween(type, status, start, end);
+        return contents.stream().map(e -> domainFactory.createContentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -134,14 +137,14 @@ public class ContentRepositoryImpl implements ContentRepository {
         List<Content> contents = contentMapper.searchContents(keyword, type, true);
         return contents
                 .stream()
-                .map(e->domainFactory.createContentDomain().assemble(e))
+                .map(e -> domainFactory.createContentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
     @Override
     public ContentDomain loadNextActivePublishContentDomain(Integer created, String type) {
         Content content = contentMapper.selectNextContentDomain(created, true, TypeConst.PUBLISH, type);
-        if(content==null){
+        if (content == null) {
             return null;
         }
         return domainFactory.createContentDomain().assemble(content);
@@ -150,7 +153,7 @@ public class ContentRepositoryImpl implements ContentRepository {
     @Override
     public ContentDomain loadPrevActivePublishContentDomain(Integer created, String type) {
         Content content = contentMapper.selectPrevContentDomain(created, true, TypeConst.PUBLISH, type);
-        if(content==null){
+        if (content == null) {
             return null;
         }
         return domainFactory.createContentDomain().assemble(content);

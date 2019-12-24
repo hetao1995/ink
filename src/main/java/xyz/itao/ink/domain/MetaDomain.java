@@ -9,7 +9,6 @@ import xyz.itao.ink.domain.params.MetaParam;
 import xyz.itao.ink.domain.vo.MetaVo;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.InnerException;
-import xyz.itao.ink.repository.ContentRepository;
 import xyz.itao.ink.repository.MetaRepository;
 import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
@@ -20,16 +19,15 @@ import java.util.List;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Data
 @Accessors(chain = true)
 public class MetaDomain {
-    
-    MetaDomain(MetaRepository metaRepository){
+
+    MetaDomain(MetaRepository metaRepository) {
         this.metaRepository = metaRepository;
     }
-    
+
     private MetaRepository metaRepository;
 
 
@@ -99,20 +97,19 @@ public class MetaDomain {
     private Long updateBy;
 
 
-
     public Integer getCount() {
         return metaRepository.countArticlesByMetaId(id);
     }
 
-    public List<ContentDomain> getActivePublishArticles(){
+    public List<ContentDomain> getActivePublishArticles() {
         return metaRepository.loadAllActiveContentDomainByMetaIdAndStatus(id, TypeConst.PUBLISH);
     }
 
-    public  MetaDomain assemble(Meta entity){
-        if(entity==null){
+    public MetaDomain assemble(Meta entity) {
+        if (entity == null) {
             return null;
         }
-        
+
         this.setId(entity.getId())
                 .setDeleted(entity.getDeleted())
                 .setCreateTime(entity.getCreateTime())
@@ -128,9 +125,9 @@ public class MetaDomain {
                 .setDetail(entity.getDetail());
         return this;
     }
-    
-    public MetaDomain assemble(MetaVo vo){
-        if(vo==null){
+
+    public MetaDomain assemble(MetaVo vo) {
+        if (vo == null) {
             return null;
         }
         this.setId(vo.getId())
@@ -145,7 +142,7 @@ public class MetaDomain {
     }
 
     public MetaDomain assemble(MetaParam metaParam) {
-        if(metaParam==null){
+        if (metaParam == null) {
             return this;
         }
         return this.setId(metaParam.getId())
@@ -153,8 +150,8 @@ public class MetaDomain {
                 .setParentId(metaParam.getParentId());
 
     }
-    
-    public Meta entity(){
+
+    public Meta entity() {
         return Meta
                 .builder()
                 .id(this.getId())
@@ -173,7 +170,7 @@ public class MetaDomain {
                 .build();
     }
 
-    public MetaVo vo(){
+    public MetaVo vo() {
         return MetaVo
                 .builder()
                 .id(this.getId())
@@ -188,7 +185,7 @@ public class MetaDomain {
                 .build();
     }
 
-    public MetaDomain save(){
+    public MetaDomain save() {
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
         this.id = IdUtils.nextId();
@@ -197,12 +194,12 @@ public class MetaDomain {
         return metaRepository.saveNewMetaDomain(this);
     }
 
-    public MetaDomain updateById(){
+    public MetaDomain updateById() {
         this.updateTime = DateUtils.getNow();
         return metaRepository.updateMetaDomain(this);
     }
 
-    public boolean saveContentMeta(Long contentId, Long operator){
+    boolean saveContentMeta(Long contentId, Long operator) {
         ContentMeta contentMeta = ContentMeta
                 .builder()
                 .id(IdUtils.nextId())
@@ -220,9 +217,8 @@ public class MetaDomain {
     }
 
 
-
     public MetaDomain loadById() {
-        if(id==null){
+        if (id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         MetaDomain metaDomain = metaRepository.loadMetaDomainById(id);
@@ -230,7 +226,7 @@ public class MetaDomain {
     }
 
     public MetaDomain deleteById() {
-        if(id==null){
+        if (id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         this.setDeleted(true);

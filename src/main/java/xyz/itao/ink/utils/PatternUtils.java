@@ -6,9 +6,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * 正则工具类, 提供验证邮箱、手机号、电话号码、身份证号码、数字等方法
+ *
  * @author hetao
  * @date 2018-12-01 22:52
- * @description 正则工具类, 提供验证邮箱、手机号、电话号码、身份证号码、数字等方法
  */
 public class PatternUtils {
     /**
@@ -18,7 +19,7 @@ public class PatternUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isEmail(String email) {
-        String regex = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+        String regex = "^([a-z0-9A-Z]+[-|.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
         return Pattern.matches(regex, email);
     }
 
@@ -68,7 +69,7 @@ public class PatternUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isPhone(String phone) {
-        String regex = "(\\+\\d+)?(\\d{3,4}\\-?)?\\d{7,8}$";
+        String regex = "(\\+\\d+)?(\\d{3,4}-?)?\\d{7,8}$";
         return Pattern.matches(regex, phone);
     }
 
@@ -79,7 +80,7 @@ public class PatternUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isDigit(String digit) {
-        String regex = "\\-?[1-9]\\d+";
+        String regex = "-?[1-9]\\d+";
         return Pattern.matches(regex, digit);
     }
 
@@ -90,7 +91,7 @@ public class PatternUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isDecimals(String decimals) {
-        String regex = "\\-?[1-9]\\d+(\\.\\d+)?";
+        String regex = "-?[1-9]\\d+(\\.\\d+)?";
         return Pattern.matches(regex, decimals);
     }
 
@@ -130,24 +131,14 @@ public class PatternUtils {
     /**
      * 检测是否是数字
      *
-     * @param str
-     * @return
+     * @param str 输入
+     * @return 是否数字
      */
     public static boolean isNumber(String str) {
         String regex = "^[1-9]\\d*$";
         return Pattern.matches(regex, str);
     }
 
-    /**
-     * 验证学生学号
-     *
-     * @param num
-     * @return
-     */
-    public static boolean isStudentNum(String num) {
-        String regex = "^[A-Za-z0-9-_]+$";
-        return Pattern.matches(regex, num);
-    }
 
     /**
      * 验证日期（年月日）
@@ -167,7 +158,6 @@ public class PatternUtils {
      * @return 验证成功返回true，验证失败返回false
      */
     public static boolean isURL(String url) {
-//        String regex = "(https?://(w{3}\\.)?)?\\w+\\.\\w+(\\.[a-zA-Z]+)*(:\\d{1,5})?(/\\w*)*(\\??(.+=.*)?(&.+=.*)?)?";
         String regex = "^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
 
 
@@ -198,22 +188,25 @@ public class PatternUtils {
 
     /**
      * 匹配usernanme，匹配的规则为2-20位，字母、数字、下划线组成， 字母开头
+     *
      * @param username 传如的username
      * @return 是否验证成功
      */
-    public static boolean isUsername(String username){
+    public static boolean isUsername(String username) {
         String regex = "^[a-zA-Z]\\w{2,20}$";
         return Pattern.matches(regex, username);
     }
 
+
+    private static final Pattern SLUG_REGEX = Pattern.compile("^[A-Za-z0-9_-]{5,100}$", Pattern.CASE_INSENSITIVE);
     /**
      * 判断是否是合法路径
      *
-     * @param slug
-     * @return
+     * @param slug 路径
+     * @return 是否合法
      */
     public static boolean isPath(String slug) {
-        Pattern SLUG_REGEX = Pattern.compile("^[A-Za-z0-9_-]{5,100}$", Pattern.CASE_INSENSITIVE);
+
         if (StringUtils.isNotBlank(slug)) {
             if (slug.contains("/") || slug.contains(" ") || slug.contains(".")) {
                 return false;

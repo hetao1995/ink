@@ -19,16 +19,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 模板相关
+ *
  * @author hetao
  * @date 2018-12-07
- * @description
  */
 @Controller
 @RequestMapping("/admin/template")
 @Slf4j
 public class TemplateController {
+    private final Props props;
+
     @Autowired
-    Props props;
+    public TemplateController(Props props) {
+        this.props = props;
+    }
+
     @GetMapping("")
     public String templateIndex(HttpServletRequest request) {
         String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default");
@@ -62,9 +68,9 @@ public class TemplateController {
     @GetMapping("/content")
     public void getContent(@RequestParam String fileName, HttpServletResponse response) {
         try {
-            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default") ;
-            String filePath  = themePath + File.separatorChar + fileName;
-            String content  = String.join("\n", Files.readAllLines(Paths.get(filePath)));
+            String themePath = WebConstant.CLASSPATH + File.separatorChar + "templates" + File.separatorChar + "themes" + File.separatorChar + props.get(WebConstant.OPTION_SITE_THEME, "default");
+            String filePath = themePath + File.separatorChar + fileName;
+            String content = String.join("\n", Files.readAllLines(Paths.get(filePath)));
             response.setCharacterEncoding("UTF-8");
             response.getWriter().append(content);
         } catch (IOException e) {

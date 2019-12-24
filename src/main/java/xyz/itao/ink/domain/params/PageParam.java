@@ -1,13 +1,10 @@
 package xyz.itao.ink.domain.params;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author hetao
  * @date 2018-12-04
- * @description
  */
 @Data
 public class PageParam {

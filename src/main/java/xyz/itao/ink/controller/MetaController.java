@@ -8,10 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import xyz.itao.ink.common.Props;
 import xyz.itao.ink.constant.TypeConst;
-import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.ContentDomain;
 import xyz.itao.ink.domain.MetaDomain;
-import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.service.ContentService;
 import xyz.itao.ink.service.MetaService;
 
@@ -21,28 +19,33 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * 首页的分类标签等
+ *
  * @author hetao
  * @date 2018-12-06
- * @description
  */
 @Controller
 public class MetaController {
 
-    @Autowired
-    private ContentService contentService;
+    private final ContentService contentService;
+
+    private final MetaService metaService;
+
+    private final Props props;
 
     @Autowired
-    private MetaService metaService;
-
-    @Autowired
-    private Props props;
+    public MetaController(ContentService contentService, MetaService metaService, Props props) {
+        this.contentService = contentService;
+        this.metaService = metaService;
+        this.props = props;
+    }
 
     /**
      * 分类列表页
      */
     @GetMapping(value = {"/categories", "/categories.html"})
     public String categories(HttpServletRequest request) {
-        Map<String, List<ContentDomain>> mapping    = metaService.getMetaMapping(TypeConst.CATEGORY);
+        Map<String, List<ContentDomain>> mapping = metaService.getMetaMapping(TypeConst.CATEGORY);
         Set<String> categories = mapping.keySet();
         request.setAttribute("categories", categories);
         request.setAttribute("mapping", mapping);
@@ -63,7 +66,7 @@ public class MetaController {
     @GetMapping(value = {"/category/{name}/{pageNum}", "/category/{name}/{pageNum}.html"})
     public String categories(HttpServletRequest request, @PathVariable String name,
                              @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
-        return metas(request,name,pageNum,pageSize,TypeConst.CATEGORY);
+        return metas(request, name, pageNum, pageSize, TypeConst.CATEGORY);
     }
 
     /**
@@ -74,7 +77,7 @@ public class MetaController {
     @GetMapping(value = {"/tags", "/tags.html"})
     public String tags(HttpServletRequest request) {
         Map<String, List<ContentDomain>> mapping = metaService.getMetaMapping(TypeConst.TAG);
-        Set<String> tags    = mapping.keySet();
+        Set<String> tags = mapping.keySet();
         request.setAttribute("tags", tags);
         request.setAttribute("mapping", mapping);
         return props.renderTheme("tags");
@@ -99,7 +102,7 @@ public class MetaController {
     }
 
 
-    private String metas(HttpServletRequest request, String name, int pageNum, int pageSize, String type){
+    private String metas(HttpServletRequest request, String name, int pageNum, int pageSize, String type) {
         MetaDomain metaDomain = metaService.getMetaDomainByTypeAndName(type, name);
         if (null == metaDomain) {
             return props.render404();
@@ -109,16 +112,15 @@ public class MetaController {
         request.setAttribute("articles", contentsPage);
         request.setAttribute("meta", metaDomain);
         request.setAttribute("keyword", name);
-        if(TypeConst.TAG.equals(type)){
+        if (TypeConst.TAG.equals(type)) {
             request.setAttribute("type", "标签");
             request.setAttribute("is_tag", true);
             request.setAttribute("page_prefix", "/tag/" + name);
-        }else if(TypeConst.CATEGORY.equals(type)){
+        } else if (TypeConst.CATEGORY.equals(type)) {
             request.setAttribute("type", "分类");
             request.setAttribute("is_category", true);
             request.setAttribute("page_prefix", "/category/" + name);
         }
-
 
         return props.renderTheme("page-category");
     }

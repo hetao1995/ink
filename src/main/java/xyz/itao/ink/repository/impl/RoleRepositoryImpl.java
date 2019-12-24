@@ -18,23 +18,26 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-03
- * @description
  */
 @Repository("roleRepository")
-public class RoleRepositoryImpl  implements RoleRepository {
+public class RoleRepositoryImpl implements RoleRepository {
+    private final RoleMapper roleMapper;
+    private final UserRoleMapper userRoleMapper;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    RoleMapper roleMapper;
-    @Autowired
-    UserRoleMapper userRoleMapper;
-    @Autowired
-    DomainFactory domainFactory;
+    public RoleRepositoryImpl(RoleMapper roleMapper, UserRoleMapper userRoleMapper, DomainFactory domainFactory) {
+        this.roleMapper = roleMapper;
+        this.userRoleMapper = userRoleMapper;
+        this.domainFactory = domainFactory;
+    }
 
 
     @Override
     public RoleDomain loadActiveRoleDomainById(Long id) {
         RoleDomain domain = domainFactory.createRoleDomain().setId(id).setActive(true).setDeleted(false);
         List<Role> roles = roleMapper.selectByNoNulProperties(domain.entity());
-        if(roles.isEmpty()){
+        if (roles.isEmpty()) {
             return null;
         }
         return domain.assemble(roles.get(0));
@@ -50,7 +53,7 @@ public class RoleRepositoryImpl  implements RoleRepository {
     public RoleDomain loadActiveRoleDomainByRole(String role) {
         RoleDomain domain = domainFactory.createRoleDomain().setRole(role).setActive(true).setDeleted(false);
         List<Role> roles = roleMapper.selectByNoNulProperties(domain.entity());
-        if(roles.isEmpty()){
+        if (roles.isEmpty()) {
             return null;
         }
         return domain.assemble(roles.get(0));
@@ -59,13 +62,13 @@ public class RoleRepositoryImpl  implements RoleRepository {
     @Override
     public List<RoleDomain> loadAllActiveRoleDomainByUserId(Long userId) {
         List<Role> roles = roleMapper.selectByUserId(userId);
-        return roles.stream().map(e->domainFactory.createRoleDomain().assemble(e)).collect(Collectors.toList());
+        return roles.stream().map(e -> domainFactory.createRoleDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
     public boolean deleteUserRoleRelationshipByUserIdAndRoleId(Long userId, Long roleId) {
         UserRole userRole = userRoleMapper.selectByUserIdAndRoleId(userId, roleId);
-        if(userRole == null){
+        if (userRole == null) {
             throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
         }
         userRole.setDeleted(true);

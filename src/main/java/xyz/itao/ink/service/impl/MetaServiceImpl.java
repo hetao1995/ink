@@ -15,9 +15,7 @@ import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.MetaDomain;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.params.MetaParam;
-import xyz.itao.ink.domain.vo.ContentVo;
 import xyz.itao.ink.domain.vo.MetaVo;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.exception.ExceptionEnum;
 import xyz.itao.ink.exception.TipException;
 import xyz.itao.ink.repository.MetaRepository;
@@ -30,30 +28,33 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Service("metaService")
 @CacheConfig(cacheNames = WebConstant.META_CACHE)
 public class MetaServiceImpl implements MetaService {
 
+    private final MetaRepository metaRepository;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    MetaRepository metaRepository;
-    @Autowired
-    DomainFactory domainFactory;
+    public MetaServiceImpl(MetaRepository metaRepository, DomainFactory domainFactory) {
+        this.metaRepository = metaRepository;
+        this.domainFactory = domainFactory;
+    }
 
 
     @Override
     @CacheEvict(key = "'type_'+#result.type")
     @Transactional
     public MetaDomain saveMeta(String type, MetaParam metaParam, UserDomain userDomain) {
-        if(StringUtils.isBlank(type)){
+        if (StringUtils.isBlank(type)) {
             throw new TipException(ExceptionEnum.META_TYPE_ILLEGAL);
         }
-        if(StringUtils.isBlank(metaParam.getName())){
+        if (StringUtils.isBlank(metaParam.getName())) {
             throw new TipException(ExceptionEnum.META_NAME_ILLEGAL);
         }
         MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, metaParam.getName());
-        if(metaDomain != null){
+        if (metaDomain != null) {
             throw new TipException(ExceptionEnum.META_HAS_SAVED);
         }
         metaParam.setId(null);
@@ -69,7 +70,7 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key ="'type_'+#result.type+'_name_'+#result.name"),
+            @CacheEvict(key = "'type_'+#result.type+'_name_'+#result.name"),
             @CacheEvict(key = "'type_'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
@@ -97,7 +98,7 @@ public class MetaServiceImpl implements MetaService {
     }
 
     @Override
-    @Cacheable(key="#id+'_num_'+#pageNum+'_size_'+#pageSize")
+    @Cacheable(key = "#id+'_num_'+#pageNum+'_size_'+#pageSize")
     public PageInfo<ContentDomain> getArticlesByMetaId(Long id, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);
         List<ContentDomain> contentDomains = metaRepository.loadAllActiveContentDomainByMetaIdAndStatus(id, TypeConst.PUBLISH);
@@ -106,7 +107,7 @@ public class MetaServiceImpl implements MetaService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key ="'type_'+#result.type+'_name_'+#result.name"),
+            @CacheEvict(key = "'type_'+#result.type+'_name_'+#result.name"),
             @CacheEvict(key = "'type_'+#result.type")
     })
     @CacheRemove(value = WebConstant.META_CACHE, key = {"#id+'*'"})
@@ -117,11 +118,11 @@ public class MetaServiceImpl implements MetaService {
                 .assemble(metaParam)
                 .setId(id)
                 .loadById();
-        if(metaDomain==null){
+        if (metaDomain == null) {
             throw new TipException(ExceptionEnum.HAS_NOT_FIND_DATA);
         }
-        if(!TypeConst.CATEGORY.equals(metaDomain.getType())){
-            throw  new TipException(ExceptionEnum.FORBIDDEN_OPERATION);
+        if (!TypeConst.CATEGORY.equals(metaDomain.getType())) {
+            throw new TipException(ExceptionEnum.FORBIDDEN_OPERATION);
         }
         metaDomain.setName(metaParam.getName()).setUpdateBy(userDomain.getId());
         return metaDomain.updateById();

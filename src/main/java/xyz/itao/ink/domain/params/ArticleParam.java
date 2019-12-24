@@ -5,10 +5,10 @@ import lombok.*;
 /**
  * @author hetao
  * @date 2018-12-05
- * @description
  */
 @Data
 @Builder
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(callSuper = true)

@@ -25,9 +25,9 @@ import xyz.itao.ink.utils.IdUtils;
 import java.util.*;
 
 /**
+ * user域
  * @author hetao
  * @date 2018-11-29
- * @description user域
  */
 @Data
 @Accessors(chain = true)
@@ -134,6 +134,7 @@ public class UserDomain implements CredentialsContainer {
      *
      * @return 所有角色数组
      */
+    @SuppressWarnings("unchecked")
     public List<RoleDomain> getRoles() {
         // id未初始化，直接返回空List
         if (id == null) {
@@ -268,7 +269,7 @@ public class UserDomain implements CredentialsContainer {
         if(roles!=null){
             this.saveRoles();
         }
-        cacheManager.getCache(WebConstant.USER_CACHE).evict(this.id);
+        Objects.requireNonNull(cacheManager.getCache(WebConstant.USER_CACHE)).evict(this.id);
         return this;
     }
 

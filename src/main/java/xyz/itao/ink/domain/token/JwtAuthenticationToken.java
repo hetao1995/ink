@@ -12,11 +12,10 @@ import java.util.Collections;
 /**
  * @author hetao
  * @date 2018-12-03
- * @description
  */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
-    private UserDomain principal ;
+    private UserDomain principal;
     private DecodedJWT token;
 
     public JwtAuthenticationToken(DecodedJWT token) {

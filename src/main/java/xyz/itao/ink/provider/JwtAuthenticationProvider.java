@@ -13,7 +13,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.NonceExpiredException;
 import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.domain.token.JwtAuthenticationToken;
-import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.service.UserService;
 
 import java.util.Calendar;
@@ -21,12 +20,11 @@ import java.util.Calendar;
 /**
  * @author hetao
  * @date 2018-12-01
- * @description
  */
 @Slf4j
 public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -39,7 +37,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         Long id = Long.valueOf(jwt.getSubject());
         UserDomain userDomain = userService.loadUserDomainById(id);
         if (userDomain == null || userDomain.getSalt() == null) {
-            log.debug("没有找到userDomain或者userDomian中salt为空 ",userDomain);
+            log.debug("没有找到userDomain或者userDomian中salt为空 ", userDomain);
             throw new NonceExpiredException("Token expires");
         }
         // 获取jwt中的盐

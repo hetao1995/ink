@@ -1,6 +1,5 @@
 package xyz.itao.ink.domain;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import xyz.itao.ink.domain.entity.Option;
@@ -15,15 +14,15 @@ import java.util.Date;
 /**
  * @author hetao
  * @date 2018-12-11
- * @description
  */
 @Data
 @Accessors(chain = true)
 public class OptionDomain {
 
-    OptionDomain(OptionRepository optionRepository){
+    OptionDomain(OptionRepository optionRepository) {
         this.optionRepository = optionRepository;
     }
+
     private OptionRepository optionRepository;
     /**
      * 主键
@@ -75,7 +74,7 @@ public class OptionDomain {
      */
     private Long updateBy;
 
-    public OptionDomain assemble(Option entity){
+    public OptionDomain assemble(Option entity) {
         return this
                 .setId(entity.getId())
                 .setDeleted(entity.getDeleted())
@@ -89,7 +88,7 @@ public class OptionDomain {
                 .setValue(entity.getValue());
     }
 
-    public Option entity(){
+    public Option entity() {
         return Option
                 .builder()
                 .id(this.getId())
@@ -105,7 +104,7 @@ public class OptionDomain {
                 .build();
     }
 
-    public OptionDomain save(){
+    public OptionDomain save() {
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
         this.deleted = false;
@@ -114,8 +113,8 @@ public class OptionDomain {
         return this;
     }
 
-    public OptionDomain updateById(){
-        if(this.id==null){
+    public OptionDomain updateById() {
+        if (this.id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         optionRepository.updateOptionDomain(this);

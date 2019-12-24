@@ -16,14 +16,14 @@ import java.util.Date;
 /**
  * @author hetao
  * @date 2018-12-11
- * @description
  */
 @Data
 @Accessors(chain = true)
 public class LinkDomain {
-    LinkDomain(LinkRepository linkRepository){
+    LinkDomain(LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
     }
+
     LinkRepository linkRepository;
     /**
      * 连接的id
@@ -79,8 +79,8 @@ public class LinkDomain {
      * 修改者id
      */
     private Long updateBy;
-    
-    public LinkDomain assemble(LinkVo vo){
+
+    public LinkDomain assemble(LinkVo vo) {
         return this
                 .setId(vo.getId())
                 .setActive(vo.getActive())
@@ -89,8 +89,8 @@ public class LinkDomain {
                 .setFileName(vo.getFileName())
                 .setFileKey(vo.getFileKey());
     }
-    
-    public LinkDomain assemble(Link entity){
+
+    public LinkDomain assemble(Link entity) {
         return this
                 .setId(entity.getId())
                 .setDeleted(entity.getDeleted())
@@ -104,8 +104,8 @@ public class LinkDomain {
                 .setFileName(entity.getFileName())
                 .setFileKey(entity.getFileKey());
     }
-    
-    public Link entity(){
+
+    public Link entity() {
         return Link
                 .builder()
                 .id(this.getId())
@@ -121,8 +121,8 @@ public class LinkDomain {
                 .fileKey(this.getFileKey())
                 .build();
     }
-    
-    public LinkVo vo(){
+
+    public LinkVo vo() {
         return LinkVo
                 .builder()
                 .id(this.getId())
@@ -133,7 +133,8 @@ public class LinkDomain {
                 .fileKey(this.getFileKey())
                 .build();
     }
-    public LinkDomain save(){
+
+    public LinkDomain save() {
         this
                 .setId(IdUtils.nextId())
                 .setActive(true)
@@ -143,8 +144,9 @@ public class LinkDomain {
         linkRepository.saveNewLinkDomain(this);
         return this;
     }
-    public LinkDomain updateById(){
-        if(id==null){
+
+    public LinkDomain updateById() {
+        if (id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         this.updateTime = DateUtils.getNow();
@@ -161,7 +163,7 @@ public class LinkDomain {
         return this;
     }
 
-    public String getSubstrFileName(){
+    public String getSubstrFileName() {
         return StringUtils.substring(this.getFileName(), 0, 12);
     }
 }

@@ -19,7 +19,6 @@ import java.util.Collections;
 /**
  * @author hetao
  * @date 2018-11-29
- * @description
  */
 
 @SpringBootApplication

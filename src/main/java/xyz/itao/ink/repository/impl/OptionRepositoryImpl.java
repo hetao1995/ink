@@ -14,15 +14,18 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-11
- * @description
  */
 @Repository("optionRepository")
-public class OptionRepositoryImpl  implements OptionRepository {
+public class OptionRepositoryImpl implements OptionRepository {
+
+    private final OptionMapper optionMapper;
+    private final DomainFactory domainFactory;
 
     @Autowired
-    OptionMapper optionMapper;
-    @Autowired
-    DomainFactory domainFactory;
+    public OptionRepositoryImpl(OptionMapper optionMapper, DomainFactory domainFactory) {
+        this.optionMapper = optionMapper;
+        this.domainFactory = domainFactory;
+    }
 
 
     @Override
@@ -31,7 +34,7 @@ public class OptionRepositoryImpl  implements OptionRepository {
         List<Option> options = optionMapper.selectByNoNulProperties(domain.entity());
         return options
                 .stream()
-                .map(e->domainFactory.createOptionDomain().assemble(e))
+                .map(e -> domainFactory.createOptionDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
@@ -39,7 +42,7 @@ public class OptionRepositoryImpl  implements OptionRepository {
     public OptionDomain loadOptionDomainByName(String name) {
         OptionDomain domain = domainFactory.createOptionDomain().setDeleted(false).setName(name);
         List<Option> options = optionMapper.selectByNoNulProperties(domain.entity());
-       if(options.isEmpty()){
+        if (options.isEmpty()) {
             return null;
         }
         return domain.assemble(options.get(0));
@@ -58,7 +61,7 @@ public class OptionRepositoryImpl  implements OptionRepository {
     @Override
     public List<OptionDomain> loadAllOptionDomainNotDeleteLike(String pattern) {
         List<Option> options = optionMapper.selectNotDeleteByNamePattern(pattern);
-        return options.stream().map(e->domainFactory.createOptionDomain().assemble(e)).collect(Collectors.toList());
+        return options.stream().map(e -> domainFactory.createOptionDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override

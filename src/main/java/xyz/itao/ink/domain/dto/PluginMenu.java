@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 /**
  * @author hetao
  * @date 2018-12-07
- * @description
  */
 @Data
 @AllArgsConstructor

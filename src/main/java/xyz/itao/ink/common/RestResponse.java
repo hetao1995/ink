@@ -1,9 +1,10 @@
 package xyz.itao.ink.common;
 
 /**
+ * rest返回对象
+ *
  * @author hetao
  * @date 2018-12-04
- * @description rest返回对象
  */
 public class RestResponse<T> {
     /**
@@ -110,6 +111,7 @@ public class RestResponse<T> {
         return new RestResponse(true);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> RestResponse ok(T payload) {
         return new RestResponse(true, payload);
     }
@@ -118,6 +120,7 @@ public class RestResponse<T> {
         return new RestResponse(true, null, code);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> RestResponse ok(T payload, int code) {
         return new RestResponse(true, payload, code);
     }

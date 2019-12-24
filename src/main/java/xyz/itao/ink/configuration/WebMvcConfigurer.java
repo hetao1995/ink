@@ -4,56 +4,52 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.ValueConstants;
 
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.filter.FormContentFilter;
-import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.method.annotation.AbstractNamedValueMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import xyz.itao.ink.annotation.SysLog;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.filter.EmptyStringParameterFilter;
 import xyz.itao.ink.interceptor.BaseInterceptor;
 import xyz.itao.ink.interceptor.StopRepeatSubmitInterceptor;
 import xyz.itao.ink.interceptor.SysLogInterceptor;
-import xyz.itao.ink.listener.PvCacheEventListenerFactory;
 
 import java.util.List;
 
 /**
  * @author hetao
  * @date 2018-12-08
- * @description
  */
 @Configuration
 public class WebMvcConfigurer extends WebMvcConfigurationSupport {
+    private final BaseInterceptor baseInterceptor;
+    private final SysLogInterceptor sysLogInterceptor;
+    private final StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
+
     @Autowired
-    BaseInterceptor baseInterceptor;
-    @Autowired
-    SysLogInterceptor sysLogInterceptor;
-    @Autowired
-    StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
+    public WebMvcConfigurer(BaseInterceptor baseInterceptor, SysLogInterceptor sysLogInterceptor, StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor) {
+        this.baseInterceptor = baseInterceptor;
+        this.sysLogInterceptor = sysLogInterceptor;
+        this.stopRepeatSubmitInterceptor = stopRepeatSubmitInterceptor;
+    }
+
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(WebConstant.CDN_URI+"/**").addResourceLocations("classpath:/templates/admin/static/");
+        registry.addResourceHandler(WebConstant.CDN_URI + "/**").addResourceLocations("classpath:/templates/admin/static/");
         registry.addResourceHandler("/themes/**").addResourceLocations("classpath:/templates/themes/");
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:"+WebConstant.UP_DIR);
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:" + WebConstant.UP_DIR);
         super.addResourceHandlers(registry);
     }
 
@@ -69,7 +65,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
         ObjectMapper objectMapper = new ObjectMapper();
-        /**
+        /*
          * 序列换成json时,将所有的long变成string
          * 因为js中得数字类型不能包含所有的java long值
          */
@@ -83,12 +79,13 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
     /**
      * 处理controller中的argument
-     * @param argumentResolvers
+     *
+     * @param argumentResolvers argument处理器
      */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
 
-        argumentResolvers.add(new AbstractNamedValueMethodArgumentResolver(){
+        argumentResolvers.add(new AbstractNamedValueMethodArgumentResolver() {
 
             @Override
             public boolean supportsParameter(MethodParameter methodParameter) {
@@ -97,16 +94,16 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
             @Override
             protected NamedValueInfo createNamedValueInfo(MethodParameter methodParameter) {
-                return  new NamedValueInfo("", false, ValueConstants.DEFAULT_NONE);
+                return new NamedValueInfo("", false, ValueConstants.DEFAULT_NONE);
             }
 
             @Override
-            protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) throws Exception {
+            protected Object resolveName(String name, MethodParameter parameter, NativeWebRequest request) {
                 String[] param = request.getParameterValues(name);
-                if(param==null){
+                if (param == null) {
                     return null;
                 }
-                if(StringUtils.isEmpty(param[0])){
+                if (StringUtils.isEmpty(param[0])) {
                     return null;
                 }
                 return param[0];
@@ -117,25 +114,26 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
 
     /**
      * 解决put、delete form传值
-     * @return
      */
     @Bean
-    public FormContentFilter formContentFilter(){
+    public FormContentFilter formContentFilter() {
         return new FormContentFilter();
     }
 
     /**
      * 将请求参数中的空字符串移出
-     * @return
      */
     @Bean
-    public EmptyStringParameterFilter emptyStringParameterFilter(){
+    public EmptyStringParameterFilter emptyStringParameterFilter() {
         return new EmptyStringParameterFilter();
     }
 
 
+    /**
+     * ehcache配置bean
+     */
     @Bean
-    public EhCacheManagerFactoryBean ehCacheManagerFactoryBean(){
+    public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
         return new EhCacheManagerFactoryBean();
     }
 

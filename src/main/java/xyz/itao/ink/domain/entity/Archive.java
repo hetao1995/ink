@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * @author hetao
  * @date 2018-12-06
- * @description
  */
 @Data
 @Builder
@@ -21,6 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Archive {
-    private String         dateStr;
-    private Integer         count;
+    private String dateStr;
+    private Integer count;
 }

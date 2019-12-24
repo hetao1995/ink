@@ -28,10 +28,7 @@ import xyz.itao.ink.utils.InkUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -39,17 +36,16 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-04
- * @description
  */
 @Data
 @Accessors(chain = true)
 public class ContentDomain {
 
-    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory, Props props, CacheManager cacheManager){
+    ContentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository, MetaRepository metaRepository, DomainFactory domainFactory, Props props, CacheManager cacheManager) {
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
-        this.metaRepository =  metaRepository;
+        this.metaRepository = metaRepository;
         this.domainFactory = domainFactory;
         this.props = props;
         this.cacheManager = cacheManager;
@@ -57,6 +53,7 @@ public class ContentDomain {
         this.authorCache = cacheManager.getCache(WebConstant.USER_CACHE);
 
     }
+
     /**
      * UserRepository 对象
      */
@@ -195,7 +192,6 @@ public class ContentDomain {
     private Long updateBy;
 
 
-
     /**
      * 标签列表
      */
@@ -207,7 +203,7 @@ public class ContentDomain {
     private String categories;
 
     public Integer getModified() {
-        if(this.getUpdateTime()==null){
+        if (this.getUpdateTime() == null) {
             return null;
         }
         return DateUtils.getUnixTimeByDate(this.getUpdateTime());
@@ -215,12 +211,14 @@ public class ContentDomain {
 
     /**
      * 获取所有激活状态的comment
-     * @return
+     *
+     * @return comment
      */
+    @SuppressWarnings("unchecked")
     public List<CommentDomain> getActiveComments() {
-        String key = this.id+"active_comments";
+        String key = this.id + "active_comments";
         Cache.ValueWrapper wrapper = cache.get(key);
-        if(wrapper != null){
+        if (wrapper != null) {
             return (List<CommentDomain>) wrapper.get();
         }
         List<CommentDomain> contentDomains = commentRepository.loadAllActiveRootCommentDomainByContentId(id);
@@ -230,19 +228,21 @@ public class ContentDomain {
 
     /**
      * 获取文章所有的comment
-     * @return
+     *
+     * @return comment
      */
-    public List<CommentDomain> getComments(){
+    public List<CommentDomain> getComments() {
         return commentRepository.loadAllActiveRootCommentDomainByContentId(id);
     }
 
     /**
      * 获取文章作者对象
-     * @return
+     *
+     * @return user
      */
     public UserDomain getAuthor() {
         Cache.ValueWrapper wrapper = authorCache.get(this.authorId);
-        if(wrapper != null){
+        if (wrapper != null) {
             return (UserDomain) wrapper.get();
         }
         UserDomain userDomain = userRepository.loadActiveUserDomainById(authorId);
@@ -252,7 +252,8 @@ public class ContentDomain {
 
     /**
      * 获取标签Meta
-     * @return
+     *
+     * @return tag
      */
     public String getTags() {
         return getMetas(TypeConst.TAG);
@@ -260,15 +261,17 @@ public class ContentDomain {
 
     /**
      * 存储tag
-     * @param tags
+     *
+     * @param tags tags
      */
-    private void saveTags(String tags){
+    private void saveTags(String tags) {
         saveMetas(tags, TypeConst.TAG);
     }
 
     /**
      * 获取分类meta
-     * @return
+     *
+     * @return category
      */
     public String getCategories() {
         return getMetas(TypeConst.CATEGORY);
@@ -276,28 +279,29 @@ public class ContentDomain {
 
     /**
      * 存储category
-     * @param categories
+     *
+     * @param categories category
      */
-    private void saveCategories(String categories){
+    private void saveCategories(String categories) {
         saveMetas(categories, TypeConst.CATEGORY);
     }
 
     private void saveMetas(String metas, String type) {
-        if(metas == null){
-            return ;
+        if (metas == null) {
+            return;
         }
         Set<String> metaSet = Sets.newHashSet(StringUtils.split(metas, ","));
         List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
-        for(MetaDomain metaDomain : metaDomains){
-            if(!metaSet.contains(metaDomain.getName())){
+        for (MetaDomain metaDomain : metaDomains) {
+            if (!metaSet.contains(metaDomain.getName())) {
                 metaRepository.deleteContentMetaRelationshipByContentIdAndMetaId(id, metaDomain.getId());
-            }else{
+            } else {
                 metaSet.remove(metaDomain.getName());
             }
         }
-        for(String name : metaSet){
+        for (String name : metaSet) {
             MetaDomain metaDomain = metaRepository.loadMetaDomainByTypeAndName(type, name);
-            if(metaDomain == null){
+            if (metaDomain == null) {
                 metaDomain = domainFactory
                         .createMetaDomain()
                         .setName(name)
@@ -311,16 +315,16 @@ public class ContentDomain {
             }
             metaDomain.saveContentMeta(id, this.updateBy);
         }
-        cache.put("metas:"+type+this.id, metas);
+        cache.put("metas:" + type + this.id, metas);
     }
 
-    private String getMetas(String type){
-        if(id==null){
+    private String getMetas(String type) {
+        if (id == null) {
             return null;
         }
-        String key = "metas:"+type+this.id;
+        String key = "metas:" + type + this.id;
         Cache.ValueWrapper wrapper = cache.get(key);
-        if(wrapper != null){
+        if (wrapper != null) {
             return (String) wrapper.get();
         }
         List<MetaDomain> metaDomains = metaRepository.loadAllMetaDomainByContentIdAndType(id, type);
@@ -329,7 +333,7 @@ public class ContentDomain {
         return metas;
     }
 
-    public ContentDomain save(){
+    public ContentDomain save() {
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
         this.id = IdUtils.nextId();
@@ -344,8 +348,8 @@ public class ContentDomain {
         return this;
     }
 
-    public ContentDomain updateById(){
-        if(id==null){
+    public ContentDomain updateById() {
+        if (id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         this.updateTime = DateUtils.getNow();
@@ -353,12 +357,12 @@ public class ContentDomain {
         this.saveCategories(this.categories);
         this.setCommentsNum(this.getTotalComments());
         // 根据status修改commentzhuangt
-        if(TypeConst.DRAFT.equals(this.getStatus())){
-            for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
+        if (TypeConst.DRAFT.equals(this.getStatus())) {
+            for (CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)) {
                 commentDomain.setActive(false).updateById();
             }
-        }else if (TypeConst.PUBLISH.equals(this.getStatus())){
-            for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
+        } else if (TypeConst.PUBLISH.equals(this.getStatus())) {
+            for (CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)) {
                 commentDomain.setActive(true).updateById();
             }
         }
@@ -368,13 +372,13 @@ public class ContentDomain {
     }
 
 
-    public ContentDomain deleteById(){
-        if(id==null){
+    public ContentDomain deleteById() {
+        if (id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         this.setDeleted(true);
         // 将删除的文章所有comment都设置为false
-        for(CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)){
+        for (CommentDomain commentDomain : commentRepository.loadAllCommentDomainByContentId(this.id)) {
             commentDomain.setActive(false).updateById();
         }
         this.cacheEvict();
@@ -382,24 +386,23 @@ public class ContentDomain {
     }
 
 
-
-    public ContentDomain loadById(){
-        if(id==null){
+    public ContentDomain loadById() {
+        if (id == null) {
             throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
         }
         Cache.ValueWrapper wrapper = cache.get(this.id);
         ContentDomain contentDomain;
-        if(wrapper != null){
-            contentDomain =  (ContentDomain) wrapper.get();
-        }else {
+        if (wrapper != null) {
+            contentDomain = (ContentDomain) wrapper.get();
+        } else {
             contentDomain = contentRepository.loadContentDomainById(id);
             cache.put(this.id, contentDomain);
         }
-        return assemble(contentDomain.entity());
+        return assemble(Objects.requireNonNull(contentDomain).entity());
     }
 
-    public  ContentDomain assemble(Content entity){
-        if(entity==null){
+    public ContentDomain assemble(Content entity) {
+        if (entity == null) {
             return this;
         }
 
@@ -428,8 +431,8 @@ public class ContentDomain {
         return this;
     }
 
-    public  ContentDomain assemble(ContentVo vo){
-        if(vo==null){
+    public ContentDomain assemble(ContentVo vo) {
+        if (vo == null) {
             return this;
         }
 
@@ -456,9 +459,8 @@ public class ContentDomain {
     }
 
 
-
-    public ContentDomain assemble(ArticleParam articleParam){
-        if(articleParam==null){
+    public ContentDomain assemble(ArticleParam articleParam) {
+        if (articleParam == null) {
             return this;
         }
         this.setStatus(articleParam.getStatus())
@@ -468,7 +470,7 @@ public class ContentDomain {
         return this;
     }
 
-    public  Content entity(){
+    public Content entity() {
         return Content
                 .builder()
                 .id(this.getId())
@@ -498,7 +500,7 @@ public class ContentDomain {
                 .build();
     }
 
-    public ContentVo vo(){
+    public ContentVo vo() {
         return ContentVo
                 .builder()
                 .id(this.getId())
@@ -525,24 +527,25 @@ public class ContentDomain {
 
     /**
      * 获取content转化后的html
+     *
      * @return html文本
      */
-    public String getContentHtml(){
-        String key = "content_html:"+this.getId();
+    public String getContentHtml() {
+        String key = "content_html:" + this.getId();
         Cache.ValueWrapper wrapper = cache.get(key);
-        if (wrapper!=null){
-            return (String)wrapper.get();
+        if (wrapper != null) {
+            return (String) wrapper.get();
         }
-        String content = StringUtils.replaceFirst(this.getContent(),WebConstant.INTRODUCTION_SPLITTER, "\n");
+        String content = StringUtils.replaceFirst(this.getContent(), WebConstant.INTRODUCTION_SPLITTER, "\n");
         String html = getHtml(content);
         cache.put(key, html);
         return html;
     }
 
     private String getHtml(String content) {
-        if(WebConstant.FMT_HTML.equals(this.getFmtType())){
+        if (WebConstant.FMT_HTML.equals(this.getFmtType())) {
             return content;
-        }else if(WebConstant.FMT_MARK_DOWN.equals(this.getFmtType())){
+        } else if (WebConstant.FMT_MARK_DOWN.equals(this.getFmtType())) {
             return InkUtils.mdToHtml(content);
         }
         return content;
@@ -550,32 +553,34 @@ public class ContentDomain {
 
     /**
      * 获取摘要html
+     *
      * @return introduction
      */
-    public String getIntroHtml(){
+    public String getIntroHtml() {
         String intro = StringUtils.substring(this.getContent(), 0, props.getInt(WebConstant.OPTION_INTRO_MAX_LEN, 75));
         int pos = StringUtils.indexOf(intro, WebConstant.INTRODUCTION_SPLITTER);
-        intro =  pos<0 ? intro : StringUtils.substring(intro, 0, pos);
+        intro = pos < 0 ? intro : StringUtils.substring(intro, 0, pos);
         return getHtml(intro);
     }
 
     /**
      * @return 返回文章永久链接
      */
-    public String getPermalink(){
+    public String getPermalink() {
         return props.getSiteUrl(WebConstant.ARTICLE_URI + "/" + (StringUtils.isNotBlank(slug) ? slug : id.toString()));
     }
 
 
-    private  final Pattern SRC_PATTERN = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
+    private final Pattern SRC_PATTERN = Pattern.compile("src\\s*=\\s*\'?\"?(.*?)(\'|\"|>|\\s+)");
+
     /**
      * @return 显示文章缩略图，顺序为：thumbImag -> 文章图 -> 随机获取
      */
-    public String getThumbUrl(){
+    public String getThumbUrl() {
         final String imgPrefix = "<img";
-        if(StringUtils.isNotBlank(this.getThumbImg())){
-            return  "/upload/thumbnail_"+this.getThumbImg().trim();
-        }else if (this.getContentHtml().contains(imgPrefix)){
+        if (StringUtils.isNotBlank(this.getThumbImg())) {
+            return "/upload/thumbnail_" + this.getThumbImg().trim();
+        } else if (this.getContentHtml().contains(imgPrefix)) {
             String img = "";
             final String regExImg = "<img.*src\\s*=\\s*(.*?)[^>]*?>";
             Pattern pImage = Pattern.compile(regExImg, Pattern.CASE_INSENSITIVE);
@@ -589,8 +594,8 @@ public class ContentDomain {
                 }
             }
         }
-        Long size = this.getId() % props.getInt(WebConstant.OPTION_RAND_THUMB_LEN, 20) + 1;
-        return "/themes/"+props.get(WebConstant.OPTION_SITE_THEME, "default")+"/static/img/rand/" + size + ".jpg";
+        long size = this.getId() % props.getInt(WebConstant.OPTION_RAND_THUMB_LEN, 20) + 1;
+        return "/themes/" + props.get(WebConstant.OPTION_SITE_THEME, "default") + "/static/img/rand/" + size + ".jpg";
     }
 
     private final static String[] ICONS = {"bg-ico-book", "bg-ico-game", "bg-ico-note", "bg-ico-chat", "bg-ico-code", "bg-ico-image", "bg-ico-web", "bg-ico-link", "bg-ico-design", "bg-ico-lock"};
@@ -598,7 +603,7 @@ public class ContentDomain {
     /**
      * @return 文章图标
      */
-    public String getIcon(){
+    public String getIcon() {
         return ICONS[(int) (this.id % ICONS.length)];
     }
 
@@ -607,13 +612,13 @@ public class ContentDomain {
      */
     public String getCategoriesHtml() throws UnsupportedEncodingException {
         String categories = this.getCategories();
-        if(StringUtils.isBlank(categories)){
+        if (StringUtils.isBlank(categories)) {
             categories = "默认分类";
         }
         String[] arr = categories.split(",");
         StringBuffer sbuf = new StringBuffer();
         for (String c : arr) {
-            sbuf.append("<a href=\""+WebConstant.CATEGORY_URI+"/" + URLEncoder.encode(c, "UTF-8") + "\">" + c + "</a>");
+            sbuf.append("<a href=\"" + WebConstant.CATEGORY_URI + "/" + URLEncoder.encode(c, "UTF-8") + "\">" + c + "</a>");
         }
         return sbuf.toString();
     }
@@ -623,29 +628,29 @@ public class ContentDomain {
      */
     public String getTagsHtml() throws UnsupportedEncodingException {
         String tags = this.getTags();
-        if(StringUtils.isBlank(tags)){
+        if (StringUtils.isBlank(tags)) {
             return "";
         }
         String[] arr = tags.split(",");
-        StringBuffer sbuf = new StringBuffer();
+        StringBuilder sbuf = new StringBuilder();
         for (String c : arr) {
-            sbuf.append("<a href=\""+WebConstant.TAG_URI+"/" + URLEncoder.encode(c, "UTF-8") + "\">" + c + "</a>");
+            sbuf.append("<a href=\"" + WebConstant.TAG_URI + "/").append(URLEncoder.encode(c, "UTF-8")).append("\">").append(c).append("</a>");
         }
         return sbuf.toString();
     }
 
-    public String getCreatedFmt(){
+    public String getCreatedFmt() {
         return DateUtils.formatDateByUnixTime(this.getCreated(), "yyyy-MM-dd");
     }
 
-    public String getModifiedFmt(){
-        return DateUtils.dateFormat(this.getUpdateTime(),"yyyy/MM/dd HH:mm" );
+    public String getModifiedFmt() {
+        return DateUtils.dateFormat(this.getUpdateTime(), "yyyy/MM/dd HH:mm");
     }
 
-    public ContentDomain getPrev(){
-        String key = "prev:"+this.id;
+    public ContentDomain getPrev() {
+        String key = "prev:" + this.id;
         Cache.ValueWrapper wrapper = cache.get(key);
-        if(wrapper != null){
+        if (wrapper != null) {
             return (ContentDomain) wrapper.get();
         }
         ContentDomain contentDomain = contentRepository.loadPrevActivePublishContentDomain(this.getCreated(), this.type);
@@ -653,10 +658,10 @@ public class ContentDomain {
         return contentDomain;
     }
 
-    public ContentDomain getNext(){
-        String key = "next:"+this.id;
+    public ContentDomain getNext() {
+        String key = "next:" + this.id;
         Cache.ValueWrapper wrapper = cache.get(key);
-        if(wrapper != null){
+        if (wrapper != null) {
             return (ContentDomain) wrapper.get();
         }
         ContentDomain contentDomain = contentRepository.loadNextActivePublishContentDomain(this.getCreated(), this.type);
@@ -664,34 +669,34 @@ public class ContentDomain {
         return contentDomain;
     }
 
-    public void cacheEvict(){
-        String prev = "prev:"+this.id, next = "next:"+this.id;
+    public void cacheEvict() {
+        String prev = "prev:" + this.id, next = "next:" + this.id;
         cache.evict(prev);
         cache.evict(next);
         ContentDomain p = getPrev(), n = getNext();
-        if(p!=null){
-            cache.evict("next:"+p.getId());
+        if (p != null) {
+            cache.evict("next:" + p.getId());
         }
-        if(n!=null){
-            cache.evict("prev:"+n.getId());
+        if (n != null) {
+            cache.evict("prev:" + n.getId());
         }
         cache.evict(this.id);
-        cache.evict("content_html:"+this.getId());
+        cache.evict("content_html:" + this.getId());
     }
 
-    public ContentDomain hit(){
+    public ContentDomain hit() {
         Long hit = this.getPv();
-        EhCacheUtils.put(WebConstant.PV_CACHE, this.getId(), hit+1);
+        EhCacheUtils.put(WebConstant.PV_CACHE, this.getId(), hit + 1);
         return this;
     }
 
-    public Long getPv(){
+    public Long getPv() {
         Long hit = (Long) EhCacheUtils.get(WebConstant.PV_CACHE, this.getId());
-        if(hit != null){
+        if (hit != null) {
             return hit;
         }
         hit = contentRepository.getHit(this.getId());
-        if (hit == null){
+        if (hit == null) {
             hit = 0L;
         }
         EhCacheUtils.put(WebConstant.PV_CACHE, this.getId(), hit);
@@ -700,15 +705,16 @@ public class ContentDomain {
 
     /**
      * 获取commentNums
-     * @return
+     *
+     * @return 评论数
      */
     public Long getTotalComments() {
-        Long cn = (Long) EhCacheUtils.get(WebConstant.COMMENT_CACHE, this.getId()+"commentsNum");
-        if(cn != null){
+        Long cn = (Long) EhCacheUtils.get(WebConstant.COMMENT_CACHE, this.getId() + "commentsNum");
+        if (cn != null) {
             return cn;
         }
         cn = commentRepository.countActiveApprovedCommentByContentId(this.id);
-        EhCacheUtils.put(WebConstant.COMMENT_CACHE, this.getId()+"commentsNum", cn);
+        EhCacheUtils.put(WebConstant.COMMENT_CACHE, this.getId() + "commentsNum", cn);
         return cn;
     }
 }

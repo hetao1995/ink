@@ -15,22 +15,26 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-11
- * @description
  */
 @Repository("linkRepository")
-public class LinkRepositoryImpl  implements LinkRepository {
+public class LinkRepositoryImpl implements LinkRepository {
+
+    private final LinkMapper linkMapper;
+    private final DomainFactory domainFactory;
 
     @Autowired
-    LinkMapper linkMapper;
-    @Autowired
-    DomainFactory domainFactory;
+    public LinkRepositoryImpl(LinkMapper linkMapper, DomainFactory domainFactory) {
+        this.linkMapper = linkMapper;
+        this.domainFactory = domainFactory;
+    }
+
     @Override
     public List<LinkDomain> loadAllActiveLinkDomain() {
         LinkDomain domain = domainFactory.createLinkDomain().setActive(true).setDeleted(false);
         return linkMapper
                 .selectByNoNulProperties(domain.entity())
                 .stream()
-                .map(e->domainFactory.createLinkDomain().assemble(e))
+                .map(e -> domainFactory.createLinkDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
@@ -38,10 +42,10 @@ public class LinkRepositoryImpl  implements LinkRepository {
     public LinkDomain loadLinkDomainById(Long id) {
         LinkDomain domain = domainFactory.createLinkDomain().setActive(true).setDeleted(false).setId(id);
         List<Link> links = linkMapper.selectByNoNulProperties(domain.entity());
-       if(links.isEmpty()){
-           return null;
-       }
-       return  domain.assemble(links.get(0));
+        if (links.isEmpty()) {
+            return null;
+        }
+        return domain.assemble(links.get(0));
     }
 
     @Override

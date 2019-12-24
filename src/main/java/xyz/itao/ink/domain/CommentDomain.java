@@ -3,8 +3,6 @@ package xyz.itao.ink.domain;
 import com.google.common.collect.Lists;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
-import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.domain.entity.Comment;
 import xyz.itao.ink.domain.params.CommentParam;
 import xyz.itao.ink.domain.vo.CommentVo;
@@ -21,17 +19,17 @@ import java.util.List;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Data
 @Accessors(chain = true)
 public class CommentDomain {
 
-    CommentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository){
+    CommentDomain(UserRepository userRepository, ContentRepository contentRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
     }
+
     /**
      * UserRepository 对象
      */
@@ -115,11 +113,11 @@ public class CommentDomain {
         return userRepository.loadActiveUserDomainById(authorId);
     }
 
-    public ContentDomain getContentDomain(){
+    public ContentDomain getContentDomain() {
         return contentRepository.loadActiveContentDomainById(contentId);
     }
 
-    public CommentDomain assemble(Comment entity){
+    public CommentDomain assemble(Comment entity) {
         return this
                 .setId(entity.getId())
                 .setDeleted(entity.getDeleted())
@@ -136,7 +134,7 @@ public class CommentDomain {
                 .setContent(entity.getContent());
     }
 
-    public CommentDomain assemble(CommentVo vo){
+    public CommentDomain assemble(CommentVo vo) {
         return this
                 .setId(vo.getId())
                 .setActive(vo.getActive())
@@ -148,13 +146,13 @@ public class CommentDomain {
                 .setContent(vo.getContent());
     }
 
-    public CommentDomain assemble(CommentParam param){
+    public CommentDomain assemble(CommentParam param) {
         return this
                 .setContentId(param.getContentId())
                 .setParentId(param.getParentId());
     }
 
-    public Comment entity(){
+    public Comment entity() {
         return Comment
                 .builder()
                 .id(this.getId())
@@ -173,7 +171,7 @@ public class CommentDomain {
                 .build();
     }
 
-    public CommentVo vo(){
+    public CommentVo vo() {
         return CommentVo
                 .builder()
                 .id(this.getId())
@@ -191,7 +189,7 @@ public class CommentDomain {
                 .build();
     }
 
-    public CommentDomain save(){
+    public CommentDomain save() {
         this.createTime = DateUtils.getNow();
         this.updateTime = DateUtils.getNow();
         this.id = IdUtils.nextId();
@@ -200,7 +198,7 @@ public class CommentDomain {
         return commentRepository.saveNewCommentDomain(this);
     }
 
-    public CommentDomain updateById(){
+    public CommentDomain updateById() {
         return commentRepository.updateCommentDomain(this);
     }
 
@@ -209,35 +207,37 @@ public class CommentDomain {
         return updateById();
     }
 
-    public List<CommentDomain> getChildren(){
-        if(this.parentId != 0){
+    public List<CommentDomain> getChildren() {
+        if (this.parentId != 0) {
             return Lists.newArrayList();
         }
         return dfs(id);
     }
-    private List<CommentDomain> dfs(Long pid){
+
+    private List<CommentDomain> dfs(Long pid) {
         List<CommentDomain> children = commentRepository.loadAllActiveApprovedCommentDomainByParentId(pid);
         List<CommentDomain> res = Lists.newArrayList();
-        for(CommentDomain child : children){
+        for (CommentDomain child : children) {
             res.add(child);
             res.addAll(dfs(child.id));
         }
         return res;
     }
 
-    public CommentDomain getParent(){
+    public CommentDomain getParent() {
         return commentRepository.loadCommentDomainById(this.parentId);
     }
 
     /**
      * 获取content转化后的html
+     *
      * @return html文本
      */
-    public String getContentHtml(){
+    public String getContentHtml() {
         return InkUtils.mdToHtml(this.getContent());
     }
 
-    public String getCreatedFmt(){
+    public String getCreatedFmt() {
         return DateUtils.dateFormat(this.getCreateTime(), "yyyy-MM-dd HH:mm");
     }
 }

@@ -5,9 +5,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 /**
+ * 页面相关
+ *
  * @author hetao
  * @date 2018-12-07
- * @description
  */
 @Controller
 @RequestMapping("/admin/page")
@@ -16,7 +17,7 @@ public class PageController {
 
 
     @GetMapping(value = "")
-    public String index(){
+    public String index() {
         return "admin/pages";
     }
 
@@ -36,7 +37,7 @@ public class PageController {
     }
 
     @GetMapping("/new")
-    public String newPage(){
+    public String newPage() {
         return "admin/page/new";
     }
 

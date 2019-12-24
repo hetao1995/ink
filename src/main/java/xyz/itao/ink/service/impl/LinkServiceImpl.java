@@ -28,37 +28,43 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
  * @author hetao
  * @date 2018-12-11
- * @description
  */
 @Service("linkService")
 @Slf4j
 public class LinkServiceImpl implements LinkService {
 
+    private final LinkRepository linkRepository;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    LinkRepository linkRepository;
-    @Autowired
-    DomainFactory domainFactory;
+    public LinkServiceImpl(LinkRepository linkRepository, DomainFactory domainFactory) {
+        this.linkRepository = linkRepository;
+        this.domainFactory = domainFactory;
+    }
 
     @Override
+    @SuppressWarnings("unchecked")
     public PageInfo<LinkVo> loadAllActiveLinkVo(PageParam pageParam) {
         Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
         List<LinkDomain> linkDomains = linkRepository.loadAllActiveLinkDomain();
         List<LinkVo> linkVos = linkDomains.stream().map(LinkDomain::vo).collect(Collectors.toList());
-        PageInfo<LinkVo> pageInfo =  new PageInfo<>(page);
+        PageInfo<LinkVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(linkVos);
         return pageInfo;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public PageInfo<LinkDomain> loadAllActiveLinkDomain(PageParam pageParam) {
         Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
         List<LinkDomain> linkDomains = linkRepository.loadAllActiveLinkDomain();
-        PageInfo<LinkDomain> pageInfo =  new PageInfo<>(page);
+        PageInfo<LinkDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(linkDomains);
         return pageInfo;
     }
@@ -67,8 +73,8 @@ public class LinkServiceImpl implements LinkService {
     @Transactional
     public void deleteAttachesById(Long id, UserDomain userDomain) {
         LinkDomain linkDomain = linkRepository.loadLinkDomainById(id);
-        if(linkDomain==null){
-            throw  new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
+        if (linkDomain == null) {
+            throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
         }
         linkDomain.setUpdateBy(userDomain.getId()).deleteById();
     }
@@ -76,12 +82,12 @@ public class LinkServiceImpl implements LinkService {
 
     @Override
     @Transactional
-    public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain)  {
+    public List<LinkVo> saveFiles(MultipartFile[] multipartFiles, UserDomain userDomain) {
         List<LinkVo> res = Lists.newArrayList();
         for (MultipartFile multipartFile : multipartFiles) {
             LinkVo linkVo = null;
             try {
-                String fname = multipartFile.getOriginalFilename(), ftype = multipartFile.getContentType().contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
+                String fname = multipartFile.getOriginalFilename(), ftype = Objects.requireNonNull(multipartFile.getContentType()).contains("image") ? TypeConst.IMAGE : TypeConst.FILE;
                 String fid = String.valueOf(IdUtils.nextId());
                 linkVo = LinkVo
                         .builder()
@@ -91,18 +97,18 @@ public class LinkServiceImpl implements LinkService {
                         .active(true)
                         .build();
                 String ext = FileUtils.fileExt(multipartFile.getInputStream(), fname);
-                if (ext==null){
+                if (ext == null) {
                     continue;
                 }
-                String fkey = fid+"."+ ext;
+                String fkey = fid + "." + ext;
                 linkVo.setFileKey(fkey);
 
                 String filePath = WebConstant.UP_DIR + fkey;
-                System.out.println("filePath:"+filePath);
+                System.out.println("filePath:" + filePath);
                 Files.write(Paths.get(filePath), multipartFile.getBytes());
-                if(TypeConst.IMAGE.equals(ftype)){
+                if (TypeConst.IMAGE.equals(ftype)) {
                     String thumbnailFilePath = fkey.replace(fid, "thumbnail_" + fid);
-                    ImageUtils.cutCenterImage(WebConstant.UP_DIR + fkey, WebConstant.UP_DIR +thumbnailFilePath, 270, 380);
+                    ImageUtils.cutCenterImage(WebConstant.UP_DIR + fkey, WebConstant.UP_DIR + thumbnailFilePath, 270, 380);
                 }
                 LinkDomain linkDomain = domainFactory.createLinkDomain().assemble(linkVo).setCreateBy(userDomain.getId()).setUpdateBy(userDomain.getId()).save();
                 res.add(linkDomain.vo());
@@ -110,7 +116,6 @@ public class LinkServiceImpl implements LinkService {
                 log.debug("上传文件失败:{}", e);
                 e.printStackTrace();
                 res.add(linkVo);
-                continue;
             }
 
         }

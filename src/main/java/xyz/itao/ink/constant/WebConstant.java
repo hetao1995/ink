@@ -5,14 +5,13 @@ import xyz.itao.ink.controller.admin.AdminApiController;
 import xyz.itao.ink.domain.dto.PluginMenu;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 常量
+ *
  * @author hetao
  * @date 2018-12-03
- * @description
  */
 public class WebConstant {
     public static Map<String, String> initConfig = Maps.newConcurrentMap();
@@ -57,7 +56,6 @@ public class WebConstant {
     public static Integer MAX_FILE_SIZE = 204800;
 
 
-
     /**
      * 安装页面URI
      */
@@ -90,13 +88,13 @@ public class WebConstant {
     public static final String PLUGINS_MENU_NAME = "plugin_menus";
 
     public static final String ENV_SUPPORT_163_MUSIC = "app.support_163_music";
-    public static final String ENV_SUPPORT_GIST      = "app.support_gist";
-    public static final String MP3_PREFIX            = "[mp3:";
-    public static final String MUSIC_IFRAME          = "<iframe frameborder=\"no\" border=\"0\" marginwidth=\"0\" marginheight=\"0\" width=350 height=106 src=\"//music.163.com/outchain/player?type=2&id=$1&auto=0&height=88\"></iframe>";
-    public static final String MUSIC_REG_PATTERN     = "\\[mp3:(\\d+)\\]";
-    public static final String GIST_PREFIX_URL       = "https://gist.github.com/";
-    public static final String GIST_REG_PATTERN      = "&lt;script src=\"https://gist.github.com/(\\w+)/(\\w+)\\.js\">&lt;/script>";
-    public static final String GIST_REPLATE_PATTERN  = "<script src=\"https://gist.github.com/$1/$2\\.js\"></script>";
+    public static final String ENV_SUPPORT_GIST = "app.support_gist";
+    public static final String MP3_PREFIX = "[mp3:";
+    public static final String MUSIC_IFRAME = "<iframe frameborder=\"no\" border=\"0\" marginwidth=\"0\" marginheight=\"0\" width=350 height=106 src=\"//music.163.com/outchain/player?type=2&id=$1&auto=0&height=88\"></iframe>";
+    public static final String MUSIC_REG_PATTERN = "\\[mp3:(\\d+)\\]";
+    public static final String GIST_PREFIX_URL = "https://gist.github.com/";
+    public static final String GIST_REG_PATTERN = "&lt;script src=\"https://gist.github.com/(\\w+)/(\\w+)\\.js\">&lt;/script>";
+    public static final String GIST_REPLATE_PATTERN = "<script src=\"https://gist.github.com/$1/$2\\.js\"></script>";
 
 
     public static final String SQL_QUERY_METAS = "select a.*, count(b.cid) as count from t_metas a left join `t_relationships` b on a.mid = b.mid " +
@@ -108,18 +106,18 @@ public class WebConstant {
     public static final String COMMENT_APPROVED = "approved";
     public static final String COMMENT_NO_AUDIT = "no_audit";
 
-    public static final String OPTION_CDN_URL             = "cdn_url";
-    public static final String OPTION_SITE_THEME          = "site_theme";
-    public static final String OPTION_ALLOW_INSTALL       = "allow_install";
+    public static final String OPTION_CDN_URL = "cdn_url";
+    public static final String OPTION_SITE_THEME = "site_theme";
+    public static final String OPTION_ALLOW_INSTALL = "allow_install";
     public static final String OPTION_ALLOW_COMMENT_AUDIT = "allow_comment_audit";
-    public static final String OPTION_ALLOW_CLOUD_CDN     = "allow_cloud_CDN";
-    public static final String OPTION_SAFE_REMEMBER_ME    = "safe_remember_me";
+    public static final String OPTION_ALLOW_CLOUD_CDN = "allow_cloud_CDN";
+    public static final String OPTION_SAFE_REMEMBER_ME = "safe_remember_me";
     public static final String OPTION_SITE_TITLE = "site_title";
     public static final String OPTION_SITE_URL = "site_url";
-    public static final String OPTION_SITE_DESCRIPTION  = "site_description";
+    public static final String OPTION_SITE_DESCRIPTION = "site_description";
     public static final String OPTION_SITE_KEYWORDS = "site_keywords";
 
-    public static final int REMEMBER_ME_INTERVAL = 60*60*24*30;
+    public static final int REMEMBER_ME_INTERVAL = 60 * 60 * 24 * 30;
 
     public static final String AUTHORIZATION = "Authorization";
 
@@ -156,6 +154,8 @@ public class WebConstant {
     public final static String REPEAT_SUBMIT_CACHE = "repeat_submit_cache";
 
     public final static String PV_CACHE = "pv_cache";
-    // 两个小时内多次访问不计算
-    public final static Integer PV_INTERVAL = 60*60*2;
+    /**
+     * 两个小时内多次访问不计算pv
+     */
+    public final static Integer PV_INTERVAL = 60 * 60 * 2;
 }

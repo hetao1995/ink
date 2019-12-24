@@ -4,7 +4,6 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.*;
 import org.springframework.stereotype.Service;
@@ -26,21 +25,24 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-05
- * @description
  */
 @Service("contentService")
 @Slf4j
 @CacheConfig(cacheNames = WebConstant.CONTENT_CACHE)
-public class ContentServiceImpl  implements ContentService {
+public class ContentServiceImpl implements ContentService {
+    private final ContentRepository contentRepository;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    private ContentRepository contentRepository;
-    @Autowired
-    private DomainFactory domainFactory;
+    public ContentServiceImpl(ContentRepository contentRepository, DomainFactory domainFactory) {
+        this.contentRepository = contentRepository;
+        this.domainFactory = domainFactory;
+    }
 
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key = "#id") ,
+            @CacheEvict(key = "#id"),
             @CacheEvict(key = "#result.slug")
     })
     @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#result.type+'*'")
@@ -55,13 +57,13 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @Cacheable(key="#id")
+    @Cacheable(key = "#id")
     public ContentDomain loadContentDomainById(Long id) {
         return contentRepository.loadActiveContentDomainById(id);
     }
 
     @Override
-    @CachePut(key="#result.id")
+    @CachePut(key = "#result.id")
     @Transactional
     @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#contentVo.type+'*'")
     public ContentDomain publishNewContent(ContentVo contentVo, UserDomain userDomain) {
@@ -74,19 +76,21 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'_vo'")
+    @SuppressWarnings("unchecked")
+    @Cacheable(key = "'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'_vo'")
     public PageInfo<ContentVo> loadAllContentVo(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.loadAllContentDomain(contentDomain);
-        List<ContentVo> contentVos = contentDomains.stream().map(d->d.vo()).collect(Collectors.toList());
+        List<ContentVo> contentVos = contentDomains.stream().map(ContentDomain::vo).collect(Collectors.toList());
         PageInfo<ContentVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(contentVos);
         return pageInfo;
     }
 
     @Override
-    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize")
+    @SuppressWarnings("unchecked")
+    @Cacheable(key = "'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize")
     public PageInfo<ContentDomain> loadAllContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam);
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
@@ -97,7 +101,8 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'publish'")
+    @SuppressWarnings("unchecked")
+    @Cacheable(key = "'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'publish'")
     public PageInfo<ContentDomain> loadAllActivePublishContentDomain(ArticleParam articleParam) {
         ContentDomain contentDomain = domainFactory.createContentDomain().assemble(articleParam).setActive(true).setStatus(TypeConst.PUBLISH).setType(articleParam.getType());
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
@@ -109,7 +114,7 @@ public class ContentServiceImpl  implements ContentService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(key = "#result.id") ,
+            @CacheEvict(key = "#result.id"),
             @CacheEvict(key = "#result.slug")
     })
     @CacheRemove(value = WebConstant.CONTENT_CACHE, key = "'type_'+#contentVo.type+'*'")
@@ -123,7 +128,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
-    @Cacheable(key="'type_post_feed'")
+    @Cacheable(key = "'type_post_feed'")
     public List<ContentVo> selectAllFeedArticles() {
         List<ContentDomain> contentDomains = contentRepository.loadAllFeedArticles();
         return contentDomains.stream().map(ContentDomain::vo).collect(Collectors.toList());
@@ -135,6 +140,7 @@ public class ContentServiceImpl  implements ContentService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     @Cacheable(value = WebConstant.META_CACHE, key = "#metaDomain.id+'_article_num_'+#pageNum+'_size_'+#pageSize")
     public PageInfo<ContentDomain> getPublishArticlesByMeta(MetaDomain metaDomain, int pageNum, int pageSize) {
         Page page = PageHelper.startPage(pageNum, pageSize);
@@ -156,39 +162,41 @@ public class ContentServiceImpl  implements ContentService {
     public ContentDomain loadDraftByIdOrSlug(String idOrSlug, UserDomain userDomain) {
 
         ContentDomain contentDomain = loadContentDomainByIdOrSlug(idOrSlug, TypeConst.DRAFT);
-        if(contentDomain==null || !contentDomain.getAuthorId().equals( userDomain.getId())){
+        if (contentDomain == null || !contentDomain.getAuthorId().equals(userDomain.getId())) {
             return null;
         }
         return contentDomain;
     }
 
 
-    private ContentDomain loadContentDomainByIdOrSlug(String idOrSlug, String status){
+    private ContentDomain loadContentDomainByIdOrSlug(String idOrSlug, String status) {
         ContentDomain contentDomain = domainFactory.createContentDomain().setStatus(status);
-        if(PatternUtils.isNumber(idOrSlug)){
+        if (PatternUtils.isNumber(idOrSlug)) {
             contentDomain.setId(Long.parseLong(idOrSlug));
-        }else{
+        } else {
             contentDomain.setSlug(idOrSlug);
         }
         List<ContentDomain> contentDomains = contentRepository.loadAllActiveContentDomain(contentDomain);
-        if(contentDomains.isEmpty()){
+        if (contentDomains.isEmpty()) {
             return null;
         }
         return contentDomains.get(0);
     }
 
     @Override
-    @Cacheable(key="'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'_archive'")
+    @SuppressWarnings("unchecked")
+    @Cacheable(key = "'type_'+#articleParam.type+'_num_'+#articleParam.pageNum+'_size_'+#articleParam.pageSize+'_archive'")
     public PageInfo<ArchiveDomain> loadContentArchives(ArticleParam articleParam) {
-        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(),articleParam.getOrderBy());
+        Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<Archive> archives = contentRepository.loadContentArchives(articleParam.getType(), articleParam.getStatus());
-        List<ArchiveDomain> archiveDomains = archives.stream().map(e->domainFactory.createArchiveDomain().assemble(e).setType(articleParam.getType()).setStatus(articleParam.getStatus())).collect(Collectors.toList());
+        List<ArchiveDomain> archiveDomains = archives.stream().map(e -> domainFactory.createArchiveDomain().assemble(e).setType(articleParam.getType()).setStatus(articleParam.getStatus())).collect(Collectors.toList());
         PageInfo<ArchiveDomain> pageInfo = new PageInfo<>(page);
         pageInfo.setList(archiveDomains);
         return pageInfo;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public PageInfo<ContentDomain> searchArticles(String keyword, ArticleParam articleParam) {
         Page page = PageHelper.startPage(articleParam.getPageNum(), articleParam.getPageSize(), articleParam.getOrderBy());
         List<ContentDomain> contentDomains = contentRepository.searchContentDomain(keyword, articleParam.getType());

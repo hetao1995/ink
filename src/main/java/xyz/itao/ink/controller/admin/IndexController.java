@@ -14,9 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
+ * 一些其他页面
  * @author hetao
  * @date 2018-12-06
- * @description
  */
 @Controller("adminIndex")
 @RequestMapping("/admin")
@@ -24,14 +24,18 @@ import java.util.List;
 public class IndexController {
 
 
+    private final LogService logService;
+    private final CommentService commentService;
+    private final ContentService contentService;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    LogService logService;
-    @Autowired
-    CommentService commentService;
-    @Autowired
-    ContentService contentService;
-    @Autowired
-    DomainFactory domainFactory;
+    public IndexController(LogService logService, CommentService commentService, ContentService contentService, DomainFactory domainFactory) {
+        this.logService = logService;
+        this.commentService = commentService;
+        this.contentService = contentService;
+        this.domainFactory = domainFactory;
+    }
 
     /**
      * 仪表盘

@@ -20,7 +20,6 @@ import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.CommentVo;
 import xyz.itao.ink.domain.vo.UserVo;
 import xyz.itao.ink.repository.CommentRepository;
-import xyz.itao.ink.repository.UserRepository;
 import xyz.itao.ink.service.CommentService;
 import xyz.itao.ink.service.UserService;
 import xyz.itao.ink.utils.DateUtils;
@@ -31,26 +30,28 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Service("commentService")
 @CacheConfig(cacheNames = WebConstant.COMMENT_CACHE)
-public class CommentServiceImpl  implements CommentService {
+public class CommentServiceImpl implements CommentService {
+    private final UserService userService;
+    private final CommentRepository commentRepository;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    UserService userService;
-    @Autowired
-    CommentRepository commentRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    DomainFactory domainFactory;
+    public CommentServiceImpl(UserService userService, CommentRepository commentRepository, DomainFactory domainFactory) {
+        this.userService = userService;
+        this.commentRepository = commentRepository;
+        this.domainFactory = domainFactory;
+    }
 
     @Override
+    @SuppressWarnings("unchecked")
     @Cacheable(key = "'all_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum+'_vo'")
     public PageInfo<CommentVo> loadAllActiveCommentVo(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());
         List<CommentDomain> commentDomains = commentRepository.loadAllActiveCommentDomain();
-        List<CommentVo> commentVos = commentDomains.stream().map((d)->d.vo()).collect(Collectors.toList());
+        List<CommentVo> commentVos = commentDomains.stream().map(CommentDomain::vo).collect(Collectors.toList());
         PageInfo<CommentVo> pageInfo = new PageInfo<>(page);
         pageInfo.setList(commentVos);
         return pageInfo;
@@ -60,7 +61,7 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     @CacheEvict(key = "#id")
     @Transactional
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#result.contentId+'*'","'all*'"})
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#result.contentId+'*'", "'all*'"})
     public CommentDomain deleteCommentById(Long id, UserDomain userDomain) {
         return domainFactory
                 .createCommentDomain()
@@ -72,7 +73,7 @@ public class CommentServiceImpl  implements CommentService {
     @Override
     @CacheEvict(key = "#commentVo.id")
     @Transactional
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#commentVo.contentId+'*'","'all*'"})
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#commentVo.contentId+'*'", "'all*'"})
     public void updateCommentVo(CommentVo commentVo, UserDomain userDomain) {
         domainFactory
                 .createCommentDomain()
@@ -83,9 +84,9 @@ public class CommentServiceImpl  implements CommentService {
 
     @Override
     @Transactional
-    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#commentVo.contentId+'*'","'all*'"})
-    public UserDomain postNewComment(CommentVo commentVo,  UserDomain userDomain) {
-        if(userDomain == null){
+    @CacheRemove(value = WebConstant.COMMENT_CACHE, key = {"#commentVo.contentId+'*'", "'all*'"})
+    public UserDomain postNewComment(CommentVo commentVo, UserDomain userDomain) {
+        if (userDomain == null) {
             UserVo userVo = UserVo
                     .builder()
                     .username(null)
@@ -98,7 +99,7 @@ public class CommentServiceImpl  implements CommentService {
 
         }
         commentVo.setAuthorId(userDomain.getId());
-        if(commentVo.getParentId()==null) {
+        if (commentVo.getParentId() == null) {
             commentVo.setParentId(0L);
         }
         domainFactory
@@ -111,6 +112,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     @Cacheable(key = "#commentParam.contentId+'_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum+'_active'")
     public PageInfo<CommentDomain> loadAllActiveCommentDomain(PageParam pageParam, ContentDomain contentDomain) {
         Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
@@ -122,6 +124,7 @@ public class CommentServiceImpl  implements CommentService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     @Cacheable(key = "#commentParam.contentId+'_size_'+#commentParam.pageSize+'_num_'+#commentParam.pageNum+'_approved'")
     public PageInfo<CommentDomain> loadAllActiveApprovedCommentDomain(CommentParam commentParam) {
         Page page = PageHelper.startPage(commentParam.getPageNum(), commentParam.getPageSize(), commentParam.getOrderBy());

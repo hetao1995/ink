@@ -23,24 +23,27 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-11
- * @description
  */
 @Repository("metaRepository")
-public class MetaRepositoryImpl  implements MetaRepository {
+public class MetaRepositoryImpl implements MetaRepository {
+
+    private final MetaMapper metaMapper;
+
+    private final ContentMetaMapper contentMetaMapper;
+
+    private final DomainFactory domainFactory;
 
     @Autowired
-    MetaMapper metaMapper;
-
-    @Autowired
-    ContentMetaMapper contentMetaMapper;
-
-    @Autowired
-    DomainFactory domainFactory;
+    public MetaRepositoryImpl(MetaMapper metaMapper, ContentMetaMapper contentMetaMapper, DomainFactory domainFactory) {
+        this.metaMapper = metaMapper;
+        this.contentMetaMapper = contentMetaMapper;
+        this.domainFactory = domainFactory;
+    }
 
     @Override
     public MetaDomain updateMetaDomain(MetaDomain domain) {
-         metaMapper.updateByPrimaryKeySelective(domain.entity());
-         return domain;
+        metaMapper.updateByPrimaryKeySelective(domain.entity());
+        return domain;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class MetaRepositoryImpl  implements MetaRepository {
     public MetaDomain loadMetaDomainByTypeAndName(String type, String name) {
         MetaDomain metaDomain = domainFactory.createMetaDomain().setType(type).setName(name).setDeleted(false).setActive(true);
         List<Meta> metas = metaMapper.selectByNoNulProperties(metaDomain.entity());
-        if(metas.isEmpty()){
+        if (metas.isEmpty()) {
             return null;
         }
         return metaDomain.assemble(metas.get(0));
@@ -65,7 +68,7 @@ public class MetaRepositoryImpl  implements MetaRepository {
         List<Meta> metas = metaMapper.selectByNoNulProperties(metaDomain.entity());
         return metas
                 .stream()
-                .map(e->domainFactory.createMetaDomain().assemble(e))
+                .map(e -> domainFactory.createMetaDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +87,7 @@ public class MetaRepositoryImpl  implements MetaRepository {
     public MetaDomain loadMetaDomainById(Long metaId) {
         MetaDomain metaDomain = domainFactory.createMetaDomain().setDeleted(false).setId(metaId);
         List<Meta> metas = metaMapper.selectByNoNulProperties(metaDomain.entity());
-        if(metas.isEmpty()){
+        if (metas.isEmpty()) {
             return null;
         }
         return metaDomain.assemble(metas.get(0));
@@ -93,18 +96,18 @@ public class MetaRepositoryImpl  implements MetaRepository {
     @Override
     public List<MetaDomain> loadAllMetaDomainByContentIdAndType(Long contentId, String type) {
         List<Meta> metas = metaMapper.selectByContentIdAndType(contentId, type);
-        return metas.stream().map(e->domainFactory.createMetaDomain().assemble(e)).collect(Collectors.toList());
+        return metas.stream().map(e -> domainFactory.createMetaDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
     public boolean deleteContentMetaRelationshipByContentIdAndMetaId(Long contentId, Long metaId) {
 
-         ContentMeta contentMeta = contentMetaMapper.selectByContentIdAndMetaId(contentId, metaId);
-         if(contentMeta == null){
-             throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
-         }
-         contentMeta.setDeleted(true);
-         return contentMetaMapper.updateByPrimaryKeySelective(contentMeta);
+        ContentMeta contentMeta = contentMetaMapper.selectByContentIdAndMetaId(contentId, metaId);
+        if (contentMeta == null) {
+            throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
+        }
+        contentMeta.setDeleted(true);
+        return contentMetaMapper.updateByPrimaryKeySelective(contentMeta);
     }
 
 

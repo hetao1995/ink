@@ -9,7 +9,6 @@ import java.util.zip.ZipOutputStream;
 /**
  * @author hetao
  * @date 2018-12-01 23:14
- * @description
  */
 public class ZipUtils {
     public static void zipFolder(String srcFolder, String destZipFile) throws Exception {

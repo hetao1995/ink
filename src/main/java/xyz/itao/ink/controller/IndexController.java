@@ -20,23 +20,27 @@ import xyz.itao.ink.utils.InkUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 /**
+ * 首页、搜索、归档等
+ *
  * @author hetao
  * @date 2018-12-04
- * @description
  */
 @Controller
 @Slf4j
-public class IndexController{
+public class IndexController {
+    private final ContentService contentService;
+    private final SiteService siteService;
+    private final Props props;
+
     @Autowired
-    ContentService contentService;
-    @Autowired
-    SiteService siteService;
-    @Autowired
-    Props props;
+    public IndexController(ContentService contentService, SiteService siteService, Props props) {
+        this.contentService = contentService;
+        this.siteService = siteService;
+        this.props = props;
+    }
 
     /**
      * 首页
@@ -48,11 +52,12 @@ public class IndexController{
 
     /**
      * 首页分页显示
-     * @param request request
-     * @param pageNum 第几页
+     *
+     * @param request  request
+     * @param pageNum  第几页
      * @param pageSize 每页大小
      */
-    @GetMapping(value = {"/page/{pageNum}","/page/{pageNum}.html"})
+    @GetMapping(value = {"/page/{pageNum}", "/page/{pageNum}.html"})
     public String index(HttpServletRequest request, @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
 
         if (pageNum > 1) {
@@ -68,6 +73,7 @@ public class IndexController{
         request.setAttribute("is_home", true);
         return props.renderTheme("index");
     }
+
     /**
      * 搜索页
      */
@@ -82,7 +88,7 @@ public class IndexController{
     }
 
     @GetMapping(value = {"/search/{keyword}/{pageNum}", "search/{keyword}/{pageNum}.html"})
-    public String search(HttpServletRequest request,  @PathVariable String keyword,  @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
+    public String search(HttpServletRequest request, @PathVariable String keyword, @PathVariable int pageNum, @RequestParam(defaultValue = "12") int pageSize) {
 
         ArticleParam articleParam = ArticleParam.builder().type(TypeConst.ARTICLE).build();
         articleParam.setPageSize(pageSize);
@@ -100,12 +106,12 @@ public class IndexController{
      * 归档页
      */
     @GetMapping(value = {"/archive", "/archive.html"})
-    public String archives(HttpServletRequest request,  @RequestParam(defaultValue = "12") Integer pageSize) {
-        return archives(request,0, pageSize);
+    public String archives(HttpServletRequest request, @RequestParam(defaultValue = "12") Integer pageSize) {
+        return archives(request, 0, pageSize);
     }
 
-    @GetMapping(value = {"/archive/{pageNum}","/archive/{pageNum}.html"})
-    public String archives(HttpServletRequest request, @PathVariable Integer pageNum, @RequestParam(defaultValue = "12") Integer pageSize){
+    @GetMapping(value = {"/archive/{pageNum}", "/archive/{pageNum}.html"})
+    public String archives(HttpServletRequest request, @PathVariable Integer pageNum, @RequestParam(defaultValue = "12") Integer pageSize) {
         ArticleParam articleParam = ArticleParam
                 .builder()
                 .type(TypeConst.ARTICLE)
@@ -127,7 +133,7 @@ public class IndexController{
     public void feed(HttpServletResponse response) {
         List<ContentVo> articles = contentService.selectAllFeedArticles();
         try {
-            String xml = InkUtils.getRssXml(articles, props.get(WebConstant.OPTION_SITE_URL,""),props.get(WebConstant.OPTION_SITE_TITLE, "ink"), props.get(WebConstant.OPTION_SITE_DESCRIPTION,""));
+            String xml = InkUtils.getRssXml(articles, props.get(WebConstant.OPTION_SITE_URL, ""), props.get(WebConstant.OPTION_SITE_TITLE, "ink"), props.get(WebConstant.OPTION_SITE_DESCRIPTION, ""));
             response.setContentType("text/xml; charset=utf-8");
             response.getWriter().append(xml);
         } catch (Exception e) {
@@ -156,27 +162,27 @@ public class IndexController{
      * 登录视图
      */
     @GetMapping(value = "/login")
-    public String login(){
+    public String login() {
         return "admin/login";
     }
 
     @GetMapping(value = "error_404")
-    public String error404(){
+    public String error404() {
         return "comm/error_404";
     }
 
     @GetMapping(value = "error_403")
-    public String error403(){
+    public String error403() {
         return "comm/error_403";
     }
 
     @GetMapping(value = "error_500")
-    public String error500(){
+    public String error500() {
         return "comm/error_500";
     }
 
     @GetMapping(value = "error_tip")
-    public String errorTip(String message){
+    public String errorTip(String message) {
         return "comm/error_tip";
     }
 }

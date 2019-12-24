@@ -7,9 +7,10 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
+ * 后台统计对象
+ *
  * @author hetao
  * @date 2018-12-06
- * @description 后台统计对象
  */
 @Data
 @Builder

@@ -14,7 +14,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestHeaderRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -30,9 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 拦截器，拦截除登陆外的所有请求，获取header中的token，提交给AuthenticationManager检查
+ *
  * @author hetao
  * @date 2018-12-01
- * @description 拦截器，拦截除登陆外的所有请求，获取header中的token，提交给AuthenticationManager检查
  */
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -48,11 +48,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //        this.requiresAuthenticationRequestMatcher = new RequestHeaderRequestMatcher("Authorization");
         this.requiresAuthenticationRequestMatcher = request -> {
             Cookie[] cookies = request.getCookies();
-            if(cookies == null){
+            if (cookies == null) {
                 return false;
             }
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("Authorization")) return true;
+            for (Cookie cookie : cookies) {
+                if ("Authorization".equals(cookie.getName())) {
+                    return true;
+                }
             }
             return false;
         };
@@ -65,11 +67,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         Assert.notNull(failureHandler, "AuthenticationFailureHandler must be specified");
     }
 
-    protected String getJwtToken(HttpServletRequest request) {
+    private String getJwtToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         String authInfo = null;
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals("Authorization")) authInfo = cookie.getValue();
+        for (Cookie cookie : cookies) {
+            if ("Authorization".equals(cookie.getName())) {
+                authInfo = cookie.getValue();
+            }
         }
 //        authInfo = request.getHeader("Authorization");
 
@@ -88,27 +92,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         AuthenticationException failed = null;
         try {
             String token = getJwtToken(request);
-            if(StringUtils.isNotBlank(token)) {
+            if (StringUtils.isNotBlank(token)) {
                 JwtAuthenticationToken authToken = new JwtAuthenticationToken(JWT.decode(token));
                 authResult = this.getAuthenticationManager().authenticate(authToken);
             } else {
                 failed = new InsufficientAuthenticationException("JWT is Empty");
             }
-        } catch(JWTDecodeException e) {
+        } catch (JWTDecodeException e) {
             logger.error("JWT format error", e);
-            failed = new InsufficientAuthenticationException("JWT format error", failed);
-        }catch (InternalAuthenticationServiceException e) {
+            failed = new InsufficientAuthenticationException("JWT format error", e);
+        } catch (InternalAuthenticationServiceException e) {
             logger.error(
                     "An internal error occurred while trying to authenticate the user.",
-                    failed);
+                    e);
             failed = e;
-        }catch (AuthenticationException e) {
+        } catch (AuthenticationException e) {
             // Authentication failed
             failed = e;
         }
-        if(authResult != null) {
+        if (authResult != null) {
             successfulAuthentication(request, response, filterChain, authResult);
-        } else if(!permissiveRequest(request)){
+        } else if (!permissiveRequest(request)) {
             unsuccessfulAuthentication(request, response, failed);
             return;
         }
@@ -116,21 +120,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    protected void unsuccessfulAuthentication(HttpServletRequest request,
-                                              HttpServletResponse response, AuthenticationException failed)
+    private void unsuccessfulAuthentication(HttpServletRequest request,
+                                            HttpServletResponse response, AuthenticationException failed)
             throws IOException, ServletException {
         SecurityContextHolder.clearContext();
         failureHandler.onAuthenticationFailure(request, response, failed);
     }
 
-    protected void successfulAuthentication(HttpServletRequest request,
-                                            HttpServletResponse response, FilterChain chain, Authentication authResult)
-            throws IOException, ServletException{
+    private void successfulAuthentication(HttpServletRequest request,
+                                          HttpServletResponse response, FilterChain chain, Authentication authResult)
+            throws IOException, ServletException {
         SecurityContextHolder.getContext().setAuthentication(authResult);
         successHandler.onAuthenticationSuccess(request, response, authResult);
     }
 
-    protected AuthenticationManager getAuthenticationManager() {
+    private AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
     }
 
@@ -138,26 +142,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.authenticationManager = authenticationManager;
     }
 
-    protected boolean requiresAuthentication(HttpServletRequest request,
-                                             HttpServletResponse response) {
+    private boolean requiresAuthentication(HttpServletRequest request,
+                                           HttpServletResponse response) {
         return requiresAuthenticationRequestMatcher.matches(request);
     }
 
-    protected boolean permissiveRequest(HttpServletRequest request) {
-        if(permissiveRequestMatchers == null)
+    private boolean permissiveRequest(HttpServletRequest request) {
+        if (permissiveRequestMatchers == null) {
             return false;
-        for(RequestMatcher permissiveMatcher : permissiveRequestMatchers) {
-            if(permissiveMatcher.matches(request))
+        }
+        for (RequestMatcher permissiveMatcher : permissiveRequestMatchers) {
+            if (permissiveMatcher.matches(request)) {
                 return true;
+            }
         }
         return false;
     }
 
     public void setPermissiveUrl(String... urls) {
-        if(permissiveRequestMatchers == null)
+        if (permissiveRequestMatchers == null) {
             permissiveRequestMatchers = new ArrayList<>();
-        for(String url : urls)
-            permissiveRequestMatchers .add(new AntPathRequestMatcher(url));
+        }
+        for (String url : urls) {
+            permissiveRequestMatchers.add(new AntPathRequestMatcher(url));
+        }
     }
 
     public void setAuthenticationSuccessHandler(

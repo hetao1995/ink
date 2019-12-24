@@ -5,6 +5,9 @@ import xyz.itao.ink.domain.entity.User;
 
 import java.util.List;
 
+/**
+ * @author hetao
+ */
 @Component
 public interface UserMapper {
 

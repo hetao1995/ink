@@ -10,22 +10,22 @@ import xyz.itao.ink.repository.MetaRepository;
 /**
  * @author hetao
  * @date 2018-12-06
- * @description
  */
 public class StatisticsDomain {
     StatisticsDomain(ContentRepository contentRepository,
                      CommentRepository commentRepository,
                      MetaRepository metaRepository,
-                     LinkRepository linkRepository){
+                     LinkRepository linkRepository) {
         this.contentRepository = contentRepository;
         this.commentRepository = commentRepository;
         this.metaRepository = metaRepository;
         this.linkRepository = linkRepository;
     }
-    ContentRepository contentRepository;
-    CommentRepository commentRepository;
-    MetaRepository metaRepository;
-    LinkRepository linkRepository;
+
+    private ContentRepository contentRepository;
+    private CommentRepository commentRepository;
+    private MetaRepository metaRepository;
+    private LinkRepository linkRepository;
 
     /**
      * 文章数
@@ -69,7 +69,7 @@ public class StatisticsDomain {
         return linkRepository.countLinkNum();
     }
 
-    public StatisticsVo vo(){
+    public StatisticsVo vo() {
         return StatisticsVo
                 .builder()
                 .articles(this.getArticles())

@@ -27,26 +27,30 @@ import java.util.Date;
 /**
  * @author hetao
  * @date 2018-12-01
- * @description
  */
 @Service("userService")
 @CacheConfig(cacheNames = WebConstant.USER_CACHE)
-public class UserServiceImpl  implements UserService {
+public class UserServiceImpl implements UserService {
     /**
      * 临时token，一个小时后过期
      */
-    private static final Long TEMPORARY_JWT_EXPIRE_INTERVAL = 1000*60*60L;
+    private static final Long TEMPORARY_JWT_EXPIRE_INTERVAL = 1000 * 60 * 60L;
     /**
      * 长期token，一个月后过期
      */
-    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = (long) WebConstant.REMEMBER_ME_INTERVAL *1000;
+    private static final Long LONG_TERM_JWT_EXPIRE_INTERVAL = (long) WebConstant.REMEMBER_ME_INTERVAL * 1000;
+
+    private final UserRepository userRepository;
+    private final DomainFactory domainFactory;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
-    DomainFactory domainFactory;
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, DomainFactory domainFactory, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.domainFactory = domainFactory;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     @CachePut(key = "#result.id")
     @Transactional
@@ -68,7 +72,7 @@ public class UserServiceImpl  implements UserService {
         String salt = userDomain.getSalt();
         long interval = rememberMe ? LONG_TERM_JWT_EXPIRE_INTERVAL : TEMPORARY_JWT_EXPIRE_INTERVAL;
         Algorithm algorithm = Algorithm.HMAC256(salt);
-        Date date = new Date(System.currentTimeMillis()+interval);
+        Date date = new Date(System.currentTimeMillis() + interval);
         return JWT
                 .create()
                 .withSubject(String.valueOf(userDomain.getId()))
@@ -79,7 +83,7 @@ public class UserServiceImpl  implements UserService {
 
 
     @Override
-    @Cacheable(key="#id")
+    @Cacheable(key = "#id")
     public UserDomain loadUserDomainById(Long id) {
         return userRepository.loadActiveUserDomainById(id);
     }
@@ -105,13 +109,13 @@ public class UserServiceImpl  implements UserService {
     public UserDomain registerPermanentUser(UserVo userVo) {
         CommonValidator.valid(userVo, true);
 
-        if(userRepository.loadUserDomainByUsername(userVo.getUsername()) != null){
+        if (userRepository.loadUserDomainByUsername(userVo.getUsername()) != null) {
             throw new TipException(ExceptionEnum.USERNAME_USED);
         }
-        if(userRepository.loadUserDomainByEmail(userVo.getEmail()) != null){
+        if (userRepository.loadUserDomainByEmail(userVo.getEmail()) != null) {
             throw new TipException(ExceptionEnum.EMAIL_USED);
         }
-        if(userRepository.loadUserDomainByHomeUrl(userVo.getHomeUrl()) != null){
+        if (userRepository.loadUserDomainByHomeUrl(userVo.getHomeUrl()) != null) {
             throw new TipException(ExceptionEnum.HOME_URL_USED);
         }
         userVo.setActive(true);
@@ -127,10 +131,10 @@ public class UserServiceImpl  implements UserService {
     public void updateProfile(String screenName, String email, UserDomain userDomain) {
         UserVo userVo = UserVo.builder().displayName(screenName).email(email).build();
         CommonValidator.valid(userVo, false);
-        if(screenName!=null) {
+        if (screenName != null) {
             userDomain.setDisplayName(screenName);
         }
-        if(email!=null) {
+        if (email != null) {
             userDomain.setEmail(email);
         }
         userDomain
@@ -142,8 +146,8 @@ public class UserServiceImpl  implements UserService {
     @CacheEvict(key = "#userDomain.id")
     @Transactional
     public void updatePassword(String old_password, String password, UserDomain userDomain) {
-        if(!passwordEncoder.matches(old_password, userDomain.getPassword())){
-            throw  new TipException(ExceptionEnum.WRONG_OLD_PASSWORD);
+        if (!passwordEncoder.matches(old_password, userDomain.getPassword())) {
+            throw new TipException(ExceptionEnum.WRONG_OLD_PASSWORD);
         }
         UserVo userVo = UserVo.builder().password(password).build();
         CommonValidator.valid(userVo, true);

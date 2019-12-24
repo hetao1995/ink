@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import xyz.itao.ink.domain.LogDomain;
 import xyz.itao.ink.domain.params.PageParam;
 import xyz.itao.ink.domain.vo.LogVo;
-import xyz.itao.ink.exception.ExceptionEnum;
-import xyz.itao.ink.exception.InnerException;
 import xyz.itao.ink.repository.LogRepository;
 import xyz.itao.ink.service.LogService;
 
@@ -20,13 +18,18 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-05
- * @description
  */
 @Service("logService")
-public class LogServiceImpl  implements LogService {
+public class LogServiceImpl implements LogService {
+    private final LogRepository logRepository;
+
     @Autowired
-    LogRepository logRepository;
+    public LogServiceImpl(LogRepository logRepository) {
+        this.logRepository = logRepository;
+    }
+
     @Override
+    @SuppressWarnings("unchecked")
     public PageInfo<LogVo> getLogs(PageParam pageParam) {
         Page page = PageHelper.startPage(pageParam.getPageNum(), pageParam.getPageSize(), pageParam.getOderBy());
         List<LogDomain> logDomains = logRepository.loadAllLogs();

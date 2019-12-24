@@ -19,7 +19,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,15 +29,14 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-04
- * @description
  */
 public class InkUtils {
 
     /**
      * 提取html中的文字
      *
-     * @param html
-     * @return
+     * @param html html
+     * @return 位子
      */
     public static String htmlToText(String html) {
         if (StringUtils.isNotBlank(html)) {
@@ -46,11 +44,12 @@ public class InkUtils {
         }
         return "";
     }
+
     /**
      * markdown转换为html
      *
-     * @param markdown
-     * @return
+     * @param markdown markdown
+     * @return 转换结果
      */
     public static String mdToHtml(String markdown) {
         if (StringUtils.isBlank(markdown)) {
@@ -71,17 +70,18 @@ public class InkUtils {
      * <p>
      * 这种格式的字符转换为emoji表情
      *
-     * @param value
-     * @return
+     * @param value value
+     * @return emoji
      */
     public static String emoji(String value) {
         return EmojiParser.parseToUnicode(value);
     }
+
     /**
      * 替换HTML脚本
      *
-     * @param value
-     * @return
+     * @param value 脚本
+     * @return html
      */
     public static String cleanXSS(String value) {
         //You'll need to remove the spaces from the html entities below
@@ -89,15 +89,16 @@ public class InkUtils {
         value = value.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
         value = value.replaceAll("'", "&#39;");
         value = value.replaceAll("eval\\((.*)\\)", "");
-        value = value.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+        value = value.replaceAll("[\"'][\\s]*javascript:(.*)[\"']", "\"\"");
         value = value.replaceAll("script", "");
         return value;
     }
+
     /**
      * 过滤XSS注入
      *
-     * @param value
-     * @return
+     * @param value value
+     * @return 脚本
      */
     public static String filterXSS(String value) {
         String cleanValue = null;
@@ -111,10 +112,10 @@ public class InkUtils {
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
 
             // Avoid anything in a src='...' type of expression
-            scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\'(.*?)\\\'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*'(.*?)'", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
 
-            scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\\\"(.*?)\\\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+            scriptPattern = Pattern.compile("src[\r\n]*=[\r\n]*\"(.*?)\"", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
             cleanValue = scriptPattern.matcher(cleanValue).replaceAll("");
 
             // Remove any lonesome </script> tag
@@ -162,7 +163,7 @@ public class InkUtils {
             Item item = new Item();
             item.setTitle(post.getTitle());
             Content content = new Content();
-            String  value   = article(post.getContent());
+            String value = article(post.getContent());
 
             char[] xmlChar = value.toCharArray();
             for (int i = 0; i < xmlChar.length; ++i) {
@@ -192,7 +193,6 @@ public class InkUtils {
             "<urlset xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\" xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">";
 
 
-
     static class Url {
         String loc;
         String lastmod;
@@ -204,7 +204,7 @@ public class InkUtils {
 
     public static String getSitemapXml(List<ContentVo> articles, String siteUrl) {
         List<Url> urls = articles.stream()
-                .map(c->parse(c, siteUrl))
+                .map(c -> parse(c, siteUrl))
                 .collect(Collectors.toList());
         urls.add(new Url(siteUrl + "/archive"));
 
@@ -240,12 +240,12 @@ public class InkUtils {
     /**
      * 返回文章链接地址
      *
-     * @param id 文章主键
+     * @param id   文章主键
      * @param slug 文章链接
      * @return 文章链接地址
      */
     public static String permalink(Long id, String slug, String siteUrl) {
-        return siteUrl+"/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString());
+        return siteUrl + "/article/" + (StringUtils.isNotBlank(slug) ? slug : id.toString());
     }
 
     /**
@@ -263,31 +263,32 @@ public class InkUtils {
     }
 
     /**
-     * 清楚cookie
-     * @param request
-     * @param response
+     * 清除cookie
+     *
+     * @param request request
+     * @param response response
      */
     public static void clearCookies(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
-        if(cookies==null){
+        if (cookies == null) {
             return;
         }
-        for(Cookie cookie : cookies){
+        for (Cookie cookie : cookies) {
             cookie.setMaxAge(0);
             response.addCookie(cookie);
         }
     }
 
-    public static void removeCookie(HttpServletRequest request, HttpServletResponse response, String name){
+    public static void removeCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie[] cookies = request.getCookies();
-        if(cookies==null){
+        if (cookies == null) {
             return;
         }
-        if(StringUtils.isBlank(name)){
+        if (StringUtils.isBlank(name)) {
             return;
         }
-        for(Cookie cookie : cookies){
-            if(!StringUtils.equals(cookie.getName(), name)){
+        for (Cookie cookie : cookies) {
+            if (!StringUtils.equals(cookie.getName(), name)) {
                 continue;
             }
             cookie.setMaxAge(0);
@@ -297,18 +298,19 @@ public class InkUtils {
 
     /**
      * 添加cookie
-     * @param response
-     * @param name
-     * @param value
+     *
+     * @param response response
+     * @param name key
+     * @param value value
      */
-    public static void setCookie(HttpServletResponse response, String name, String value, Integer expire){
+    public static void setCookie(HttpServletResponse response, String name, String value, Integer expire) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expire);
         cookie.setHttpOnly(true);
         response.addCookie(cookie);
     }
 
-    public static void setCookie(HttpServletResponse response, String name, String value, Integer expire, String path){
+    public static void setCookie(HttpServletResponse response, String name, String value, Integer expire, String path) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expire);
         cookie.setHttpOnly(true);
@@ -318,20 +320,21 @@ public class InkUtils {
 
     /**
      * 查找cookies是否存在指定的key
-     * @param request
-     * @param name
-     * @return
+     *
+     * @param request 请求
+     * @param name name
+     * @return 是否存在
      */
     public static boolean containsCookieName(HttpServletRequest request, String name) {
-        if(StringUtils.isBlank(name)){
+        if (StringUtils.isBlank(name)) {
             return false;
         }
         Cookie[] cookies = request.getCookies();
-        if(cookies==null){
+        if (cookies == null) {
             return false;
         }
-        for(Cookie cookie : cookies){
-            if(name.equals(cookie.getName())){
+        for (Cookie cookie : cookies) {
+            if (name.equals(cookie.getName())) {
                 return true;
             }
         }

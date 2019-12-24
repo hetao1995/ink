@@ -25,25 +25,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * 文章controller
+ *
  * @author hetao
  * @date 2018-12-06
- * @description
  */
 @Controller
 public class ArticleController {
 
-    @Autowired
-    private ContentService contentService;
+    private final ContentService contentService;
+
+    private final CommentService commentService;
+
+    private final UserService userService;
+
+    private final Props props;
 
     @Autowired
-    private CommentService commentService;
-
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private Props props;
+    public ArticleController(ContentService contentService, CommentService commentService, UserService userService, Props props) {
+        this.contentService = contentService;
+        this.commentService = commentService;
+        this.userService = userService;
+        this.props = props;
+    }
 
     /**
      * 自定义页面,如关于页
@@ -55,7 +59,6 @@ public class ArticleController {
             return props.render404();
         }
         setArticleAttribute(request, pageNum, pageSize, contentDomain);
-//        contentService.hit(contentDomain);
         return renderContent(request, contentDomain);
     }
 
@@ -73,7 +76,7 @@ public class ArticleController {
         setArticleAttribute(request, pageNum, pageSize, contentDomain);
         request.setAttribute("is_post", true);
         // 在一段时间内访问同一文章不计算浏览
-        if(!InkUtils.containsCookieName(request, contentDomain.getId().toString())){
+        if (!InkUtils.containsCookieName(request, contentDomain.getId().toString())) {
             contentService.hit(contentDomain);
             InkUtils.setCookie(response, contentDomain.getId().toString(), null, WebConstant.PV_INTERVAL);
         }
@@ -85,9 +88,9 @@ public class ArticleController {
      * 预览页
      */
     @GetMapping(value = {"/preview/{idOrSlug}", "/preview/{idOrSlug}.html"})
-    public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserDomain userDomain){
+    public String preview(HttpServletRequest request, @PathVariable String idOrSlug, @RequestAttribute(value = WebConstant.LOGIN_USER) UserDomain userDomain) {
         ContentDomain contentDomain = contentService.loadDraftByIdOrSlug(idOrSlug, userDomain);
-        if(null == contentDomain){
+        if (null == contentDomain) {
             return props.render404();
         }
         request.setAttribute("article", contentDomain);
@@ -98,10 +101,10 @@ public class ArticleController {
      * 评论操作
      */
     @SysLog("发表评论")
-    @StopRepeatSubmit(key = "comment",interval = 60)
+    @StopRepeatSubmit(key = "comment", interval = 60)
     @PostMapping(value = "comment")
     @ResponseBody
-    public RestResponse<?> comment(HttpServletResponse response,   CommentVo commentVo, @RequestAttribute(required = false,value = "login_user") UserDomain userDomain) {
+    public RestResponse<?> comment(HttpServletResponse response, CommentVo commentVo, @RequestAttribute(required = false, value = "login_user") UserDomain userDomain) {
 
         CommonValidator.valid(commentVo);
 
@@ -111,11 +114,11 @@ public class ArticleController {
             commentVo.setStatus(WebConstant.COMMENT_APPROVED);
         }
 
-        UserDomain newUserDomain = commentService.postNewComment(commentVo,userDomain);
-        if(userDomain==null || userDomain.getId()==null){
+        UserDomain newUserDomain = commentService.postNewComment(commentVo, userDomain);
+        if (userDomain == null || userDomain.getId() == null) {
             // 将临时用户jwt放入cookie
             String jwt = userService.getJwtLoginToken(newUserDomain, true);
-            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt, WebConstant.REMEMBER_ME_INTERVAL,"/");
+            InkUtils.setCookie(response, WebConstant.AUTHORIZATION, jwt, WebConstant.REMEMBER_ME_INTERVAL, "/");
         }
         return RestResponse.ok();
     }
@@ -137,7 +140,7 @@ public class ArticleController {
     /**
      * 设置article和comments到attribute
      */
-    private void setArticleAttribute(HttpServletRequest request,  Integer pageNum, Integer pageSize, ContentDomain contentDomain) {
+    private void setArticleAttribute(HttpServletRequest request, Integer pageNum, Integer pageSize, ContentDomain contentDomain) {
         request.setAttribute("article", contentDomain);
         CommentParam commentParam = CommentParam.builder().build();
         commentParam.setPageSize(pageNum);

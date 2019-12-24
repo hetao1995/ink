@@ -18,7 +18,6 @@ import java.util.Set;
 /**
  * @author hetao
  * @date 2018-12-12
- * @description
  */
 @Slf4j
 @Component
@@ -26,35 +25,36 @@ public class BaseInterceptor implements HandlerInterceptor {
     private static final String USER_AGENT = "user-agent";
 
 
+    private final Props props;
+
     @Autowired
-    private Props props;
+    public BaseInterceptor(Props props) {
+        this.props = props;
+    }
 
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        String contextPath = request.getContextPath();
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) {
         String uri = request.getRequestURI();
 
         log.debug("UserAgent: {}", request.getHeader(USER_AGENT));
         log.debug("用户访问地址: {}, 来路地址: {}", uri, IpUtils.getIpAddrByRequest(request));
         Set<String> blockIps = props.getBlockIps();
-        if(blockIps.contains(IpUtils.getIpAddrByRequest(request))){
-            return false;
-        }
-        return true;
+        return !blockIps.contains(IpUtils.getIpAddrByRequest(request));
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) throws Exception {
+    @SuppressWarnings("unchecked")
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object o, ModelAndView modelAndView) {
         //一些公共属性
         request.setAttribute("props", props);
         String themJson = props.getThemeOption();
-        if(StringUtils.isBlank(themJson)){
-            return ;
+        if (StringUtils.isBlank(themJson)) {
+            return;
         }
         Map<String, String> map = JSON.parseObject(themJson, Map.class);
-        for(Map.Entry<String, String> entry : map.entrySet()){
-            if(StringUtils.isBlank(entry.getValue()) || StringUtils.isBlank(entry.getKey())){
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (StringUtils.isBlank(entry.getValue()) || StringUtils.isBlank(entry.getKey())) {
                 continue;
             }
             request.setAttribute(entry.getKey(), entry.getValue());
@@ -62,7 +62,7 @@ public class BaseInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
+    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
 
     }
 }

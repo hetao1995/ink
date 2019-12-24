@@ -3,9 +3,10 @@ package xyz.itao.ink.utils;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ * 简单的Id生成工具，long型，1位不使用，距离START_STMP时间43位，序列号20位
+ *
  * @author hetao
  * @date 2018-12-01 23:33
- * @description 简单的Id生成工具，long型，1位不使用，距离START_STMP时间43位，序列号20位
  */
 public class IdUtils {
     /**
@@ -76,25 +77,4 @@ public class IdUtils {
         return ((stamp - START_STMP) << TIMESTMP_LEFT | sequence) & 0xEFFFFFFFFFFFFFFFL;
     }
 
-
-//    /**
-//     * 多线程测试并发生成
-//     */
-//    public static void main(String[] args) {
-//        for (int i=0; i<10; i++){
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    long start = System.currentTimeMillis();
-//                    java.util.HashSet<Object> set = new java.util.HashSet<>();
-//                    for (int i = 0; i < 1000000; i++) {
-//                        long id = nextId();
-//                        set.add(id);
-//                    }
-//                    System.out.println(System.currentTimeMillis() - start);
-//                    System.out.println(set.size());
-//                }
-//            }).start();
-//        }
-//    }
 }

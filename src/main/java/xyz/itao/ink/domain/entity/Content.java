@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 /**
+ * contents表的实体类
+ *
  * @author hetao
  * @date 2018-12-02
- * @description contents表的实体类
  */
 @Data
 @Builder

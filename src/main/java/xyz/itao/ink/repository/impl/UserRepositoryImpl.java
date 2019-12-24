@@ -13,14 +13,17 @@ import java.util.List;
 /**
  * @author hetao
  * @date 2018-12-02
- * @description
  */
 @Repository("userRepository")
 public class UserRepositoryImpl  implements UserRepository {
+    private final UserMapper userMapper;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    UserMapper userMapper;
-    @Autowired
-    DomainFactory domainFactory;
+    public UserRepositoryImpl(UserMapper userMapper, DomainFactory domainFactory) {
+        this.userMapper = userMapper;
+        this.domainFactory = domainFactory;
+    }
 
     @Override
     public UserDomain loadActiveUserDomainById(Long id) {

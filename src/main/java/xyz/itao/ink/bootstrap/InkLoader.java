@@ -8,11 +8,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
+ * 加载ink
+ *
  * @author hetao
  * @date 2018-12-05
- * @description
  */
 public class InkLoader {
     private InkLoader() {
@@ -26,8 +28,8 @@ public class InkLoader {
 
     public static void loadThemes() {
         String themeDir = WebConstant.CLASSPATH + "templates" + File.separatorChar + "themes";
-        File[] dir      = new File(themeDir).listFiles();
-        for (File f : dir) {
+        File[] dir = new File(themeDir).listFiles();
+        for (File f : Objects.requireNonNull(dir)) {
             if (f.isDirectory() && Files.isDirectory(Paths.get(f.getPath() + "/static"))) {
                 String themePath = "/templates/themes/" + f.getName();
 //                blade.addStatics(themePath + "/style.css", themePath + "/screenshot.png", themePath + "/static/");
@@ -43,7 +45,7 @@ public class InkLoader {
         File pluginDir = new File(WebConstant.CLASSPATH + "plugins");
         if (pluginDir.exists() && pluginDir.isDirectory()) {
             File[] plugins = pluginDir.listFiles();
-            for (File plugin : plugins) {
+            for (File plugin : Objects.requireNonNull(plugins)) {
                 loadPlugin(plugin);
             }
         }
@@ -58,7 +60,7 @@ public class InkLoader {
         try {
             if (pluginFile.isFile() && pluginFile.getName().endsWith(".jar")) {
                 URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-                Method add         = URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
+                Method add = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
                 add.setAccessible(true);
                 add.invoke(classLoader, pluginFile.toURI().toURL());
 

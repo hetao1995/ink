@@ -1,10 +1,7 @@
 package xyz.itao.ink.repository.impl;
 
-import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Repository;
-import xyz.itao.ink.constant.TypeConst;
 import xyz.itao.ink.constant.WebConstant;
 import xyz.itao.ink.dao.CommentMapper;
 import xyz.itao.ink.domain.CommentDomain;
@@ -21,17 +18,20 @@ import java.util.stream.Collectors;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Repository("commentRepository")
-public class CommentRepositoryImpl  implements CommentRepository {
+public class CommentRepositoryImpl implements CommentRepository {
+
+    private final CommentMapper commentMapper;
+    private final UserRepository userRepository;
+    private final DomainFactory domainFactory;
 
     @Autowired
-    CommentMapper commentMapper;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    DomainFactory domainFactory;
+    public CommentRepositoryImpl(CommentMapper commentMapper, UserRepository userRepository, DomainFactory domainFactory) {
+        this.commentMapper = commentMapper;
+        this.userRepository = userRepository;
+        this.domainFactory = domainFactory;
+    }
 
 
     @Override
@@ -41,19 +41,18 @@ public class CommentRepositoryImpl  implements CommentRepository {
     }
 
 
-
     @Override
     public List<CommentDomain> loadAllActiveRootCommentDomain(CommentDomain domain) {
         Comment comment = domain.setParentId(0L).setActive(true).setDeleted(false).entity();
         List<Comment> comments = commentMapper.selectByNoNulProperties(comment);
-        return comments.stream().map(e->domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
+        return comments.stream().map(e -> domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
     public List<CommentDomain> loadAllRootCommentDomain(CommentDomain domain) {
         Comment comment = domainFactory.createCommentDomain().setParentId(0L).entity();
         List<Comment> comments = commentMapper.selectByNoNulProperties(comment);
-        return comments.stream().map(e->domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
+        return comments.stream().map(e -> domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -72,7 +71,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
         return commentMapper
                 .selectByNoNulProperties(domain.entity())
                 .stream()
-                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .map(e -> domainFactory.createCommentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
@@ -80,7 +79,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
     @Override
     public boolean deleteCommentDomainById(Long id, Long userId) {
         CommentDomain commentDomain = loadCommentDomainById(id);
-        if(commentDomain==null) {
+        if (commentDomain == null) {
             throw new InnerException(ExceptionEnum.DELETE_NON_EXIST_ELEMENT);
         }
         commentDomain.setDeleted(true).deleteById();
@@ -97,18 +96,18 @@ public class CommentRepositoryImpl  implements CommentRepository {
     public CommentDomain loadCommentDomainById(Long id) {
         CommentDomain domain = domainFactory.createCommentDomain().setDeleted(false).setId(id);
         List<Comment> comments = commentMapper.selectByNoNulProperties(domain.entity());
-        if(comments.isEmpty()){
+        if (comments.isEmpty()) {
             return null;
         }
 
-         return domainFactory.createCommentDomain().assemble(comments.get(0));
+        return domainFactory.createCommentDomain().assemble(comments.get(0));
     }
 
     @Override
     public List<CommentDomain> loadAllRootCommentDomain() {
         CommentDomain domain = domainFactory.createCommentDomain().setDeleted(false).setParentId(0L);
         List<Comment> comments = commentMapper.selectByNoNulProperties(domain.entity());
-        return comments.stream().map(e->domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
+        return comments.stream().map(e -> domainFactory.createCommentDomain().assemble(e)).collect(Collectors.toList());
     }
 
     @Override
@@ -122,7 +121,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
         return commentMapper
                 .selectByNoNulProperties(domain.entity())
                 .stream()
-                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .map(e -> domainFactory.createCommentDomain().assemble(e))
                 .collect(Collectors.toList());
 
     }
@@ -132,7 +131,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
         return commentMapper
                 .selectByNoNulProperties(domainFactory.createCommentDomain().setDeleted(false).entity())
                 .stream()
-                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .map(e -> domainFactory.createCommentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 
@@ -141,7 +140,7 @@ public class CommentRepositoryImpl  implements CommentRepository {
         return commentMapper
                 .selectByNoNulProperties(domainFactory.createCommentDomain().setDeleted(false).setActive(true).entity())
                 .stream()
-                .map(e->domainFactory.createCommentDomain().assemble(e))
+                .map(e -> domainFactory.createCommentDomain().assemble(e))
                 .collect(Collectors.toList());
     }
 

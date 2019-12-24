@@ -6,9 +6,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
+ * application context
  * @author hetao
  * @date 2018-12-29
- * @description
  */
 @Component
 public class SpringContextHolder implements ApplicationContextAware {
@@ -20,31 +20,31 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
     /**
-     * Get application context from everywhere
+     * 获取context
      *
-     * @return
+     * @return context
      */
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
     /**
-     * Get bean by class
+     * 通过class获取bean
      *
-     * @param clazz
-     * @param <T>
-     * @return
+     * @param clazz class
+     * @param <T> 泛型
+     * @return bean
      */
     public static <T> T getBean(Class<T> clazz) {
         return applicationContext.getBean(clazz);
     }
 
     /**
-     * Get bean by class name
+     * 通过name获取bean
      *
-     * @param name
-     * @param <T>
-     * @return
+     * @param name name
+     * @param <T> 泛型
+     * @return bean
      */
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) {

@@ -16,16 +16,17 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 /**
+ * 拦截重复提交
+ *
  * @author hetao
  * @date 2018-12-29
- * @description 拦截重复提交
  */
 @Component
 public class StopRepeatSubmitInterceptor extends HandlerInterceptorAdapter {
     @Override
-    public boolean  preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
-        if(!(handler instanceof HandlerMethod)){
+        if (!(handler instanceof HandlerMethod)) {
             return true;
         }
         // 将handler强转为HandlerMethod
@@ -34,14 +35,14 @@ public class StopRepeatSubmitInterceptor extends HandlerInterceptorAdapter {
         Method method = handlerMethod.getMethod();
         // 获取出方法上的SysLog注解
         StopRepeatSubmit stopRepeatSubmit = method.getAnnotation(StopRepeatSubmit.class);
-        if(stopRepeatSubmit==null){
+        if (stopRepeatSubmit == null) {
             return true;
         }
-        String key = IpUtils.getIpAddrByRequest(request)+stopRepeatSubmit.key();
-        if(EhCacheUtils.get(WebConstant.REPEAT_SUBMIT_CACHE, key) != null){
+        String key = IpUtils.getIpAddrByRequest(request) + stopRepeatSubmit.key();
+        if (EhCacheUtils.get(WebConstant.REPEAT_SUBMIT_CACHE, key) != null) {
             InkUtils.returnJson(response, RestResponse.fail("你提交的太频繁，请过一段时间再提交"));
             return false;
-        }else{
+        } else {
             EhCacheUtils.put(WebConstant.REPEAT_SUBMIT_CACHE, key, "", stopRepeatSubmit.interval());
         }
         return true;

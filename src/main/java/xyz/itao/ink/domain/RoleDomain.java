@@ -1,8 +1,7 @@
 package xyz.itao.ink.domain;
 
-import lombok.Builder;
+
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import xyz.itao.ink.domain.entity.Role;
 import xyz.itao.ink.domain.entity.UserRole;
@@ -11,18 +10,16 @@ import xyz.itao.ink.utils.DateUtils;
 import xyz.itao.ink.utils.IdUtils;
 
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * @author hetao
  * @date 2018-12-03
- * @description
  */
 @Data
 @Accessors(chain = true)
-public class RoleDomain{
+public class RoleDomain {
 
-    RoleDomain(RoleRepository roleRepository){
+    RoleDomain(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
 
@@ -75,8 +72,9 @@ public class RoleDomain{
 
     /**
      * 根据userid插入userrole
-     * @param userId
-     * @param operator
+     *
+     * @param userId id
+     * @param operator 操作者
      */
     public boolean saveUserRole(Long userId, Long operator) {
         UserRole userRole = UserRole
@@ -104,7 +102,7 @@ public class RoleDomain{
         return this;
     }
 
-    public RoleDomain assemble(Role entity){
+    public RoleDomain assemble(Role entity) {
         return this
                 .setId(entity.getId())
                 .setDeleted(entity.getDeleted())
@@ -117,7 +115,7 @@ public class RoleDomain{
                 .setDetail(entity.getDetail());
     }
 
-    public Role entity(){
+    public Role entity() {
         return Role
                 .builder()
                 .id(this.getId())

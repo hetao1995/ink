@@ -27,25 +27,27 @@ import java.util.*;
 /**
  * @author hetao
  * @date 2018-12-24
- * @description
  */
 @Component
 @Slf4j
 public class Props {
+    private final OptionRepository optionRepository;
+    private final DomainFactory domainFactory;
+    private final ContentService contentService;
+    private final CommentService commentService;
+
     @Autowired
-    private OptionRepository optionRepository;
-    @Autowired
-    private DomainFactory domainFactory;
-    @Autowired
-    private ContentService contentService;
-    @Autowired
-    private CommentService commentService;
+    public Props(OptionRepository optionRepository, DomainFactory domainFactory, ContentService contentService, CommentService commentService) {
+        this.optionRepository = optionRepository;
+        this.domainFactory = domainFactory;
+        this.contentService = contentService;
+        this.commentService = commentService;
+    }
 
 
-
-    public String  set(String name, Object value, UserDomain userDomain){
+    public String set(String name, Object value, UserDomain userDomain) {
         OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
-        if(optionDomain == null){
+        if (optionDomain == null) {
             optionDomain = domainFactory
                     .createOptionDomain()
                     .setCreateBy(userDomain.getId())
@@ -54,157 +56,161 @@ public class Props {
                     .setName(name)
                     .setValue(value.toString())
                     .save();
-        }else{
+        } else {
             optionDomain.setName(name).setValue(value.toString()).setUpdateBy(userDomain.getId()).updateById();
         }
         EhCacheUtils.remove(WebConstant.PROPS_CACHE, name);
         return optionDomain.getValue();
     }
 
-    public void setAll(Map<String, String> map, UserDomain userDomain){
-        for(Map.Entry<String, String> entry : map.entrySet()){
+    public void setAll(Map<String, String> map, UserDomain userDomain) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
             this.set(entry.getKey(), entry.getValue(), userDomain);
         }
     }
 
-    public void setAll(Properties properties, UserDomain userDomain){
-        for(String name : properties.stringPropertyNames()){
+    public void setAll(Properties properties, UserDomain userDomain) {
+        for (String name : properties.stringPropertyNames()) {
             this.set(name, properties.getProperty(name), userDomain);
         }
     }
 
     /**
      * 反射设置pojo所有参数，必须有get方法
-     * @param param
-     * @param userDomain
+     *
+     * @param param      param
+     * @param userDomain user
      */
-    public void setAll(Object param, UserDomain userDomain){
+    public void setAll(Object param, UserDomain userDomain) {
         Class clazz = param.getClass();
         Field[] fields = clazz.getDeclaredFields();
-        for(Field field : fields){
+        for (Field field : fields) {
             try {
-                Method method = param.getClass().getMethod("get"+this.getMethodName(field.getName()));
+                Method method = param.getClass().getMethod("get" + this.getMethodName(field.getName()));
                 this.set(field.getName(), method.invoke(param), userDomain);
             } catch (Exception e) {
                 e.printStackTrace();
-                log.error("反射获取参数出错：{}",e);
-                throw  new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
+                log.error("反射获取参数出错：{}", e);
+                throw new InnerException(ExceptionEnum.ILLEGAL_OPERATION);
             }
         }
     }
+
     /**
      * 把一个字符串的第一个字母大写
      */
-    private String getMethodName(String fildeName){
+    private String getMethodName(String fildeName) {
         byte[] items = fildeName.getBytes();
         items[0] = (byte) ((char) items[0] - 'a' + 'A');
         return new String(items);
     }
 
-    public Optional<String> get(String name){
+    public Optional<String> get(String name) {
         Object obj = EhCacheUtils.get(WebConstant.PROPS_CACHE, name);
-        if(obj != null){
+        if (obj != null) {
             return Optional.ofNullable(obj.toString());
         }
         OptionDomain optionDomain = optionRepository.loadOptionDomainByName(name);
-        if(optionDomain==null){
-            return  Optional.empty();
+        if (optionDomain == null) {
+            return Optional.empty();
         }
         EhCacheUtils.put(WebConstant.PROPS_CACHE, name, optionDomain.getValue());
         return Optional.ofNullable(optionDomain.getValue());
     }
 
-    public String get(String name, String defaultValue){
+    public String get(String name, String defaultValue) {
         return get(name).orElse(defaultValue);
     }
 
-    public Optional<Integer> getInt(String name){
+    public Optional<Integer> getInt(String name) {
         Optional<String> optional = this.get(name);
         return optional.map(Integer::parseInt);
     }
 
-    public Integer getInt(String name, Integer defaultValue){
+    public Integer getInt(String name, Integer defaultValue) {
         return getInt(name).orElse(defaultValue);
     }
 
-    public Optional<Long> getLong(String name){
+    public Optional<Long> getLong(String name) {
         Optional<String> optional = this.get(name);
         return optional.map(Long::parseLong);
     }
 
-    public Long getLong(String name, Long defaultValue){
+    public Long getLong(String name, Long defaultValue) {
         return getLong(name).orElse(defaultValue);
     }
 
-    public Optional<Boolean> getBoolean(String name){
+    public Optional<Boolean> getBoolean(String name) {
         return this.get(name).map(Boolean::parseBoolean);
     }
 
-    public Boolean getBoolean(String name, Boolean defaultValue){
+    public Boolean getBoolean(String name, Boolean defaultValue) {
         return getBoolean(name).orElse(defaultValue);
     }
 
-    public Optional<Double> getDouble(String name){
+    public Optional<Double> getDouble(String name) {
         return this.get(name).map(Double::parseDouble);
     }
 
     /**
      * 拼接网站url
-     * @param sub
-     * @return
+     *
+     * @param sub suburl
+     * @return url
      */
-    public String getSiteUrl(String sub){
+    public String getSiteUrl(String sub) {
         final String prefix = "http";
         String siteUrl = this.get(WebConstant.OPTION_SITE_URL, "");
         String protocol = this.get(WebConstant.OPTION_DEFAULT_PROTOCOL, "http://");
-        if(StringUtils.isNotBlank(siteUrl) && !siteUrl.startsWith(prefix)){
-            siteUrl = protocol+siteUrl;
+        if (StringUtils.isNotBlank(siteUrl) && !siteUrl.startsWith(prefix)) {
+            siteUrl = protocol + siteUrl;
         }
-        return  siteUrl+ sub;
+        return siteUrl + sub;
     }
 
-    public String getSiteUrl(){
+    public String getSiteUrl() {
         return this.getSiteUrl("");
     }
 
     /**
      * 网站标题
      */
-    public  String getSiteTitle() {
+    public String getSiteTitle() {
         return this.get(WebConstant.OPTION_SITE_TITLE, "ink");
     }
 
-    public String getSiteKeywords(){
+    public String getSiteKeywords() {
         return this.get(WebConstant.OPTION_SITE_KEYWORDS, "ink, blog");
     }
 
-    public String getSiteDescription(){
+    public String getSiteDescription() {
         return this.get(WebConstant.OPTION_SITE_DESCRIPTION, "a beautiful blog worth to try");
     }
 
-    public String getCdnUrl(String sub){
+    public String getCdnUrl(String sub) {
         return this.get(WebConstant.OPTION_CDN_URL, WebConstant.CDN_URI) + sub;
     }
 
-    public  String getCdnUrl(){
+    public String getCdnUrl() {
         return this.getCdnUrl("");
     }
 
-    public Boolean getAllowCloudCdn(){
+    public Boolean getAllowCloudCdn() {
         return this.getBoolean(WebConstant.OPTION_ALLOW_CLOUD_CDN, false);
     }
 
-    public String getSiteTheme(){
+    public String getSiteTheme() {
         return this.get(WebConstant.OPTION_SITE_THEME, "default");
     }
 
-    public String getThemeUrl(String sub){
-        return this.getSiteUrl(WebConstant.THEME_URI+"/"+this.getSiteTheme() + sub);
+    public String getThemeUrl(String sub) {
+        return this.getSiteUrl(WebConstant.THEME_URI + "/" + this.getSiteTheme() + sub);
     }
 
     /**
      * 最新文章
-     * @return
+     *
+     * @return 最新文章
      */
     public List<ContentDomain> getRecentArticles() {
         int limit = this.getInt(WebConstant.OPTION_RECENT_ARTICLE_LEN, 8);
@@ -216,11 +222,11 @@ public class Props {
     }
 
     /**
-     * 最新评论
+     * 获取最新评论
      *
-     * @return
+     * @return 最新评论
      */
-    public  List<CommentDomain> getRecentComments() {
+    public List<CommentDomain> getRecentComments() {
         int limit = this.getInt(WebConstant.OPTION_RECENT_COMMENT_LEN, 8);
         CommentParam commentParam = CommentParam.builder().orderBy("create_time desc").build();
         commentParam.setPageNum(1);
@@ -229,57 +235,60 @@ public class Props {
     }
 
 
-    public  String getAttachUrl(){
+    public String getAttachUrl() {
         return this.getAttachUrl("");
     }
 
-    public String getAttachUrl(String fileKey){
-        return this.get(TypeConst.ATTACH_URL, this.getSiteUrl("/upload/"))+fileKey;
+    public String getAttachUrl(String fileKey) {
+        return this.get(TypeConst.ATTACH_URL, this.getSiteUrl("/upload/")) + fileKey;
     }
 
-    public Integer getYearNow(){
+    public Integer getYearNow() {
         return LocalDate.now().getYear();
     }
 
-    public String getRandomBgUrl(){
-        return this.getCdnUrl("/images/bg/"+ RandomUtils.nextInt(1, 6) + ".png");
+    public String getRandomBgUrl() {
+        return this.getCdnUrl("/images/bg/" + RandomUtils.nextInt(1, 6) + ".png");
     }
 
-    public String renderTheme(String viewName){
-        return "themes/"+ this.getSiteTheme() + "/" + viewName;
+    public String renderTheme(String viewName) {
+        return "themes/" + this.getSiteTheme() + "/" + viewName;
     }
 
-    public String render404(){
+    public String render404() {
         return "/comm/error_404";
     }
 
-    public String getThemeOption(){
+    public String getThemeOption() {
         return this.get(this.getThemeOptionKey(), null);
     }
 
-    public void setThemeOption(Map<String, String> options, UserDomain userDomain){
-        this.set(this.getThemeOptionKey(),JSON.toJSONString(options), userDomain);
+    public void setThemeOption(Map<String, String> options, UserDomain userDomain) {
+        this.set(this.getThemeOptionKey(), JSON.toJSONString(options), userDomain);
     }
 
-    public String getThemeOptionKey(){
+    public String getThemeOptionKey() {
         return "theme_" + this.getSiteTheme() + "_options";
     }
 
 
     private static String BLOCK_IPS_SET = "block_ips_set";
-    public void setBlockIps(String blockIps, UserDomain userDomain){
+
+    public void setBlockIps(String blockIps, UserDomain userDomain) {
         this.set(WebConstant.OPTION_BLOCK_IPS, blockIps, userDomain);
         EhCacheUtils.put(WebConstant.PROPS_CACHE, BLOCK_IPS_SET, Sets.newHashSet(blockIps.split(",")));
     }
 
-    public Set<String> getBlockIps(){
+    @SuppressWarnings("unchecked")
+    public Set<String> getBlockIps() {
         Object obj = EhCacheUtils.get(WebConstant.PROPS_CACHE, BLOCK_IPS_SET);
-        if(obj != null && obj instanceof Set){
+        if (obj instanceof Set) {
             return (Set<String>) obj;
         }
         Set<String> set = Sets.newHashSet(this.get(WebConstant.OPTION_BLOCK_IPS, "").split(","));
         EhCacheUtils.put(WebConstant.PROPS_CACHE, BLOCK_IPS_SET, set);
         return set;
     }
+
 
 }

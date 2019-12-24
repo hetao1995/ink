@@ -5,15 +5,16 @@ import lombok.*;
 /**
  * @author hetao
  * @date 2018-12-05
- * @description
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentParam extends PageParam{
+public class CommentParam extends PageParam {
     private Long contentId;
     private String orderBy;
+    @Builder.Default
     private Long parentId = 0L;
 }

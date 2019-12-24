@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import xyz.itao.ink.domain.DomainFactory;
 import xyz.itao.ink.domain.RoleDomain;
 import xyz.itao.ink.domain.UserDomain;
-import xyz.itao.ink.domain.entity.Archive;
 import xyz.itao.ink.domain.params.InstallParam;
 import xyz.itao.ink.domain.vo.*;
 import xyz.itao.ink.exception.ExceptionEnum;
@@ -25,47 +24,46 @@ import java.util.List;
 /**
  * @author hetao
  * @date 2018-12-08
- * @description
  */
 @Service("siteService")
 @Slf4j
 public class SiteServiceImpl implements SiteService {
+    private final UserService userService;
+    private final DomainFactory domainFactory;
+
     @Autowired
-    UserService userService;
-    @Autowired
-    ContentService contentService;
-    @Autowired
-    MetaService metaService;
-    @Autowired
-    DomainFactory domainFactory;
+    public SiteServiceImpl(UserService userService, DomainFactory domainFactory) {
+        this.userService = userService;
+        this.domainFactory = domainFactory;
+    }
 
 
     @Override
     @Transactional
     public UserDomain installSite(InstallParam installParam) {
-        if(StringUtils.isBlank(installParam.getSiteTitle())){
-            throw  new TipException(ExceptionEnum.SITE_TITLE_ILLEGAL);
+        if (StringUtils.isBlank(installParam.getSiteTitle())) {
+            throw new TipException(ExceptionEnum.SITE_TITLE_ILLEGAL);
         }
         installParam.setSiteUrl(InkUtils.buildURL(installParam.getSiteUrl()));
         UserDomain admin = initAdmin(installParam);
         File lock = new File("./install.lock");
         try {
             boolean res = lock.createNewFile();
-            if(!res){
+            if (!res) {
                 log.error("Ink初始化站点失败, file创建结果为false");
-                throw  new InnerException(ExceptionEnum.SITE_INSTALL_FAILE);
+                throw new InnerException(ExceptionEnum.SITE_INSTALL_FAIL);
             }
             log.debug("Ink初始化了站点");
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("Ink初始化站点失败！{}",e);
-            throw  new InnerException(ExceptionEnum.SITE_INSTALL_FAILE);
+            log.error("Ink初始化站点失败！{}", e);
+            throw new InnerException(ExceptionEnum.SITE_INSTALL_FAIL);
         }
 
         return admin;
     }
 
-    private UserDomain initAdmin(InstallParam installParam){
+    private UserDomain initAdmin(InstallParam installParam) {
         UserVo userVo = UserVo
                 .builder()
                 .displayName(installParam.getAdminUser())

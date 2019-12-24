@@ -1,14 +1,19 @@
 package xyz.itao.ink.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 import xyz.itao.ink.domain.entity.UserRole;
 
 import java.util.List;
 
+/**
+ * @author hetao
+ */
 @Component
 public interface UserRoleMapper {
     /**
      * 插入
+     *
      * @param record 插入的对象
      * @return 是否插入成功
      */
@@ -16,6 +21,7 @@ public interface UserRoleMapper {
 
     /**
      * 通过主键查找
+     *
      * @param id 主键
      * @return 主键对应的UserRole对象
      */
@@ -23,6 +29,7 @@ public interface UserRoleMapper {
 
     /**
      * 通过主键更新
+     *
      * @param record 需要更新的数据
      * @return 是否更新成功
      */
@@ -31,16 +38,18 @@ public interface UserRoleMapper {
     /**
      * 多种条件查找，包括id、deleted、roleId、userId等
      * 这些条件全部满足才会返回
+     *
      * @param record 条件
      * @return 满足条件的UserRole实例集合
      */
     List<UserRole> selectByNoNulProperties(UserRole record);
 
     /**
-     * 通过userid和roleid查找
-     * @param userId
-     * @param roleId
-     * @return
+     * 通过userid和role id查找
+     *
+     * @param userId 用户id
+     * @param roleId 角色id
+     * @return UserRole
      */
-    UserRole selectByUserIdAndRoleId(Long userId, Long roleId);
+    UserRole selectByUserIdAndRoleId(@Param("userId") Long userId, @Param("roleId") Long roleId);
 }

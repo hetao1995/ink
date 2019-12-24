@@ -12,18 +12,24 @@ import xyz.itao.ink.domain.UserDomain;
 import xyz.itao.ink.service.UserService;
 
 /**
+ * 登陆登出、修改密码操作
+ *
  * @author hetao
  * @date 2018-12-04
- * @description 登陆登出操作
  */
 @Controller
 @Slf4j
 @RequestMapping(value = "/admin")
-public class AuthController  {
+public class AuthController {
+    private final UserService userService;
+
     @Autowired
-    UserService userService;
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
+
     @GetMapping(value = "/login")
-    public String login(){
+    public String login() {
         return "admin/login";
     }
 

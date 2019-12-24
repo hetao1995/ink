@@ -16,21 +16,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 主题相关
+ *
  * @author hetao
  * @date 2018-12-07
- * @description
  */
 @Controller
 @RequestMapping("/admin/theme")
 @Slf4j
-public class ThemeController  {
+public class ThemeController {
+    private final OptionService optionService;
+    private final Props props;
+
     @Autowired
-    OptionService optionService;
-    @Autowired
-    Props props;
+    public ThemeController(OptionService optionService, Props props) {
+        this.optionService = optionService;
+        this.props = props;
+    }
 
     @GetMapping("")
-    public String themeIndex(){
+    public String themeIndex() {
         return "admin/themes";
     }
 
@@ -40,7 +45,7 @@ public class ThemeController  {
     @GetMapping("/setting")
     public String setting(HttpServletRequest request) {
         String option = props.getThemeOption();
-        Map<String, Object> map    = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         try {
             if (StringUtils.isNotBlank(option)) {
                 map = JSON.parseObject(option);

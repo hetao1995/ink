@@ -23,20 +23,25 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
+ * 附件管理
+ *
  * @author hetao
  * @date 2018-12-07
- * @description 附件管理
  */
 @Controller
 @RequestMapping("admin/attach")
 @Slf4j
 public class AttachController {
 
-    @Autowired
-    private LinkService linkService;
+    private final LinkService linkService;
+
+    private final Props props;
 
     @Autowired
-    private Props props;
+    public AttachController(LinkService linkService, Props props) {
+        this.linkService = linkService;
+        this.props = props;
+    }
 
 
     /**
@@ -62,8 +67,8 @@ public class AttachController {
     @PostMapping(value = "upload")
     @ResponseBody
     @SysLog("上传文件")
-    public RestResponse<?> upload( @RequestParam("file") MultipartFile[] multipartFiles, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
-        if(multipartFiles==null){
+    public RestResponse<?> upload(@RequestParam("file") MultipartFile[] multipartFiles, @RequestAttribute(WebConstant.LOGIN_USER) UserDomain userDomain) {
+        if (multipartFiles == null) {
             RestResponse.fail("请选择文件上传！");
         }
         List<LinkVo> uploadFiles = linkService.saveFiles(multipartFiles, userDomain);

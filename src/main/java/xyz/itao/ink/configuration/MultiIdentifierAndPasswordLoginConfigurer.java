@@ -10,15 +10,16 @@ import xyz.itao.ink.filter.MultiIdentifierAndPasswordAuthenticationFilter;
 import xyz.itao.ink.handler.HttpStatusLoginFailureHandler;
 
 /**
+ * 多种登录方式登录验证配置
+ *
  * @author hetao
  * @date 2018-12-01
- * @description
  */
 public class MultiIdentifierAndPasswordLoginConfigurer<T extends MultiIdentifierAndPasswordLoginConfigurer<T, B>, B extends HttpSecurityBuilder<B>> extends AbstractHttpConfigurer<T, B> {
 
     private MultiIdentifierAndPasswordAuthenticationFilter authFilter;
 
-    public MultiIdentifierAndPasswordLoginConfigurer() {
+    MultiIdentifierAndPasswordLoginConfigurer() {
         this.authFilter = new MultiIdentifierAndPasswordAuthenticationFilter();
     }
 
@@ -32,7 +33,7 @@ public class MultiIdentifierAndPasswordLoginConfigurer<T extends MultiIdentifier
         http.addFilterBefore(filter, LogoutFilter.class);
     }
 
-    public MultiIdentifierAndPasswordLoginConfigurer<T,B> loginSuccessHandler(AuthenticationSuccessHandler authSuccessHandler){
+    MultiIdentifierAndPasswordLoginConfigurer<T, B> loginSuccessHandler(AuthenticationSuccessHandler authSuccessHandler) {
         authFilter.setAuthenticationSuccessHandler(authSuccessHandler);
         return this;
     }

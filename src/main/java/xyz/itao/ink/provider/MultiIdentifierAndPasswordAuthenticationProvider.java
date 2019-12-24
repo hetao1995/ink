@@ -15,13 +15,12 @@ import xyz.itao.ink.utils.PatternUtils;
 /**
  * @author hetao
  * @date 2018-12-03
- * @description
  */
 @Slf4j
 public class MultiIdentifierAndPasswordAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     UserService userService;
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     public MultiIdentifierAndPasswordAuthenticationProvider(PasswordEncoder passwordEncoder){
         this.passwordEncoder = passwordEncoder;
     }
@@ -29,7 +28,7 @@ public class MultiIdentifierAndPasswordAuthenticationProvider implements Authent
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String identifier = ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getIdentifier();
         String password = ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getPassword();
-        UserDomain userDomain = null;
+        UserDomain userDomain;
         if(PatternUtils.isEmail(identifier)){
             userDomain = userService.loadUserDomainByEmail(identifier);
         }else if(PatternUtils.isURL(identifier)){

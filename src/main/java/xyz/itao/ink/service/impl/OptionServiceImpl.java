@@ -20,17 +20,16 @@ import java.util.Map;
 /**
  * @author hetao
  * @date 2018-12-10
- * @description
  */
 @Service("optionService")
 public class OptionServiceImpl implements OptionService {
 
+    private final OptionRepository optionRepository;
+
     @Autowired
-    OptionRepository optionRepository;
-    @Autowired
-    DomainFactory domainFactory;
-    @Autowired
-    Props props;
+    public OptionServiceImpl(OptionRepository optionRepository) {
+        this.optionRepository = optionRepository;
+    }
 
     @Override
     public Map<String, String> loadAllOptions() {
@@ -46,7 +45,7 @@ public class OptionServiceImpl implements OptionService {
     @Override
     @Transactional
     public void deleteOption(String key, UserDomain userDomain) {
-        deleteByNameLike(key+"%", userDomain);
+        deleteByNameLike(key + "%", userDomain);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class OptionServiceImpl implements OptionService {
         deleteByNameLike("theme_option_%", userDomain);
     }
 
-    private void deleteByNameLike(String pattern, UserDomain userDomain){
+    private void deleteByNameLike(String pattern, UserDomain userDomain) {
         List<OptionDomain> optionDomains = optionRepository.loadAllOptionDomainNotDeleteLike(pattern);
         optionDomains.forEach(optionDomain -> {
             optionDomain.setUpdateBy(userDomain.getId());

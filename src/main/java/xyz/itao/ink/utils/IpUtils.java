@@ -7,13 +7,15 @@ import java.net.SocketException;
 import java.util.Enumeration;
 
 /**
+ * ip工具类
+ *
  * @author hetao
  * @date 2018-12-01 22:44
- * @description ip工具类
  */
 public class IpUtils {
 
     private static final String UNKNOWN = "unknown";
+
     /**
      * @param request 请求
      * @return IP Address
@@ -34,7 +36,7 @@ public class IpUtils {
 
     /**
      * @return 本机IP
-     * @throws SocketException
+     * @throws SocketException exception
      */
     public static String getRealIp() throws SocketException {
         // 本地IP，如果没有配置外网IP则返回它
