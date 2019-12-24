@@ -41,8 +41,8 @@ public class WebSecurityConfigurer extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 //静态资源访问无需认证
                 .antMatchers("/**/*.js", "/lang/*.json", "/**/*.css", "/**/*.js", "/**/*.map", "/**/*.html", "/**/*.png", "/**/*.svg", "/**/*.otf", "/**/*.eot", "/**/*.ttf", "/**/*.woff", "/**/*.woff2").permitAll()
+                .antMatchers("/admin/**").hasAnyRole("ADMIN")
                 .antMatchers("/*", "/themes/**/static/**", "/upload/**", WebConstant.CDN_URI + "/**").permitAll()
-                .antMatchers("/admin/**", "/admin").hasAnyRole("ADMIN")
                 .and()
                 //CRSF禁用，因为不使用session
                 .csrf().disable()
