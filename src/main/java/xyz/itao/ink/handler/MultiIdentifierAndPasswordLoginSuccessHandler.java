@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MultiIdentifierAndPasswordLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Autowired
     private UserService userService;
 
     @Override
@@ -32,5 +31,10 @@ public class MultiIdentifierAndPasswordLoginSuccessHandler implements Authentica
             InkUtils.setCookie(response, WebConstant.AUTHORIZATION, token, -1, "/");
         }
         request.setAttribute(WebConstant.LOGIN_USER, authentication.getPrincipal());
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

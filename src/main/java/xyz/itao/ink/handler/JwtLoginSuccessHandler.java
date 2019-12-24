@@ -26,7 +26,7 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
      * 少于30分钟刷新
      */
     private static final int TOKEN_REFRESH_INTERVAL = 30 * 60;
-    @Autowired
+
     private UserService userService;
 
     @Override
@@ -53,4 +53,8 @@ public class JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
         return LocalDateTime.now().plusSeconds(TOKEN_REFRESH_INTERVAL).isAfter(expiresTime);
     }
 
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
 }

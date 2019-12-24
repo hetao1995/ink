@@ -24,12 +24,8 @@ import java.lang.reflect.Method;
 @Slf4j
 @Component
 public class SysLogInterceptor extends HandlerInterceptorAdapter {
-    private final DomainFactory domainFactory;
+    private DomainFactory domainFactory;
 
-    @Autowired
-    public SysLogInterceptor(DomainFactory domainFactory) {
-        this.domainFactory = domainFactory;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -59,5 +55,10 @@ public class SysLogInterceptor extends HandlerInterceptorAdapter {
                 .setUserId(userId)
                 .save();
         return true;
+    }
+
+    @Autowired
+    public void setDomainFactory(DomainFactory domainFactory) {
+        this.domainFactory = domainFactory;
     }
 }

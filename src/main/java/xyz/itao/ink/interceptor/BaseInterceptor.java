@@ -25,12 +25,7 @@ public class BaseInterceptor implements HandlerInterceptor {
     private static final String USER_AGENT = "user-agent";
 
 
-    private final Props props;
-
-    @Autowired
-    public BaseInterceptor(Props props) {
-        this.props = props;
-    }
+    private Props props;
 
 
     @Override
@@ -64,5 +59,10 @@ public class BaseInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) {
 
+    }
+
+    @Autowired
+    public void setProps(Props props) {
+        this.props = props;
     }
 }

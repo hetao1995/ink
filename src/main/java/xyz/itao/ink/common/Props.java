@@ -31,18 +31,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class Props {
-    private final OptionRepository optionRepository;
-    private final DomainFactory domainFactory;
-    private final ContentService contentService;
-    private final CommentService commentService;
-
-    @Autowired
-    public Props(OptionRepository optionRepository, DomainFactory domainFactory, ContentService contentService, CommentService commentService) {
-        this.optionRepository = optionRepository;
-        this.domainFactory = domainFactory;
-        this.contentService = contentService;
-        this.commentService = commentService;
-    }
+    private OptionRepository optionRepository;
+    private DomainFactory domainFactory;
+    private ContentService contentService;
+    private CommentService commentService;
 
 
     public String set(String name, Object value, UserDomain userDomain) {
@@ -291,4 +283,23 @@ public class Props {
     }
 
 
+    @Autowired
+    public void setOptionRepository(OptionRepository optionRepository) {
+        this.optionRepository = optionRepository;
+    }
+
+    @Autowired
+    public void setDomainFactory(DomainFactory domainFactory) {
+        this.domainFactory = domainFactory;
+    }
+
+    @Autowired
+    public void setContentService(ContentService contentService) {
+        this.contentService = contentService;
+    }
+
+    @Autowired
+    public void setCommentService(CommentService commentService) {
+        this.commentService = commentService;
+    }
 }

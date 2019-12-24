@@ -34,16 +34,10 @@ import java.util.List;
  */
 @Configuration
 public class WebMvcConfigurer extends WebMvcConfigurationSupport {
-    private final BaseInterceptor baseInterceptor;
-    private final SysLogInterceptor sysLogInterceptor;
-    private final StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
+    private BaseInterceptor baseInterceptor;
+    private SysLogInterceptor sysLogInterceptor;
+    private StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor;
 
-    @Autowired
-    public WebMvcConfigurer(BaseInterceptor baseInterceptor, SysLogInterceptor sysLogInterceptor, StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor) {
-        this.baseInterceptor = baseInterceptor;
-        this.sysLogInterceptor = sysLogInterceptor;
-        this.stopRepeatSubmitInterceptor = stopRepeatSubmitInterceptor;
-    }
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -137,4 +131,19 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
         return new EhCacheManagerFactoryBean();
     }
 
+
+    @Autowired
+    public void setBaseInterceptor(BaseInterceptor baseInterceptor) {
+        this.baseInterceptor = baseInterceptor;
+    }
+
+    @Autowired
+    public void setSysLogInterceptor(SysLogInterceptor sysLogInterceptor) {
+        this.sysLogInterceptor = sysLogInterceptor;
+    }
+
+    @Autowired
+    public void setStopRepeatSubmitInterceptor(StopRepeatSubmitInterceptor stopRepeatSubmitInterceptor) {
+        this.stopRepeatSubmitInterceptor = stopRepeatSubmitInterceptor;
+    }
 }

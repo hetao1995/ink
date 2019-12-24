@@ -16,55 +16,35 @@ public class DomainFactory {
     /**
      * UserRepository 对象
      */
-    @Autowired
-    @Lazy
     private UserRepository userRepository;
 
     /**
      * commentRepository对象
      */
-    @Autowired
-    @Lazy
     private CommentRepository commentRepository;
 
     /**
      * metaRepository对象
      */
-    @Autowired
-    @Lazy
     private MetaRepository metaRepository;
 
     /**
      * contentRepository对象
      */
-    @Autowired
-    @Lazy
     private ContentRepository contentRepository;
     /**
      * LogRepository对象
      */
-    @Autowired
-    @Lazy
     private LogRepository logRepository;
 
     /**
      * LinkRepository对象
      */
-    @Autowired
-    @Lazy
     private LinkRepository linkRepository;
-    @Autowired
-    @Lazy
     private OptionRepository optionRepository;
-    @Autowired
-    @Lazy
     private RoleRepository roleRepository;
-    @Autowired
-    @Lazy
     private Props props;
 
-    @Autowired
-    @Lazy
     private CacheManager cacheManager;
 
     /**
@@ -135,5 +115,66 @@ public class DomainFactory {
 
     public LinkDomain createLinkDomain() {
         return new LinkDomain(linkRepository);
+    }
+
+
+    @Autowired
+    @Lazy
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setCommentRepository(CommentRepository commentRepository) {
+        this.commentRepository = commentRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setMetaRepository(MetaRepository metaRepository) {
+        this.metaRepository = metaRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setContentRepository(ContentRepository contentRepository) {
+        this.contentRepository = contentRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setLogRepository(LogRepository logRepository) {
+        this.logRepository = logRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setLinkRepository(LinkRepository linkRepository) {
+        this.linkRepository = linkRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setOptionRepository(OptionRepository optionRepository) {
+        this.optionRepository = optionRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setRoleRepository(RoleRepository roleRepository) {
+        this.roleRepository = roleRepository;
+    }
+
+    @Autowired
+    @Lazy
+    public void setProps(Props props) {
+        this.props = props;
+    }
+
+    @Autowired
+    @Lazy
+    public void setCacheManager(CacheManager cacheManager) {
+        this.cacheManager = cacheManager;
     }
 }

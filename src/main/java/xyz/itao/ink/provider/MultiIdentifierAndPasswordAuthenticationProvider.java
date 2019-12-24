@@ -18,37 +18,43 @@ import xyz.itao.ink.utils.PatternUtils;
  */
 @Slf4j
 public class MultiIdentifierAndPasswordAuthenticationProvider implements AuthenticationProvider {
-    @Autowired
-    UserService userService;
+    private UserService userService;
     private PasswordEncoder passwordEncoder;
-    public MultiIdentifierAndPasswordAuthenticationProvider(PasswordEncoder passwordEncoder){
+
+    public MultiIdentifierAndPasswordAuthenticationProvider(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String identifier = ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getIdentifier();
         String password = ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getPassword();
         UserDomain userDomain;
-        if(PatternUtils.isEmail(identifier)){
+        if (PatternUtils.isEmail(identifier)) {
             userDomain = userService.loadUserDomainByEmail(identifier);
-        }else if(PatternUtils.isURL(identifier)){
+        } else if (PatternUtils.isURL(identifier)) {
             userDomain = userService.loadUserDomainByHomeUrl(identifier);
-        }else{
+        } else {
             userDomain = userService.loadUserDomainByUsername(identifier);
         }
-        if(userDomain == null){
+        if (userDomain == null) {
             log.debug("没有找到identifier对应的user", identifier);
             throw new BadCredentialsException("Fail to find the user");
         }
-        if(!passwordEncoder.matches(password, userDomain.getPassword())){
+        if (!passwordEncoder.matches(password, userDomain.getPassword())) {
             log.debug("密码错误 ", identifier, password);
             throw new BadCredentialsException("Fail to check password");
         }
-        return new MultiIdentifierAndPasswordAuthenticationToken(userDomain, ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe(),userDomain.getAuthorities());
+        return new MultiIdentifierAndPasswordAuthenticationToken(userDomain, ((MultiIdentifierAndPasswordAuthenticationToken) authentication).getRememberMe(), userDomain.getAuthorities());
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.isAssignableFrom(MultiIdentifierAndPasswordAuthenticationToken.class);
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }

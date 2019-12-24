@@ -23,7 +23,6 @@ import java.util.Calendar;
  */
 @Slf4j
 public class JwtAuthenticationProvider implements AuthenticationProvider {
-    @Autowired
     private UserService userService;
 
     @Override
@@ -59,5 +58,10 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
         return authentication.isAssignableFrom(JwtAuthenticationToken.class);
+    }
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 }
